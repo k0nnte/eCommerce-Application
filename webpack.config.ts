@@ -28,7 +28,7 @@ export default (env: IenvVar) => {
 
     },
     plugins: [
-        new HtmlWebpackPlugin({ template: path.resolve(__dirname, 'public', 'index.html') }),
+        new HtmlWebpackPlugin({ template: path.resolve(__dirname, 'public', 'index.html'), favicon: path.resolve(__dirname, 'public', 'favicon.ico') }),
        !isDevelop && new MiniCssExtractPlugin({
           filename: 'css/[name].[contenthash].css',
           chunkFilename: 'css/[name].[contenthash].css'
