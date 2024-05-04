@@ -3,6 +3,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import webpack from 'webpack';
 import type { Configuration as DevServerConfiguration } from "webpack-dev-server";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import CopyPlugin from "copy-webpack-plugin";
 
 type Mode = 'production' | 'development';
 
@@ -32,6 +33,11 @@ export default (env: IenvVar) => {
        !isDevelop && new MiniCssExtractPlugin({
           filename: 'css/[name].[contenthash].css',
           chunkFilename: 'css/[name].[contenthash].css'
+        }),
+        new CopyPlugin({
+          patterns: [
+            { from: path.resolve(__dirname,"public", "files"), to: path.resolve(__dirname, "dist", 'files') }
+          ],
         }),
     ],
     module: {
