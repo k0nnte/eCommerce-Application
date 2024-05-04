@@ -2,6 +2,7 @@ import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import webpack from 'webpack';
 import type { Configuration as DevServerConfiguration } from "webpack-dev-server";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
 type Mode = 'production' | 'development';
 
@@ -27,19 +28,39 @@ export default (env: IenvVar) => {
 
     },
     plugins: [
-        new HtmlWebpackPlugin({ template: path.resolve(__dirname, 'public', 'index.html') })
+        new HtmlWebpackPlugin({ template: path.resolve(__dirname, 'public', 'index.html') }),
+       !isDevelop && new MiniCssExtractPlugin({
+          filename: 'css/[name].[contenthash].css',
+          chunkFilename: 'css/[name].[contenthash].css'
+        }),
     ],
     module: {
         rules: [
+          {
+            // test: /\.s[ac]ss$/i,
+            test: /\.s?[ac]ss$/i,
+            use: [
+              isDevelop ?  'style-loader' :  MiniCssExtractPlugin.loader,
+               "css-loader",
+               "sass-loader"
+            ],
+          },
           {
             test: /\.tsx?$/,
             use: 'ts-loader',
             exclude: /node_modules/,
           },
+          {
+            test: /\.(png|svg|jpg|jpeg|gif)$/i,
+            type: 'asset/resource',
+          },
         ],
       },
       resolve: {
         extensions: ['.tsx', '.ts', '.js'],
+        alias: {
+          '@': path.resolve(__dirname, 'src')
+        }
       },
       devtool: isDevelop ? 'inline-source-map' : false,
       devServer: isDevelop ?  {
