@@ -43,3 +43,33 @@ The application is powered by CommerceTools 🌐, a leading provider of commerce
 8. [**Husky**](https://github.com/typicode/husky#readme) 🐕
 9. [**Jest**](https://jestjs.io/docs/getting-started) 🧪
 10. [**SASS**](https://sass-lang.com/guide/) 📚
+
+## In the project use the following scripts
+
+1. To begin the development run:
+
+   ```command-line
+    npm run dev
+   ```
+
+2. For start application use:
+
+   ```command-line
+    npm run start
+   ```
+
+3. Open [`https://localhost:3000`](https://localhost:3000) in a browser
+
+4. To create a production bundle use:
+
+   ```command-line
+    npm run prod
+   ```
+
+5. Run test:
+
+   ```command-line
+    npm test
+   ```
+
+6. Before creating a commit, the husky pre-commit hook is automatically launched, which includes scripts `lint` for running ESLint and `format` for Prettier.
