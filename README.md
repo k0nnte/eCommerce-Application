@@ -58,7 +58,7 @@ The application is powered by CommerceTools 🌐, a leading provider of commerce
     npm run start
    ```
 
-3. Open [`https://localhost:3000`](https://localhost:3000) in a browser
+3. Open [`https://localhost:8080`](https://localhost:8080) in a browser
 
 4. To create a production bundle use:
 
@@ -144,7 +144,7 @@ Please install the following software before starting development:
 11. To work with the application use the following commands:
 
     - Run `npm run start` (for start application)
-    - Open `https://localhost:3000` in a browser
+    - Open `https://localhost:8080` in a browser
     - Run `npm run prod` (for build application)
 
 12. **Have a good coding!** 💻
