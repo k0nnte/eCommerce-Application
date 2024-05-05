@@ -73,3 +73,78 @@ The application is powered by CommerceTools 🌐, a leading provider of commerce
    ```
 
 6. Before creating a commit, the husky pre-commit hook is automatically launched, which includes scripts `lint` for running ESLint and `format` for Prettier.
+
+## Getting Started
+
+### Prerequisites
+
+Please install the following software before starting development:
+
+- [Git](https://git-scm.com/downloads)
+- [Node.js LTS](https://nodejs.org/en/download/)
+
+### Steps
+
+1. Clone the repository to your local machine [repository](https://github.com/k0nnte/eCommerce-Application)
+
+   ```command-line
+   git clone https://github.com/k0nnte/eCommerce-Application.git
+   ```
+
+2. Navigate into the directory where you've cloned the source code and install NPM dependencies
+
+   ```command-line
+    cd eCommerce-Application
+    npm install
+   ```
+
+3. Navigate into the branch `develop`
+
+   ```command-line
+     git checkout develop
+   ```
+
+4. Use `git pull` to update your local branch
+
+   ```command-line
+     git pull
+   ```
+
+5. Create a branch for your feature (for Sprint #1, for other sprints navigate into the script's branch and create your branch)
+
+   ```command-line
+      git checkout -b feat/rss-ecomm-1_xx
+   ```
+
+6. Run the application in development mode with live reload:
+
+   ```command-line
+   npm run dev
+   ```
+
+7. Do coding 👩‍💻👨‍💻
+
+8. Commit your changes using a descriptive commit message that follows [Commit Message Conventions](https://docs.rs.school/#/git-convention)
+
+   ```command-line
+   git commit -m "feat: add something"
+   ```
+
+9. Push your branch to GitHub:
+
+   ```command-line
+   git push origin <your branch name>
+   ```
+
+10. Create a pull request with detailed descriptions, outlining the changes made and the purpose of the changes.
+
+    - ❗All pull requests should merged with approvals from other team members, ensuring the quality of code contributions.
+    - 🔄 Merge all feature branches into the current sprint's branch.
+
+11. To work with the application use the following commands:
+
+    - Run `npm run start` (for start application)
+    - Open `https://localhost:3000` in a browser
+    - Run `npm run prod` (for build application)
+
+12. **Have a good coding!** 💻
