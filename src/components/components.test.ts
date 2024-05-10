@@ -16,10 +16,10 @@ describe('createComponent', () => {
       expect(element.classList.contains(cls)).toBe(true);
     });
   });
-  it('atributes', () => {
+  it('attributes', () => {
     const attributes: objAtribute = {
-      id: 'testone',
-      type: 'testhree',
+      id: 'teston',
+      type: 'testee',
     };
     const element = createComponent('div', [], attributes);
 

@@ -9,8 +9,8 @@ export default function createComponent(
   for (let i = 0; i < classes.length; i += 1) {
     elem.classList.add(classes[i]);
   }
-  const enteries = Object.entries(object);
-  enteries.forEach(([key, value]) => {
+  const entries = Object.entries(object);
+  entries.forEach(([key, value]) => {
     elem.setAttribute(key, value);
   });
   return elem;
