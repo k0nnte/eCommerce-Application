@@ -6,29 +6,29 @@ export default class App {
 
   wrapper: HTMLElement;
 
-  main: string;
+  main: HTMLElement;
 
-  login: string;
+  login: HTMLElement;
 
-  err: string;
+  err: HTMLElement;
 
-  register: string;
+  register: HTMLElement;
 
   constructor() {
-    this.main = 'main';
-    this.login = 'login';
-    this.register = 'register';
-    this.err = 'err';
+    this.main = createComponent('div', [], {});
+    this.login = createComponent('div', [], {});
+    this.register = createComponent('div', [], {});
+    this.err = createComponent('div', [], {});
     this.wrapper = createComponent('div', [], {});
     this.routing = new Router(this.createRoutes(), this.wrapper);
   }
 
   createRoutes() {
     return {
-      '/': this.main,
-      '/login': this.login,
-      '/err': this.err,
-      '/register': this.register,
+      '/': this.main.innerHTML,
+      '/login': this.login.innerHTML,
+      '/err': this.err.innerHTML,
+      '/register': this.register.innerHTML,
     };
   }
 
