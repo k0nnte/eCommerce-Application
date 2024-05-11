@@ -24,7 +24,8 @@ export default class Router {
       this.wrapper.innerHTML = '';
       this.wrapper.append(routPath);
     } else {
-      this.wrapper = this.routers['/err'];
+      this.wrapper.innerHTML = '';
+      this.wrapper.append(this.routers['/err']);
     }
   }
 }
