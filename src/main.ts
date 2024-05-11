@@ -1,6 +1,5 @@
-import Router from '@/router/router';
-import routes from '@/router/routes';
+import App from './app/app';
 
-const rout = new Router(routes);
+const app = new App();
 
-console.log(rout);
+app.view();

@@ -1,8 +1,13 @@
-export default class Router {
-  routers: any;
+import { router } from './routerType';
 
-  constructor(routers: any) {
+export default class Router {
+  routers: router;
+
+  wrapper: HTMLElement;
+
+  constructor(routers: router, wrapper: HTMLElement) {
     this.routers = routers;
+    this.wrapper = wrapper;
     this.init();
   }
 
@@ -16,9 +21,9 @@ export default class Router {
     const routPath = this.routers[path];
 
     if (routPath) {
-      console.log(routPath);
+      this.wrapper.innerHTML = routPath;
     } else {
-      console.log(this.routers['/err']);
+      this.wrapper.innerHTML = this.routers['/err'];
     }
   }
 }

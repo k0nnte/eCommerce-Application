@@ -19,6 +19,7 @@
     }
   },
   "rules": {
+    "@typescript-eslint/no-explicit-any": "error",
     "prettier/prettier": "error",
     "import/extensions": [
       "error",
