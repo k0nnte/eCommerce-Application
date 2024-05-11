@@ -74,6 +74,7 @@ export default (env: IenvVar) => {
     devServer: isDevelop ? {
       port: env.port ?? 8080,
       hot: true,
+      historyApiFallback: true,
     } : undefined,
   };
   return config;
