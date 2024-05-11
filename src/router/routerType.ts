@@ -1,1 +1,1 @@
-export type router = Record<string, string>;
+export type router = Record<string, HTMLElement>;

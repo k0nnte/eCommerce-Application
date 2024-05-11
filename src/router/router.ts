@@ -21,9 +21,10 @@ export default class Router {
     const routPath = this.routers[path];
 
     if (routPath) {
-      this.wrapper.innerHTML = routPath;
+      this.wrapper.innerHTML = '';
+      this.wrapper.append(routPath);
     } else {
-      this.wrapper.innerHTML = this.routers['/err'];
+      this.wrapper = this.routers['/err'];
     }
   }
 }

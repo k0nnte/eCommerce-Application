@@ -25,10 +25,10 @@ export default class App {
 
   createRoutes() {
     return {
-      '/': this.main.innerHTML,
-      '/login': this.login.innerHTML,
-      '/err': this.err.innerHTML,
-      '/register': this.register.innerHTML,
+      '/': this.main,
+      '/login': this.login,
+      '/err': this.err,
+      '/register': this.register,
     };
   }
 
