@@ -61,43 +61,66 @@ body {
     margin-bottom: 30px;
     display: flex;
     flex-direction: column;
-}
+    position: relative;
 
-.input-field {
-    width: 100%;
-    height: 52px;
-    padding: 10px;
-    border: 1px solid #c2c5e1;
-    border-radius: 2px;
-    font-family: Lato, sans-serif;
-    font-size: 16px;
-    &:focus {
-        outline: none;
+    .input-field {
+        width: 100%;
+        height: 52px;
+        padding: 10px;
         border: 1px solid #c2c5e1;
+        border-radius: 2px;
+        font-family: Lato, sans-serif;
+        font-size: 16px;
+        &:focus {
+            outline: none;
+            border: 1px solid #c2c5e1;
+            &.input-invalid {
+                border: 1px solid red;
+            }
+
+            &.input-valid {
+                border: 1px solid green;
+            }
+        }
     }
-    &:valid {
-        border: 1px solid green;
-    }
-    &:invalid {
+
+    .input-invalid {
         border: 1px solid red;
     }
-    &:placeholder-shown {
-        border: 1px solid #c2c5e1;
+
+    .input-valid {
+        border: 1px solid green;
     }
-}
 
-.input-valid {
-    border: 1px solid green;
-}
+    .error-message {
+        max-width: 100%;
+        position: absolute;
+        top: 100%;
+        left: 10px;
+        font-size: 14px;
+        color: red;
+        word-wrap: break-word;
+        text-align: left;
+        line-height: 1;
+    }
 
-.input-invalid {
-    border: 1px solid red;
-}
+    .password-toggle {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: none;
+        cursor: pointer;
 
-.error-message {
-    position: fixed;
-    margin-top: 55px;
-    color: red;
+        &:focus {
+            outline: none;
+        }
+        &.fa {
+            font-size: 1.2em;
+            color: #c2c5e1;
+        }
+    }
 }
 
 .button {
