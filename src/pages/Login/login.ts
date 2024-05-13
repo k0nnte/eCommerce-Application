@@ -67,14 +67,7 @@ export default class Login {
   static validateEmail(email: string): ValidationResult {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
-      return { isValid: false, message: 'Email address is required.' };
-    }
-
-    if (!emailRegex.test(email)) {
-      return {
-        isValid: false,
-        message: 'Email address must be correctly formatted.',
-      };
+      return { isValid: false, message: 'Email address is required' };
     }
 
     if (email !== email.trim()) {
@@ -99,6 +92,14 @@ export default class Login {
         message: 'Email address must contain a domain name',
       };
     }
+
+    if (!emailRegex.test(email)) {
+      return {
+        isValid: false,
+        message: 'Email address must be correctly formatted',
+      };
+    }
+
     return { isValid: true, message: '' };
   }
 
@@ -111,16 +112,17 @@ export default class Login {
         isValid: false,
         message: 'Password must be at least 8 characters long',
       };
+
+    if (password !== password.trim())
+      return {
+        isValid: false,
+        message: 'Password should not contain spaces at the beginning or end',
+      };
     if (!passwordRegex.test(password))
       return {
         isValid: false,
         message:
           'Password must contain at least one uppercase letter, one lowercase letter, and one digit',
-      };
-    if (password !== password.trim())
-      return {
-        isValid: false,
-        message: 'Password should not contain spaces at the beginning or end',
       };
     return { isValid: true, message: '' };
   }
@@ -139,7 +141,7 @@ export default class Login {
     let validationResult: ValidationResult;
     if (input.type === 'email') {
       validationResult = Login.validateEmail(input.value);
-    } else if (input.type === 'password') {
+    } else if (input.type === 'password' || input.type === 'text') {
       validationResult = Login.validatePassword(input.value);
     } else {
       input.classList.add('input-invalid');
