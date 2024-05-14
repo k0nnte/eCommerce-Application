@@ -140,11 +140,11 @@ describe('validateEmail', () => {
     });
   });
 
-  it('should return an error for email with spaces at the beginning or end', () => {
+  it('should return an error for email with spaces', () => {
     const result = Login.validateEmail(' user@example.com ');
     expect(result).toEqual({
       isValid: false,
-      message: 'Email address must not contain spaces at the beginning or end',
+      message: 'Email address must not contain spaces',
     });
   });
 
@@ -190,6 +190,15 @@ describe('validatePassword', () => {
     });
   });
 
+  it('should return an error if password does not meet complexity requirements', () => {
+    const result = Login.validatePassword('abcde');
+    expect(result).toEqual({
+      isValid: false,
+      message:
+        'Password must contain at least one uppercase letter, one lowercase letter, and one digit',
+    });
+  });
+
   it('should return an error if password is less than 8 characters', () => {
     const result = Login.validatePassword('Abc123');
     expect(result).toEqual({
@@ -198,20 +207,11 @@ describe('validatePassword', () => {
     });
   });
 
-  it('should return an error if password contains spaces at the beginning or end', () => {
-    const result = Login.validatePassword(' Abc12345 ');
+  it('should return an error if password contains spaces', () => {
+    const result = Login.validatePassword(' Abc 12345 ');
     expect(result).toEqual({
       isValid: false,
-      message: 'Password should not contain spaces at the beginning or end',
-    });
-  });
-
-  it('should return an error if password does not meet complexity requirements', () => {
-    const result = Login.validatePassword('abcdefgh');
-    expect(result).toEqual({
-      isValid: false,
-      message:
-        'Password must contain at least one uppercase letter, one lowercase letter, and one digit',
+      message: 'Password should not contain spaces',
     });
   });
 
@@ -262,14 +262,14 @@ describe('validateInput', () => {
 
   it('should invalidate an incorrect password', () => {
     inputElement.type = 'password';
-    inputElement.value = 'short';
+    inputElement.value = 'asdf1234';
     const result = Login.validateInput(inputElement);
     expect(result).toBe(false);
     Login.validateInput(inputElement);
     expect(inputElement.classList.contains('input-invalid')).toBe(true);
     expect(inputElement.classList.contains('input-error')).toBe(true);
     expect(parentElement.querySelector('.error-message')!.textContent).toBe(
-      'Password must be at least 8 characters long',
+      'Password must contain at least one uppercase letter, one lowercase letter, and one digit',
     );
   });
 
