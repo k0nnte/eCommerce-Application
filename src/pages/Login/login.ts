@@ -70,6 +70,8 @@ export default class Login {
     inputContainer.appendChild(input);
 
     input.addEventListener('input', function validateInputField() {
+      this.value = this.value.trim();
+
       Login.validateInput(this);
     });
     if (type === 'password') {
@@ -95,6 +97,7 @@ export default class Login {
     const input = inputElement;
     const inputType = inputElement.type === 'password' ? 'text' : 'password';
     input.type = inputType;
+    input.autocomplete = 'off';
     const toggleClass = inputType === 'text' ? 'fa-eye' : 'fa-eye-slash';
     toggleButtonElement.classList.replace('fa-eye', 'fa-eye-slash');
     toggleButtonElement.classList.replace('fa-eye-slash', toggleClass);
@@ -111,16 +114,14 @@ export default class Login {
   }
 
   static validateEmail(email: string): ValidationResult {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
       return { isValid: false, message: 'Email address is required' };
     }
-
-    if (email !== email.trim()) {
+    const spaceRegex = /^[^\s]+$/;
+    if (!spaceRegex.test(email)) {
       return {
         isValid: false,
-        message:
-          'Email address must not contain spaces at the beginning or end',
+        message: 'Email address must not contain spaces',
       };
     }
 
@@ -139,6 +140,9 @@ export default class Login {
       };
     }
 
+    const emailRegex =
+      /^(?![\s@])[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
     if (!emailRegex.test(email)) {
       return {
         isValid: false,
@@ -150,26 +154,30 @@ export default class Login {
   }
 
   static validatePassword(password: string): ValidationResult {
-    const passwordRegex =
-      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
     if (!password) return { isValid: false, message: 'Password is required' };
-    if (password.length < 8)
+
+    const spaceRegex = /^[^\s]+$/;
+    if (!spaceRegex.test(password))
       return {
         isValid: false,
-        message: 'Password must be at least 8 characters long',
+        message: 'Password should not contain spaces',
       };
 
-    if (password !== password.trim())
-      return {
-        isValid: false,
-        message: 'Password should not contain spaces at the beginning or end',
-      };
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+
     if (!passwordRegex.test(password))
       return {
         isValid: false,
         message:
           'Password must contain at least one uppercase letter, one lowercase letter, and one digit',
       };
+
+    if (password.length < 8)
+      return {
+        isValid: false,
+        message: 'Password must be at least 8 characters long',
+      };
+
     return { isValid: true, message: '' };
   }
 
