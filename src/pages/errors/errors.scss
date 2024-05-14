@@ -75,3 +75,26 @@
     color: rgb(21, 41, 112);
 }
 
+.btn_main{
+    width: 30%;
+   height: 20px;
+
+
+   border-radius: 3px;
+
+   background: rgb(251, 46, 134);
+   border: none;
+
+   color: rgb(255, 255, 255);
+    font-family: Josefin Sans;
+    font-size: 6px;
+    font-weight: 400;
+    line-height: 25.6px;
+    letter-spacing: 0%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    margin-top: 10px;
+    cursor: pointer;
+}
