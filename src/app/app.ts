@@ -5,6 +5,7 @@ import './app.scss';
 
 const CLASS = {
   wrapper: ['main_wrap'],
+  center: ['center'],
 };
 
 export default class App {
@@ -20,13 +21,16 @@ export default class App {
 
   register: HTMLElement;
 
+  center: HTMLElement;
+
   constructor() {
     this.main = createComponent('div', [], {});
+    this.center = createComponent('div', CLASS.center, {});
     this.login = createComponent('div', [], {});
     this.register = createComponent('div', [], {});
     this.err = new ErrorPage().getWrap();
     this.wrapper = createComponent('div', CLASS.wrapper, {});
-    this.routing = new Router(this.createRoutes(), this.wrapper);
+    this.routing = new Router(this.createRoutes(), this.center);
   }
 
   createRoutes() {
@@ -39,6 +43,7 @@ export default class App {
   }
 
   view() {
+    this.wrapper.append(this.center);
     document.body.append(this.wrapper);
   }
 }

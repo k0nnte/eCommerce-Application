@@ -2,10 +2,10 @@ import ErrorPage from '@/pages/errors/error';
 
 describe('ErrorPage', () => {
   let errorPage: ErrorPage;
-
   beforeEach(() => {
     errorPage = new ErrorPage();
-    document.body.appendChild(errorPage.getWrap());
+    const el = document.querySelector('.center');
+    el?.append(errorPage.getWrap());
   });
 
   afterEach(() => {
@@ -27,5 +27,11 @@ describe('ErrorPage', () => {
     ) as HTMLButtonElement;
     button.click();
     expect(dispatchEventSpy).toHaveBeenCalledWith(expect.any(PopStateEvent));
+  });
+
+  test('getWrap return', () => {
+    const wrapper = errorPage.getWrap();
+    expect(wrapper).toBeInstanceOf(HTMLElement);
+    expect(wrapper.classList.contains('wrapper_errorlog')).toBe(true);
   });
 });

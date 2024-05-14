@@ -53,16 +53,16 @@
 .wraps_img{
     width: 40%;
     height: auto;
-    margin-top: 20px;
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
 .img_error{
-    width: 100%;
+    width: 65%;
    height: auto;
     background-color: white;
+    align-self: center;
 }
 
 .text_err{

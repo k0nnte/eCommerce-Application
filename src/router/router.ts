@@ -18,8 +18,6 @@ export default class Router {
 
   rout() {
     const path = window.location.pathname;
-    // eslint-disable-next-line no-console
-    console.log(path);
 
     const routPath = this.routers[path];
 
