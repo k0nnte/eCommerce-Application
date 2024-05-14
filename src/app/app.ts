@@ -1,5 +1,12 @@
 import Router from '@/router/router';
 import createComponent from '@/components/components';
+import ErrorPage from '@/pages/errors/error';
+import './app.scss';
+
+const CLASS = {
+  wrapper: ['main_wrap'],
+  center: ['center'],
+};
 
 export default class App {
   routing: Router;
@@ -14,13 +21,16 @@ export default class App {
 
   register: HTMLElement;
 
+  center: HTMLElement;
+
   constructor() {
     this.main = createComponent('div', [], {});
+    this.center = createComponent('div', CLASS.center, {});
     this.login = createComponent('div', [], {});
     this.register = createComponent('div', [], {});
-    this.err = createComponent('div', [], {});
-    this.wrapper = createComponent('div', [], {});
-    this.routing = new Router(this.createRoutes(), this.wrapper);
+    this.err = new ErrorPage().getWrap();
+    this.wrapper = createComponent('div', CLASS.wrapper, {});
+    this.routing = new Router(this.createRoutes(), this.center);
   }
 
   createRoutes() {
@@ -33,6 +43,7 @@ export default class App {
   }
 
   view() {
+    this.wrapper.append(this.center);
     document.body.append(this.wrapper);
   }
 }

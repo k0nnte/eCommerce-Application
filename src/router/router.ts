@@ -18,6 +18,7 @@ export default class Router {
 
   rout() {
     const path = window.location.pathname;
+
     const routPath = this.routers[path];
 
     if (routPath) {

@@ -8,12 +8,12 @@ import EslintWebpackPlugin from 'eslint-webpack-plugin';
 
 type Mode = 'production' | 'development';
 
-interface IenvVar{
+interface InvVar{
   mode: Mode;
   port: number;
 }
 
-export default (env: IenvVar) => {
+export default (env: InvVar) => {
   const isDevelop = env.mode === 'development';
 
   const config: webpack.Configuration = {
@@ -45,7 +45,6 @@ export default (env: IenvVar) => {
     module: {
       rules: [
         {
-          // test: /\.s[ac]ss$/i,
           test: /\.s?[ac]ss$/i,
           use: [
             isDevelop ? 'style-loader' : MiniCssExtractPlugin.loader,

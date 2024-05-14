@@ -1,11 +1,16 @@
 import type { Config } from 'jest';
 
 const jestConfig: Config = {
+  preset: 'ts-jest',
   testEnvironment: 'jsdom',
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
-  preset: 'ts-jest',
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '\\.(css|scss)$': 'identity-obj-proxy',
+    '\\.(png|jpg|jpeg|gif|svg)$': 'identity-obj-proxy',
+  },
   collectCoverage: true,
   coverageThreshold: {
     global: {
