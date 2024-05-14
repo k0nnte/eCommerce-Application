@@ -11,7 +11,9 @@ export default function createComponent(
   }
   const entries = Object.entries(object);
   entries.forEach(([key, value]) => {
-    elem.setAttribute(key, value);
+    if (typeof key === 'string' && typeof value === 'string') {
+      elem.setAttribute(key, value);
+    }
   });
   return elem;
 }

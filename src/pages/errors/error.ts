@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-globals */
 import createComponent from '@/components/components';
 import './errors.scss';
 import img from '../../../public/files/404.png';
@@ -73,7 +72,7 @@ export default class ErrorPage {
   initBtn() {
     this.btnMain.innerText = TEXT_BTN;
     this.btnMain.addEventListener('click', () => {
-      history.pushState({}, '', '/');
+      window.history.pushState({}, '', '/');
       window.dispatchEvent(new PopStateEvent('popstate'));
     });
   }
