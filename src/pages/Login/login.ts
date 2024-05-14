@@ -8,18 +8,50 @@ interface ValidationResult {
 }
 
 export default class Login {
-  static togglePasswordVisibility(
-    inputElement: HTMLInputElement,
-    toggleButtonElement: HTMLButtonElement,
-  ) {
-    const input = inputElement;
-    const inputType = inputElement.type === 'password' ? 'text' : 'password';
-    input.type = inputType;
-    const toggleClass = inputType === 'text' ? 'fa-eye' : 'fa-eye-slash';
-    toggleButtonElement.classList.replace('fa-eye', 'fa-eye-slash');
-    toggleButtonElement.classList.replace('fa-eye-slash', toggleClass);
+  static createMainElement(): HTMLElement {
+    const main = createComponent('main', ['main'], {});
+    return main;
+  }
 
-    Login.validateInput(inputElement);
+  static createLoginForm(): HTMLFormElement {
+    const form = createComponent('form', ['login-form'], {
+      noValidate: 'true',
+    }) as HTMLFormElement;
+
+    const title = createComponent('h1', ['form-title'], {});
+    title.textContent = 'Login';
+
+    const subtitle = createComponent('p', ['form-subtitle'], {});
+    subtitle.textContent = 'Please login using account detail bellow.';
+
+    const emailInput = Login.createInput('email', 'email');
+    const passwordInput = Login.createInput('password', 'password');
+
+    const signInButton = Login.createButton('Sign In', 'sign-in');
+
+    const accountText = createComponent('p', ['account-text'], {});
+    accountText.innerHTML = `Don’t have an Account? <a href="/register" class="create-account-link">Create account</a>`;
+
+    form.appendChild(title);
+    form.appendChild(subtitle);
+    form.appendChild(emailInput);
+    form.appendChild(passwordInput);
+    form.appendChild(signInButton);
+    form.appendChild(accountText);
+
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      const inputs = form.querySelectorAll('.input-field');
+      let isValid = true;
+      inputs.forEach((input) => {
+        isValid = Login.validateInput(input as HTMLInputElement) && isValid;
+      });
+      if (isValid) {
+        // Логика отправки данных формы
+      }
+    };
+
+    return form;
   }
 
   static createInput(type: string, id: string): HTMLElement {
@@ -54,6 +86,20 @@ export default class Login {
       inputContainer.appendChild(toggleButton);
     }
     return inputContainer;
+  }
+
+  static togglePasswordVisibility(
+    inputElement: HTMLInputElement,
+    toggleButtonElement: HTMLButtonElement,
+  ) {
+    const input = inputElement;
+    const inputType = inputElement.type === 'password' ? 'text' : 'password';
+    input.type = inputType;
+    const toggleClass = inputType === 'text' ? 'fa-eye' : 'fa-eye-slash';
+    toggleButtonElement.classList.replace('fa-eye', 'fa-eye-slash');
+    toggleButtonElement.classList.replace('fa-eye-slash', toggleClass);
+
+    Login.validateInput(inputElement);
   }
 
   static createButton(text: string, id: string): HTMLButtonElement {
@@ -165,50 +211,6 @@ export default class Login {
     input.classList.remove('input-invalid');
     input.classList.add('input-valid');
     return true;
-  }
-
-  static createMainElement(): HTMLElement {
-    const main = createComponent('main', ['main'], {});
-    return main;
-  }
-
-  static createLoginForm(): HTMLFormElement {
-    const form = createComponent('form', ['login-form'], {}) as HTMLFormElement;
-
-    const title = createComponent('h1', ['form-title'], {});
-    title.textContent = 'Login';
-
-    const subtitle = createComponent('p', ['form-subtitle'], {});
-    subtitle.textContent = 'Please login using account detail bellow.';
-
-    const emailInput = Login.createInput('email', 'email');
-    const passwordInput = Login.createInput('password', 'password');
-
-    const signInButton = Login.createButton('Sign In', 'sign-in');
-
-    const accountText = createComponent('p', ['account-text'], {});
-    accountText.innerHTML = `Don’t have an Account? <a href="/register" class="create-account-link">Create account</a>`;
-
-    form.appendChild(title);
-    form.appendChild(subtitle);
-    form.appendChild(emailInput);
-    form.appendChild(passwordInput);
-    form.appendChild(signInButton);
-    form.appendChild(accountText);
-
-    form.onsubmit = (e) => {
-      e.preventDefault();
-      const inputs = form.querySelectorAll('.input-field');
-      let isValid = true;
-      inputs.forEach((input) => {
-        isValid = Login.validateInput(input as HTMLInputElement) && isValid;
-      });
-      if (isValid) {
-        // Логика отправки данных формы
-      }
-    };
-
-    return form;
   }
 
   static initLoginPage = (): void => {
