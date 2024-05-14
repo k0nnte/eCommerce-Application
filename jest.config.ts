@@ -20,9 +20,6 @@ const jestConfig: Config = {
       lines: 25,
     },
   },
-  moduleNameMapper: {
-    '\\.(scss|sass|css)$': 'identity-obj-proxy',
-  },
 };
 
 export default jestConfig;
