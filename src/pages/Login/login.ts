@@ -7,12 +7,7 @@ interface ValidationResult {
   message: string;
 }
 
-export default class Login {
-  static createMainElement(): HTMLElement {
-    const main = createComponent('main', ['main'], {});
-    return main;
-  }
-
+export default class Login extends HTMLElement {
   static createLoginForm(): HTMLFormElement {
     const form = createComponent('form', ['login-form'], {
       noValidate: 'true',
@@ -222,16 +217,11 @@ export default class Login {
   }
 
   static initLoginPage = (): void => {
-    const body = document.querySelector('body')!;
-    const header = createComponent('header', ['header'], {});
-    const main = Login.createMainElement();
-    const loginForm = Login.createLoginForm();
-    const footer = createComponent('footer', ['footer'], {});
-
-    body.appendChild(header);
-    body.appendChild(main);
-    main.appendChild(loginForm);
-    body.appendChild(footer);
+    const centerElement = document.querySelector('.center');
+    if (centerElement) {
+      const loginForm = Login.createLoginForm();
+      centerElement.appendChild(loginForm);
+    }
   };
 }
 

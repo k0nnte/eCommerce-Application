@@ -1,12 +1,15 @@
 import Router from '@/router/router';
 import createComponent from '@/components/components';
 import ErrorPage from '@/pages/errors/error';
+import Login from '@/pages/Login/login';
 import './app.scss';
 
 const CLASS = {
   wrapper: ['main_wrap'],
   center: ['center'],
 };
+
+customElements.define('login-element', Login);
 
 export default class App {
   routing: Router;
@@ -26,7 +29,7 @@ export default class App {
   constructor() {
     this.main = createComponent('div', [], {});
     this.center = createComponent('div', CLASS.center, {});
-    this.login = createComponent('div', [], {});
+    this.login = new Login();
     this.register = createComponent('div', [], {});
     this.err = new ErrorPage().getWrap();
     this.wrapper = createComponent('div', CLASS.wrapper, {});
@@ -36,7 +39,7 @@ export default class App {
   createRoutes() {
     return {
       '/': this.main,
-      '/login': this.login,
+      '/login': Login.createLoginForm(),
       '/err': this.err,
       '/register': this.register,
     };
@@ -45,5 +48,6 @@ export default class App {
   view() {
     this.wrapper.append(this.center);
     document.body.append(this.wrapper);
+    this.routing.rout();
   }
 }
