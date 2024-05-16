@@ -35,7 +35,7 @@ export default class App {
 
   createRoutes() {
     return {
-      '/': this.main,
+      '/': this.center,
       '/login': this.login,
       '/err': this.err,
       '/register': this.register,
@@ -43,7 +43,7 @@ export default class App {
   }
 
   view() {
-    this.wrapper.append(this.center);
+    this.wrapper.append(this.main);
     document.body.append(this.wrapper);
   }
 }
