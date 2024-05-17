@@ -1,19 +1,5 @@
 import Login from './login';
 
-describe('createMainElement', () => {
-  it('should create a main element with the correct class', () => {
-    document.body.appendChild(Login.createMainElement());
-    const mainElement = document.querySelector('main');
-
-    expect(mainElement).toBeDefined();
-    if (mainElement) {
-      expect(mainElement.classList.contains('main')).toBe(true);
-    }
-
-    document.body.innerHTML = '';
-  });
-});
-
 describe('createLoginForm', () => {
   let formElement: HTMLFormElement;
   let emailInput: HTMLInputElement;
@@ -91,6 +77,30 @@ describe('createInput', () => {
     expect(input.name).toBe(id);
     expect(input.placeholder).toBe('Password');
   });
+
+  it('should toggle the password visibility when the toggle button is clicked', () => {
+    const passwordContainer = Login.createInput('password', 'password');
+    document.body.appendChild(passwordContainer);
+
+    const passwordInput = passwordContainer.querySelector('input');
+    const toggleButton = passwordContainer.querySelector('button');
+
+    if (!passwordInput || !toggleButton) {
+      throw new Error('Could not find input elements or toggle buttons');
+    }
+
+    expect(toggleButton.classList.contains('password-toggle'));
+
+    expect(passwordInput.type).toBe('password');
+
+    toggleButton.click();
+
+    expect(passwordInput.type).toBe('text');
+
+    toggleButton.click();
+
+    expect(passwordInput.type).toBe('password');
+  });
 });
 
 describe('togglePasswordVisibility', () => {
@@ -109,6 +119,7 @@ describe('togglePasswordVisibility', () => {
     Login.togglePasswordVisibility(inputElement, toggleButtonElement);
 
     expect(inputElement.type).toBe('text');
+    expect(inputElement.autocomplete).toBe('off');
     expect(toggleButtonElement.classList.contains('fa-eye')).toBe(true);
 
     Login.togglePasswordVisibility(inputElement, toggleButtonElement);
@@ -239,6 +250,15 @@ describe('validateInput', () => {
     document.body.removeChild(parentElement);
   });
 
+  it('should trim the spaces', () => {
+    inputElement.type = 'email' || 'password' || 'text';
+    inputElement.value = ' textWithTrim123 ';
+    inputElement.addEventListener('input', function () {
+      const result = inputElement.value === inputElement.value.trim();
+      expect(result).toBe(true);
+    });
+  });
+
   it('should invalidate an incorrect email', () => {
     inputElement.type = 'email';
     inputElement.value = 'invalidemail';
@@ -280,23 +300,38 @@ describe('validateInput', () => {
     expect(result).toBe(true);
     expect(inputElement.classList.contains('input-valid')).toBe(true);
   });
+
+  it('should return false for input types other than email or password', () => {
+    const inputElement = document.createElement('input');
+    inputElement.type = 'number';
+
+    const isValid = Login.validateInput(inputElement);
+
+    expect(isValid).toBe(false);
+  });
 });
 
 describe('initLoginPage', () => {
   beforeEach(() => {
-    document.body.innerHTML = '';
+    const centerElement = document.createElement('div');
+    centerElement.classList.add('center');
+    document.body.appendChild(centerElement);
+
     Login.initLoginPage();
   });
 
-  it('should append header, main, loginForm, and footer to the body', () => {
-    expect(document.querySelector('header')).not.toBeNull();
-    expect(document.querySelector('main')).not.toBeNull();
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('should append loginForm to the center', () => {
+    expect(document.querySelector('.center')).not.toBeNull();
     expect(document.querySelector('.login-form')).not.toBeNull();
-    expect(document.querySelector('footer')).not.toBeNull();
   });
 
   it('should create a login form with noValidate set to true', () => {
     const loginForm = document.querySelector('.login-form') as HTMLFormElement;
+    expect(loginForm).toBeDefined();
     expect(loginForm.noValidate).toBe(true);
   });
 });
