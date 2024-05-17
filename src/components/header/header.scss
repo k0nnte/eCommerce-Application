@@ -1,0 +1,38 @@
+.header {
+    height: 44px;
+    padding: 0 13%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #7e33e0;
+    font-family: "Josefin Sans", sans-serif;
+}
+
+.nav-items {
+    display: flex;
+    gap: 20px;
+}
+
+.home-link,
+.nav-links {
+    text-decoration: none;
+    color: #ffffff;
+    font-family: "Josefin Sans", sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: scale(1.1);
+    }
+}
+
+.home-icon {
+    margin-left: 10px;
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 0 5%;
+    }
+}
