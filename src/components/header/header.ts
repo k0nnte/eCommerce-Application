@@ -36,9 +36,3 @@ export default class Header {
     return this.header;
   }
 }
-
-const header = new Header();
-const mainWrap = document.querySelector('.main_wrap');
-if (mainWrap) {
-  mainWrap.appendChild(header.getHeader());
-}
