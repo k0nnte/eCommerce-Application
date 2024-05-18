@@ -3,6 +3,7 @@ import createComponent from '@/components/components';
 import Header from '@/components/header/header';
 import ErrorPage from '@/pages/errors/error';
 import Login from '@/pages/login/login';
+import RegistrationForm from '@/pages/registration/registration';
 import './app.scss';
 
 const CLASS = {
@@ -33,9 +34,9 @@ export default class App {
   constructor() {
     this.header = new Header().getHeader();
     this.main = createComponent('div', [], {});
-    this.center = createComponent('div', CLASS.center, {});
+    this.center = createComponent('main', CLASS.center, {});
     this.login = new Login();
-    this.register = createComponent('div', [], {});
+    this.register = new RegistrationForm().getWrap();
     this.err = new ErrorPage().getWrap();
     this.wrapper = createComponent('div', CLASS.wrapper, {});
     this.routing = new Router(this.createRoutes(), this.center);

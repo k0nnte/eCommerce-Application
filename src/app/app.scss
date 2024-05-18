@@ -1,16 +1,39 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+@import './fonts.scss';
+@import './variables.scss';
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.main_wrap{
-    width: 100vw;
-    height: 100vh;
+button {
+  font-family: $font-family-primary;
+  font-size: 1.7rem;
+  font-weight: 700;
+  border-radius: 3px;
+  min-height: 5rem;
+  border: none;
+  background-color: $color-primary;
+  color: $color-text-light;
+  cursor: pointer;
+  transition:
+    transform 0.1s,
+    background-color 0.1s;
+  border: none;
+
+  &:active {
+    transform: scale(0.99);
+    background-color: darken($color-primary, 5%);
+  }
 }
 
-.center{
-    width: 100%;
-    height: 70%;
+.main_wrap {
+  width: 100vw;
+  height: 100vh;
+}
+
+.center {
+  width: 100%;
+  height: 70%;
 }
