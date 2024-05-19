@@ -548,7 +548,7 @@ export default class RegistrationForm {
     }
   }
 
-  static validateRequiredField(input: HTMLInputElement) {
+  static validateRequiredField(input: HTMLInputElement | HTMLSelectElement) {
     const value = input.value.trim();
     const isValid = value !== '';
 
