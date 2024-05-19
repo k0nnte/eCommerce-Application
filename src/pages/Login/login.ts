@@ -25,7 +25,15 @@ export default class Login extends HTMLElement {
     const signInButton = Login.createButton('Sign In', 'sign-in');
 
     const accountText = createComponent('p', ['account-text'], {});
-    accountText.innerHTML = `Don’t have an Account? <a href="/register" class="create-account-link">Create account</a>`;
+    accountText.innerHTML = `Don’t have an Account? <a href="" class="create-account-link">Create account</a>`;
+    const createAccount = document.querySelector('.create-account-link');
+    if (createAccount) {
+      createAccount.addEventListener('click', (event) => {
+        event.preventDefault();
+        window.history.pushState({}, '', '/register');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      });
+    }
 
     form.appendChild(title);
     form.appendChild(subtitle);

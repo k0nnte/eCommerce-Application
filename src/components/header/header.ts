@@ -14,7 +14,12 @@ export default class Header {
 
     const homeLink = createComponent('a', ['home-link'], {});
     homeLink.textContent = 'Home';
-    homeLink.setAttribute('href', '/');
+    homeLink.setAttribute('href', '');
+    homeLink.addEventListener('click', (event: MouseEvent) => {
+      event.preventDefault();
+      window.history.pushState({}, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
     this.header.appendChild(homeLink);
 
     const links = ['Login', 'Register', 'Logout'];
@@ -23,7 +28,12 @@ export default class Header {
       if (linkText !== 'Logout') {
         const link = createComponent('a', ['nav-links'], {});
         link.textContent = linkText;
-        link.setAttribute('href', `/${linkText.toLowerCase()}`);
+        link.setAttribute('href', ``);
+        link.addEventListener('click', (event: MouseEvent) => {
+          event.preventDefault();
+          window.history.pushState({}, '', `/${linkText.toLowerCase()}`);
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        });
 
         nav.appendChild(link);
       }

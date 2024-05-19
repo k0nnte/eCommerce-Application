@@ -2,7 +2,7 @@ import Router from '@/router/router';
 import createComponent from '@/components/components';
 import Header from '@/components/header/header';
 import ErrorPage from '@/pages/errors/error';
-import Login from '@/pages/login/login';
+import Login from '@/pages/Login/login';
 import './app.scss';
 
 const CLASS = {

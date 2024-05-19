@@ -253,7 +253,7 @@ describe('validateInput', () => {
   it('should trim the spaces', () => {
     inputElement.type = 'email' || 'password' || 'text';
     inputElement.value = ' textWithTrim123 ';
-    inputElement.addEventListener('input', function () {
+    inputElement.addEventListener('input', () => {
       const result = inputElement.value === inputElement.value.trim();
       expect(result).toBe(true);
     });
@@ -302,7 +302,7 @@ describe('validateInput', () => {
   });
 
   it('should return false for input types other than email or password', () => {
-    const inputElement = document.createElement('input');
+    inputElement = document.createElement('input');
     inputElement.type = 'number';
 
     const isValid = Login.validateInput(inputElement);
