@@ -1,5 +1,9 @@
 import RegistrationForm from './registration';
 
+function fail(message: string) {
+  throw new Error(message);
+}
+
 describe('Validate inputs', () => {
   let firstNameInput: HTMLInputElement;
   let emailInput: HTMLInputElement;
@@ -51,14 +55,11 @@ describe('Validate inputs', () => {
 });
 
 describe('showError function', () => {
-  let registrationForm: RegistrationForm;
-
   beforeEach(() => {
     document.body.innerHTML = '<input id="test-input">';
-    registrationForm = new RegistrationForm();
   });
 
-  test('displays error message correctly', () => {
+  it('displays error message correctly', () => {
     const testInput = document.getElementById('test-input');
 
     if (testInput instanceof HTMLElement) {
@@ -78,7 +79,7 @@ describe('showError function', () => {
     }
   });
 
-  test('does not create duplicate error messages', () => {
+  it('does not create duplicate error messages', () => {
     const testInput = document.getElementById('test-input');
 
     if (testInput instanceof HTMLElement) {
@@ -100,23 +101,21 @@ describe('showError function', () => {
 });
 
 describe('hideError function', () => {
-  let registrationForm: RegistrationForm;
   let testInput: HTMLInputElement;
 
   beforeEach(() => {
     document.body.innerHTML = '<input id="test-input">';
-    registrationForm = new RegistrationForm();
     testInput = document.getElementById('test-input') as HTMLInputElement;
     RegistrationForm.showError(testInput, 'This field is required');
   });
 
-  test('hides error message when called', () => {
+  it('hides error message when called', () => {
     RegistrationForm.hideError(testInput);
 
     expect(testInput.nextElementSibling).toBeNull();
   });
 
-  test('does not hide non-error elements', () => {
+  it('does not hide non-error elements', () => {
     const nonErrorElement = document.createElement('div');
     const originalNextSibling = nonErrorElement.nextElementSibling;
 

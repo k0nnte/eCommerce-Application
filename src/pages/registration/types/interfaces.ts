@@ -4,6 +4,6 @@ export default interface FieldConfig {
   inputType?: string;
   placeholder?: string;
   id: string;
-  validationFunction: (field: HTMLInputElement | HTMLSelectElement) => void;
+  validationFunction: (field: HTMLInputElement | HTMLSelectElement) => void; // eslint-disable-line no-unused-vars
   options?: { value: string; label: string }[];
 }
