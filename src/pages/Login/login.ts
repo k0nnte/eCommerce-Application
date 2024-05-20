@@ -69,8 +69,8 @@ export default class Login extends HTMLElement {
         const resp = loginCustomer(
           // emailInput.innerText,
           // passwordInput.innerText,
-          'email',
-          'password',
+          'igorsss',
+          'igor',
         );
         resp.then((data) => {
           if (data.istrue) {

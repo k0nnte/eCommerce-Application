@@ -5,6 +5,7 @@ import ErrorPage from '@/pages/errors/error';
 import Login from '@/pages/Login/login';
 import RegistrationForm from '@/pages/registration/registration';
 import './app.scss';
+import { customerOn } from '@/components/servercomp/servercomp';
 
 const CLASS = {
   wrapper: ['main_wrap'],
@@ -39,7 +40,7 @@ export default class App {
     this.main = createComponent('div', [], {});
     this.center = createComponent('main', CLASS.center, {});
     this.login = new Login(this.headermain);
-    this.register = new RegistrationForm().getWrap();
+    this.register = new RegistrationForm(this.headermain).getWrap();
     this.err = new ErrorPage().getWrap();
     this.wrapper = createComponent('div', CLASS.wrapper, {});
     this.routing = new Router(this.createRoutes(), this.center);
@@ -58,5 +59,6 @@ export default class App {
     this.wrapper.append(this.header, this.center);
     document.body.append(this.wrapper);
     this.routing.rout();
+    customerOn(this.headermain);
   }
 }

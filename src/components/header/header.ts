@@ -1,5 +1,7 @@
+import Cookies from 'js-cookie';
 import createComponent from '../components';
 import './header.scss';
+import { customerOn } from '../servercomp/servercomp';
 
 export default class Header {
   header: HTMLElement;
@@ -58,47 +60,21 @@ export default class Header {
       window.dispatchEvent(new PopStateEvent('popstate'));
     });
 
-    this.logoutLink = createComponent('a', ['nav-link', 'login-link'], {});
+    this.logoutLink = createComponent('a', ['nav-link', 'logout-link'], {});
     this.logoutLink.textContent = 'Logout';
     this.logoutLink.setAttribute('href', '');
     this.logoutLink.innerHTML +=
       '<img width="22" height="22" src="https://img.icons8.com/sf-black/64/FFFFFF/exit.png" alt="exit"/>';
     this.logoutLink.addEventListener('click', (event: MouseEvent) => {
       event.preventDefault();
-      window.history.pushState({}, '', '/logout');
+      window.history.pushState({}, '', '/');
       window.dispatchEvent(new PopStateEvent('popstate'));
+      Cookies.remove('log');
+      customerOn(this);
     });
 
     this.header.append(this.homeLink, this.nav);
     this.nav.append(this.loginLink, this.regLink);
-
-    // links.forEach((linkText) => {
-    //   if (linkText !== 'Logout') {
-    //     const link = createComponent('a', ['nav-links'], {
-    //       id: `${linkText}`,
-    //     });
-    //     link.textContent = linkText;
-    //     link.setAttribute('href', ``);
-    //     link.addEventListener('click', (event: MouseEvent) => {
-    //       event.preventDefault();
-    //       window.history.pushState({}, '', `/${linkText.toLowerCase()}`);
-    //       window.dispatchEvent(new PopStateEvent('popstate'));
-    //     });
-
-    //     nav.appendChild(link);
-    //   } else {
-    //     const link = createComponent('a', ['nav-links'], {
-    //       id: `${linkText}`,
-    //     });
-    //     link.textContent = linkText;
-    //     link.setAttribute('href', ``);
-    //     // eslint-disable-next-line no-console
-    //     console.log(link);
-
-    //     // link.addEventListener('click', )
-    //     // TODO //
-    //   }
-    // });
   }
 
   public getHeader() {

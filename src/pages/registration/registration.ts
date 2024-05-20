@@ -1,6 +1,10 @@
 /* eslint-disable no-console */
 import './registration.scss';
 import 'font-awesome/css/font-awesome.min.css';
+import { createCustomer, customerOn } from '@/components/servercomp/servercomp';
+// import Cookies from 'js-cookie';
+import Cookies from 'js-cookie';
+import Header from '@/components/header/header';
 import createComponent from '../../components/components';
 import FieldConfig from './types/interfaces';
 import { CLASS_NAME, ERROR, MODAL_MESSAGE } from './constants/constants';
@@ -11,10 +15,16 @@ export default class RegistrationForm {
 
   registrationForm: HTMLElement;
 
-  constructor() {
+  header: Header;
+
+  static Sheader: Header;
+
+  constructor(header: Header) {
     this.registrationForm = document.createElement('div');
     this.registrationForm.classList.add('registration__wrapper');
     RegistrationForm.renderForm(this.registrationForm);
+    this.header = header;
+    RegistrationForm.Sheader = this.header;
   }
 
   static renderForm(registrationForm: HTMLElement) {
@@ -250,7 +260,6 @@ export default class RegistrationForm {
       if (RegistrationForm.isFormValid) {
         window.history.pushState({}, '', '/');
         window.dispatchEvent(new PopStateEvent('popstate'));
-        createErrorPopup(MODAL_MESSAGE.CORRECT);
       } else {
         createErrorPopup(MODAL_MESSAGE.ERROR);
       }
@@ -394,7 +403,16 @@ export default class RegistrationForm {
     }
     if (this.isFormValid) {
       // todo //
-      console.log('ok');
+      const response = createCustomer('igorsss', 'igor');
+      response
+        .then((data) => {
+          Cookies.set('log', btoa(data.body.customer.id));
+          createErrorPopup(MODAL_MESSAGE.CORRECT);
+          customerOn(this.Sheader);
+        })
+        .catch((error) => {
+          createErrorPopup(error.body.message);
+        });
     }
   }
 
