@@ -1,5 +1,9 @@
-import createComponent from '../../components/components';
 import 'font-awesome/css/font-awesome.min.css';
+import { customerOn, loginCustomer } from '@/components/servercomp/servercomp';
+import createErrorPopup from '@/components/erorpop/erorpop';
+import createComponent from '@/components/components';
+import Header from '@/components/header/header';
+import Cookies from 'js-cookie';
 import './login.scss';
 
 interface ValidationResult {
@@ -8,6 +12,16 @@ interface ValidationResult {
 }
 
 export default class Login extends HTMLElement {
+  header: Header;
+
+  static SHeader: Header;
+
+  constructor(header: Header) {
+    super();
+    this.header = header;
+    Login.SHeader = this.header;
+  }
+
   static createLoginForm(): HTMLFormElement {
     const form = createComponent('form', ['login-form'], {
       noValidate: 'true',
@@ -24,8 +38,22 @@ export default class Login extends HTMLElement {
 
     const signInButton = Login.createButton('Sign In', 'sign-in');
 
+    const createAccountLink = createComponent('a', ['create-account-link'], {
+      href: '/register',
+    });
+    createAccountLink.textContent = 'Create account';
+
     const accountText = createComponent('p', ['account-text'], {});
-    accountText.innerHTML = `Don’t have an Account? <a href="/register" class="create-account-link">Create account</a>`;
+    accountText.textContent = 'Don’t have an Account? ';
+    accountText.appendChild(createAccountLink);
+
+    if (createAccountLink) {
+      createAccountLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        window.history.pushState({}, '', '/register');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      });
+    }
 
     form.appendChild(title);
     form.appendChild(subtitle);
@@ -42,10 +70,27 @@ export default class Login extends HTMLElement {
         isValid = Login.validateInput(input as HTMLInputElement) && isValid;
       });
       if (isValid) {
+        // eslint-disable-next-line no-console
+        console.log(emailInput.innerText);
+        // eslint-disable-next-line no-console
+        console.log(passwordInput.innerText);
+
         // Логика отправки данных формы
+        const email = document.querySelector('#email') as HTMLInputElement;
+        const password = document.querySelector(
+          '#password',
+        ) as HTMLInputElement;
+        const resp = loginCustomer(email.value, password.value);
+        resp.then((data) => {
+          if (data.istrue) {
+            Cookies.set('log', btoa(data.response!.customer.id));
+            customerOn(Login.SHeader);
+          } else {
+            createErrorPopup(`${data.error!.message}`);
+          }
+        });
       }
     };
-
     return form;
   }
 

@@ -302,7 +302,7 @@ describe('validateInput', () => {
   });
 
   it('should return false for input types other than email or password', () => {
-    const inputElement = document.createElement('input');
+    inputElement = document.createElement('input');
     inputElement.type = 'number';
 
     const isValid = Login.validateInput(inputElement);

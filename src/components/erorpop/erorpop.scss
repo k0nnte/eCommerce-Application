@@ -12,41 +12,42 @@
   align-items: center;
 }
 
-.err_pop {
-  width: 35%;
-  height: 25%;
-  background-color: #fff;
-  border-radius: 25px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  transform: scale(0);
-  transition: transform 0.3s;
+.err_pop{
+    min-width: 365px;
+ width: 40%;
+ height: 20%;
+ background-color: #fff;
+ border-radius: 3px;
+ display: flex;
+ flex-direction: column;
+ justify-content: space-around;
+ align-items: center;
+ transform: scale(0);
+ transition:  transform 0.3s;
 }
 
 .block {
   overflow: hidden;
 }
 
-.text_error {
-  font-family: Josefin Sans;
-  font-size: 20px;
-  font-weight: 400;
-  line-height: -1px;
-  letter-spacing: 0%;
+.text_error{
+    font-family: Josefin Sans;
+    font-size: 150%;
+    font-weight: 400;
+    line-height: -1px;
+    letter-spacing: 0%;
 }
 
-.btn_continue {
-  width: 20%;
-  height: 15%;
-  border-radius: 55px;
-  border: none;
-  cursor: pointer;
-  background: rgb(251, 46, 134);
-  color: #fff;
-  font-family: Josefin Sans;
-  font-size: 15px;
+.btn_continue{
+    width: 40%;
+    height: 20%;
+    border-radius: 3px;
+    border: none;
+    cursor: pointer;
+    background: rgb(251, 46, 134);
+    color: #fff;
+    font-family: Josefin Sans;
+    font-size: 20px;
 }
 
 .btn_continue:hover {

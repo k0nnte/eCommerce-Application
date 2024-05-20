@@ -19,22 +19,19 @@ describe('Header component', () => {
     const homeLink = header.getHeader().querySelector('.home-link');
     expect(homeLink).not.toBeNull();
     expect(homeLink?.textContent).toBe('Home');
+    expect(window.location.pathname).toBe('/');
   });
 
-  test('Header should have navigation links', () => {
-    const navLinks = header.getHeader().querySelectorAll('.nav-links');
-    expect(navLinks.length).toBe(2);
-    expect(navLinks[0].textContent).toBe('Login');
-    expect(navLinks[1].textContent).toBe('Register');
+  test('Header should have Login link', () => {
+    const loginLink = header.getHeader().querySelector('.login-link');
+    expect(loginLink).not.toBeNull();
+    expect(loginLink?.textContent).toBe('Login');
   });
 
-  test('should render the navigation links', () => {
-    mainWrap.appendChild(header.getHeader());
-    const navItems = mainWrap.querySelector('.nav-items');
-    expect(navItems).not.toBeNull();
-
-    const links = navItems?.querySelectorAll('a');
-    expect(links).toHaveLength(2);
+  test('Header should have Register link', () => {
+    const regLink = header.getHeader().querySelector('.reg-link');
+    expect(regLink).not.toBeNull();
+    expect(regLink?.textContent).toBe('Register');
   });
 
   afterAll(() => {

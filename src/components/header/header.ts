@@ -1,55 +1,80 @@
+import Cookies from 'js-cookie';
 import createComponent from '../components';
 import './header.scss';
+import { customerOn } from '../servercomp/servercomp';
 
 export default class Header {
   header: HTMLElement;
 
+  nav: HTMLElement;
+
+  homeLink: null | HTMLElement;
+
+  loginLink: null | HTMLElement;
+
+  regLink: null | HTMLElement;
+
+  logoutLink: null | HTMLElement;
+
   constructor() {
     this.header = createComponent('header', ['header'], {});
+    this.nav = createComponent('nav', ['nav-items'], {});
+    this.homeLink = null;
+    this.loginLink = null;
+    this.regLink = null;
+    this.logoutLink = null;
     this.render();
   }
 
   render() {
-    const nav = createComponent('nav', ['nav-items'], {});
-
-    const homeLink = createComponent('a', ['home-link'], {});
-    homeLink.textContent = 'Home';
-    homeLink.innerHTML +=
+    this.homeLink = createComponent('a', ['nav-link', 'home-link'], {});
+    this.homeLink.textContent = 'Home';
+    this.homeLink.setAttribute('href', '');
+    this.homeLink.innerHTML +=
       '<img width="24" height="24" src="https://img.icons8.com/sf-regular/48/FFFFFF/home-page.png" alt="home-page"/>';
-    homeLink.setAttribute('href', '/');
-    this.header.appendChild(homeLink);
-
-    this.header.appendChild(homeLink);
-
-    const links = ['Login', 'Register', 'Logout'];
-
-    links.forEach((linkText) => {
-      if (linkText !== 'Logout') {
-        const cleanLinkText = linkText.replace(/\W/g, '');
-        const link = createComponent('a', ['nav-links'], {});
-        link.textContent = linkText;
-        link.setAttribute('href', `/${cleanLinkText.toLowerCase()}`);
-
-        if (linkText === 'Login') {
-          link.innerHTML +=
-            '<img width="22" height="22" src="https://img.icons8.com/sf-black/64/FFFFFF/enter-2.png" alt="enter-2"/>';
-        }
-
-        if (linkText === 'Register') {
-          link.innerHTML +=
-            '<img width="22" height="22" src="https://img.icons8.com/sf-black/64/FFFFFF/add-user-male.png" alt="add-user-male"/>';
-        }
-
-        if (linkText === 'Logout') {
-          link.innerHTML +=
-            '<img width="22" height="22" src="https://img.icons8.com/sf-black/64/FFFFFF/exit.png" alt="exit"/>';
-        }
-
-        nav.appendChild(link);
-      }
+    this.homeLink.addEventListener('click', (event: MouseEvent) => {
+      event.preventDefault();
+      window.history.pushState({}, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate'));
     });
 
-    this.header.appendChild(nav);
+    this.loginLink = createComponent('a', ['nav-link', 'login-link'], {});
+    this.loginLink.textContent = 'Login';
+    this.loginLink.setAttribute('href', '');
+    this.loginLink.innerHTML +=
+      '<img width="22" height="22" src="https://img.icons8.com/sf-black/64/FFFFFF/enter-2.png" alt="enter-2"/>';
+    this.loginLink.addEventListener('click', (event: MouseEvent) => {
+      event.preventDefault();
+      window.history.pushState({}, '', '/login');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+
+    this.regLink = createComponent('a', ['nav-link', 'reg-link'], {});
+    this.regLink.textContent = 'Register';
+    this.regLink.setAttribute('href', '');
+    this.regLink.innerHTML +=
+      '<img width="22" height="22" src="https://img.icons8.com/sf-black/64/FFFFFF/add-user-male.png" alt="add-user-male"/>';
+    this.regLink.addEventListener('click', (event: MouseEvent) => {
+      event.preventDefault();
+      window.history.pushState({}, '', '/register');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+
+    this.logoutLink = createComponent('a', ['nav-link', 'logout-link'], {});
+    this.logoutLink.textContent = 'Logout';
+    this.logoutLink.setAttribute('href', '');
+    this.logoutLink.innerHTML +=
+      '<img width="22" height="22" src="https://img.icons8.com/sf-black/64/FFFFFF/exit.png" alt="exit"/>';
+    this.logoutLink.addEventListener('click', (event: MouseEvent) => {
+      event.preventDefault();
+      window.history.pushState({}, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+      Cookies.remove('log');
+      customerOn(this);
+    });
+
+    this.header.append(this.homeLink, this.nav);
+    this.nav.append(this.loginLink, this.regLink);
   }
 
   public getHeader() {
