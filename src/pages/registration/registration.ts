@@ -2,7 +2,6 @@
 import './registration.scss';
 import 'font-awesome/css/font-awesome.min.css';
 import { createCustomer, customerOn } from '@/components/servercomp/servercomp';
-// import Cookies from 'js-cookie';
 import Cookies from 'js-cookie';
 import Header from '@/components/header/header';
 import createComponent from '../../components/components';
@@ -402,8 +401,12 @@ export default class RegistrationForm {
       });
     }
     if (this.isFormValid) {
+      const email = document.querySelector('#email-info') as HTMLInputElement;
+      const password = document.querySelector(
+        '#password-info',
+      ) as HTMLInputElement;
       // todo //
-      const response = createCustomer('igorsss', 'igor');
+      const response = createCustomer(email.value, password.value);
       response
         .then((data) => {
           Cookies.set('log', btoa(data.body.customer.id));

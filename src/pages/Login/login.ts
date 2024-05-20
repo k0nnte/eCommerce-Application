@@ -65,13 +65,17 @@ export default class Login extends HTMLElement {
         isValid = Login.validateInput(input as HTMLInputElement) && isValid;
       });
       if (isValid) {
+        // eslint-disable-next-line no-console
+        console.log(emailInput.innerText);
+        // eslint-disable-next-line no-console
+        console.log(passwordInput.innerText);
+
         // Логика отправки данных формы
-        const resp = loginCustomer(
-          // emailInput.innerText,
-          // passwordInput.innerText,
-          'igorsss',
-          'igor',
-        );
+        const email = document.querySelector('#email') as HTMLInputElement;
+        const password = document.querySelector(
+          '#password',
+        ) as HTMLInputElement;
+        const resp = loginCustomer(email.value, password.value);
         resp.then((data) => {
           if (data.istrue) {
             Cookies.set('log', btoa(data.response!.customer.id));

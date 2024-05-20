@@ -1,5 +1,7 @@
+/* eslint-disable camelcase */
 import { apiRoot } from '@/sdk/builder';
 import Cookies from 'js-cookie';
+import { Env } from '@/sdk/envar';
 import {
   ErrorResponse,
   LoginResponse,
@@ -77,8 +79,29 @@ async function createCustomer(email: string, password: string) {
     .execute();
 }
 
-// async function gettoken(email: string, password: string) {
+async function gettoken(email: string, password: string) {
+  const auth = btoa(`${Env.CTP_CLIENT_ID}:${Env.CTP_CLIENT_SECRET}`);
 
-// }
+  const response = await fetch(
+    // `https://${auth_host}/oauth/${projectKey}/customers/token`,
+    `${Env.CTP_AUTH_URL}/oauth/${Env.CTP_PROJECT_KEY}/customers/token`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${auth}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `grant_type=password&username=${email}&password=${password}&scope=${Env.CTP_SCOPES}`,
+    },
+  );
+  const data = await response.json();
 
-export { loginCustomer, customerOn, createCustomer };
+  // eslint-disable-next-line no-console
+  console.log(data);
+}
+
+async function getcust(id: string) {
+  return apiRoot.customers().withId({ ID: id }).get().execute();
+}
+
+export { loginCustomer, customerOn, createCustomer, gettoken, getcust };

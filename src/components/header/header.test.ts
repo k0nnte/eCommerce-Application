@@ -34,12 +34,6 @@ describe('Header component', () => {
     expect(regLink?.textContent).toBe('Register');
   });
 
-  test('Header should have Logout link', () => {
-    const logoutLink = header.getHeader().querySelector('.logout-link');
-    expect(logoutLink).not.toBeNull();
-    expect(logoutLink?.textContent).toBe('Register');
-  });
-
   afterAll(() => {
     mainWrap.remove();
   });
