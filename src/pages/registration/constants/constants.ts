@@ -7,10 +7,16 @@ export const ERROR = {
   DATE_OF_BIRTH:
     'Please ensure the date format is correct, and you are at least 13 years old',
   COUNTRY: 'Please select country',
-  POSTAL_CODE: 'Please enter a valid postal code ("XXXXX" or "XXXXX-XXXX")',
+  POSTAL_CODE:
+    'Please enter a valid postal code (format: "00000" or "00000-0000")',
   ERROR: 'Please enter the required information',
 };
 
 export const CLASS_NAME = {
   ERROR_MESSAGE: 'error-msg',
+};
+
+export const MODAL_MESSAGE = {
+  ERROR: 'Some fields are not filled correctly. Please check again',
+  CORRECT: 'Registration succeessful! You are now logged in',
 };

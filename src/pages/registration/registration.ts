@@ -1,8 +1,9 @@
+/* eslint-disable no-console */
 import './registration.scss';
 import 'font-awesome/css/font-awesome.min.css';
 import createComponent from '../../components/components';
 import FieldConfig from './types/interfaces';
-import { CLASS_NAME, ERROR } from './constants/constants';
+import { CLASS_NAME, ERROR, MODAL_MESSAGE } from './constants/constants';
 import createErrorPopup from '../../components/erorpop/erorpop';
 
 export default class RegistrationForm {
@@ -69,20 +70,29 @@ export default class RegistrationForm {
       },
     );
     const labelTextBilling = document.createTextNode(
-      'Set Shipping Address as default',
+      'Set Billing Address as default',
     );
     setBillingDefaultAddress.append(checkboxInputBilling, labelTextBilling);
 
     const billToShippingAddress = createComponent('label', ['checkbox-label'], {
       for: 'billTo',
     });
-    const checkboxBillTo = createComponent('input', ['input-billing'], {
-      id: 'billTo',
-      type: 'checkbox',
-      name: 'billTo',
-    });
-    const labelTextBillTo = document.createTextNode('Bill to shipping address');
-    billToShippingAddress.append(checkboxBillTo, labelTextBillTo);
+    const checkboxBillToShippingAddress = createComponent(
+      'input',
+      ['input-billing'],
+      {
+        id: 'billTo',
+        type: 'checkbox',
+        name: 'billTo',
+      },
+    ) as HTMLInputElement;
+    const labelTextBillTo = document.createTextNode(
+      'Billing address matches the Shipping address',
+    );
+    billToShippingAddress.append(
+      checkboxBillToShippingAddress,
+      labelTextBillTo,
+    );
 
     let shippingAddressContainer: HTMLElement | null = null;
     let billingAddressContainer: HTMLElement | null = null;
@@ -108,7 +118,10 @@ export default class RegistrationForm {
           shippingAddressContainer = document.createElement('div');
           shippingAddressContainer.classList.add('shipping-address-container');
           shippingAddressContainer.prepend(titleShipping);
-          shippingAddressContainer.append(setShippingDefaultAddress);
+          shippingAddressContainer.append(
+            setShippingDefaultAddress,
+            billToShippingAddress,
+          );
         }
         if (inputField) {
           shippingAddressContainer.append(inputField);
@@ -121,8 +134,8 @@ export default class RegistrationForm {
           billingAddressContainer.classList.add('billing-address-container');
           billingAddressContainer.prepend(titleBilling);
           billingAddressContainer.append(
-            setBillingDefaultAddress,
             billToShippingAddress,
+            setBillingDefaultAddress,
           );
         }
         if (inputField) {
@@ -168,6 +181,62 @@ export default class RegistrationForm {
       addressContainer.append(billingAddressContainer);
     }
 
+    checkboxBillToShippingAddress.addEventListener('change', (event) => {
+      event.preventDefault();
+
+      const shippingFields = {
+        street: document.getElementById(
+          'street-shipping-address',
+        ) as HTMLInputElement,
+        city: document.getElementById(
+          'city-shipping-address',
+        ) as HTMLInputElement,
+        country: document.getElementById(
+          'country-shipping-address',
+        ) as HTMLSelectElement,
+        postalCode: document.getElementById(
+          'postal-code-shipping-address',
+        ) as HTMLInputElement,
+      };
+
+      const billingFields = {
+        street: document.getElementById(
+          'street-billing-address',
+        ) as HTMLInputElement,
+        city: document.getElementById(
+          'city-billing-address',
+        ) as HTMLInputElement,
+        country: document.getElementById(
+          'country-billing-address',
+        ) as HTMLSelectElement,
+        postalCode: document.getElementById(
+          'postal-code-billing-address',
+        ) as HTMLInputElement,
+      };
+
+      const allFieldsPresent = Object.values(shippingFields)
+        .concat(Object.values(billingFields))
+        .every((field) => field);
+
+      if (checkboxBillToShippingAddress.checked && allFieldsPresent) {
+        billingFields.street.value = shippingFields.street.value;
+        billingFields.city.value = shippingFields.city.value;
+        billingFields.country.selectedIndex =
+          shippingFields.country.selectedIndex;
+        billingFields.postalCode.value = shippingFields.postalCode.value;
+
+        Object.values(billingFields).forEach((field) => {
+          const currentField = field;
+          currentField.disabled = true;
+        });
+      } else {
+        Object.values(billingFields).forEach((field) => {
+          const currentField = field;
+          currentField.disabled = false;
+        });
+      }
+    });
+
     const signUpButton = createComponent('button', ['btn', 'btn-submit'], {
       type: 'submit',
     }) as HTMLButtonElement;
@@ -181,11 +250,9 @@ export default class RegistrationForm {
       if (RegistrationForm.isFormValid) {
         window.history.pushState({}, '', '/');
         window.dispatchEvent(new PopStateEvent('popstate'));
-        createErrorPopup('Registration succeessful! You are now logged in');
+        createErrorPopup(MODAL_MESSAGE.CORRECT);
       } else {
-        createErrorPopup(
-          'Some fields are not filled correctly. Please check again',
-        );
+        createErrorPopup(MODAL_MESSAGE.ERROR);
       }
     });
 
