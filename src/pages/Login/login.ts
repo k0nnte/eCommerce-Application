@@ -1,11 +1,10 @@
 import 'font-awesome/css/font-awesome.min.css';
-import './login.scss';
-
 import { customerOn, loginCustomer } from '@/components/servercomp/servercomp';
 import createErrorPopup from '@/components/erorpop/erorpop';
 import createComponent from '@/components/components';
-import Cookies from 'js-cookie';
 import Header from '@/components/header/header';
+import Cookies from 'js-cookie';
+import './login.scss';
 
 interface ValidationResult {
   isValid: boolean;
@@ -39,11 +38,17 @@ export default class Login extends HTMLElement {
 
     const signInButton = Login.createButton('Sign In', 'sign-in');
 
+    const createAccountLink = createComponent('a', ['create-account-link'], {
+      href: '/register',
+    });
+    createAccountLink.textContent = 'Create account';
+
     const accountText = createComponent('p', ['account-text'], {});
-    accountText.innerHTML = `Don’t have an Account? <a href="" class="create-account-link">Create account</a>`;
-    const createAccount = document.querySelector('.create-account-link');
-    if (createAccount) {
-      createAccount.addEventListener('click', (event) => {
+    accountText.textContent = 'Don’t have an Account? ';
+    accountText.appendChild(createAccountLink);
+
+    if (createAccountLink) {
+      createAccountLink.addEventListener('click', (event) => {
         event.preventDefault();
         window.history.pushState({}, '', '/register');
         window.dispatchEvent(new PopStateEvent('popstate'));
