@@ -32,8 +32,9 @@ export default class Header {
 
     links.forEach((linkText) => {
       if (linkText !== 'Logout') {
-        // const cleanLinkText = linkText.replace(/\W/g, '');
-        const link = createComponent('a', ['nav-links'], {});
+        const link = createComponent('a', ['nav-links'], {
+          id: `${linkText}`,
+        });
         link.textContent = linkText;
         link.setAttribute('href', ``);
         link.addEventListener('click', (event: MouseEvent) => {
@@ -57,6 +58,17 @@ export default class Header {
         }
 
         nav.appendChild(link);
+      } else {
+        const link = createComponent('a', ['nav-links'], {
+          id: `${linkText}`,
+        });
+        link.textContent = linkText;
+        link.setAttribute('href', ``);
+        // eslint-disable-next-line no-console
+        console.log(link);
+
+        // link.addEventListener('click', )
+        // TODO //
       }
     });
 

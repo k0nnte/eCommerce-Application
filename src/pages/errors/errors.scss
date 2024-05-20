@@ -51,7 +51,7 @@
 }
 
 .wraps_img{
-    width: 40%;
+    width: 70%;
     height: auto;
     display: flex;
     flex-direction: column;
@@ -59,15 +59,16 @@
 }
 
 .img_error{
-    width: 65%;
+    width: 70%;
    height: auto;
     background-color: white;
     align-self: center;
+   
 }
 
 .text_err{
     font-family: Josefin Sans;
-    font-size: 5px;
+    font-size: 100%;
     font-weight: 700;
     line-height: -1px;
     letter-spacing: 0%;
@@ -77,7 +78,7 @@
 
 .btn_main{
     width: 30%;
-   height: 20px;
+   height: 50%;
 
 
    border-radius: 3px;
@@ -87,7 +88,7 @@
 
    color: rgb(255, 255, 255);
     font-family: Josefin Sans;
-    font-size: 6px;
+    font-size: 150%;
     font-weight: 400;
     line-height: 25.6px;
     letter-spacing: 0%;
@@ -97,4 +98,18 @@
     margin: 0 auto;
     margin-top: 10px;
     cursor: pointer;
+  
+}
+
+.btn_main:hover{
+    color: black;
+}
+
+@media screen and (max-width: 1000px) {
+    .img_error{
+        width: 100%;
+    }
+    .btn_main{
+        font-size: 70%;
+    }
 }
