@@ -17,6 +17,6 @@ export const CLASS_NAME = {
 };
 
 export const MODAL_MESSAGE = {
-  ERROR: 'Some fields are not filled correctly. Please check again',
-  CORRECT: 'Registration succeessful! You are now logged in',
+  ERROR: 'Some fields are not filled out correctly. Please check again',
+  CORRECT: 'Registration is succeessful! You are now logged in',
 };
