@@ -1,0 +1,39 @@
+.center {
+    position: relative;
+}
+
+.main {
+    position: absolute;
+    width: 100%;
+    padding: 20px;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f6f5ff;
+    font-family: "Josefin Sans", sans-serif;
+}
+
+.main-items {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.main-links {
+    text-decoration: none;
+    color: #0d0e43;
+    font-family: "Josefin Sans", sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+
+    &:first-child {
+        color: #fb2e86;
+    }
+
+    &:hover {
+        transform: scale(1.1);
+        color: #fb2e86;
+    }
+}
