@@ -7,7 +7,7 @@ export const ERROR = {
   DATE_OF_BIRTH:
     'Please ensure the date format is correct, and you are at least 13 years old',
   COUNTRY: 'Please select country',
-  POSTAL_CODE: 'Please enter a valid postal code',
+  POSTAL_CODE: 'Please enter a valid postal code ("XXXXX" or "XXXXX-XXXX")',
   ERROR: 'Please enter the required information',
 };
 

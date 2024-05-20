@@ -9,8 +9,7 @@
     "start": "webpack serve --env mode=development",
     "lint": "eslint \"src/**/*.ts\"",
     "format": "prettier --write \"src/**/*.ts\"",
-    "test": "jest",
-    "test:r": "jest --testPathPattern=registration.test.ts"
+    "test": "jest"
   },
   "keywords": [],
   "author": "k0nnte, liudmilarodzina, valeriastav",

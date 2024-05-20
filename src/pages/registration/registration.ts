@@ -3,6 +3,7 @@ import 'font-awesome/css/font-awesome.min.css';
 import createComponent from '../../components/components';
 import FieldConfig from './types/interfaces';
 import { CLASS_NAME, ERROR } from './constants/constants';
+import createErrorPopup from '../../components/erorpop/erorpop';
 
 export default class RegistrationForm {
   static isFormValid = false;
@@ -178,8 +179,13 @@ export default class RegistrationForm {
       RegistrationForm.checkFormValidity();
 
       if (RegistrationForm.isFormValid) {
-        // eslint-disable-next-line no-alert
-        alert('All fields are filled correctly. You can now submit the form!');
+        window.history.pushState({}, '', '/');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+        createErrorPopup('Registration succeessful! You are now logged in');
+      } else {
+        createErrorPopup(
+          'Some fields are not filled correctly. Please check again',
+        );
       }
     });
 
@@ -259,7 +265,7 @@ export default class RegistrationForm {
         inputType: 'text',
         placeholder: 'Enter your postal code',
         id: 'postal-code-shipping-address',
-        validationFunction: RegistrationForm.validatePostalCode,
+        validationFunction: RegistrationForm.validateShippingPostalCode,
       },
       {
         label: 'Street',
@@ -290,7 +296,7 @@ export default class RegistrationForm {
         inputType: 'text',
         placeholder: 'Enter your postal code',
         id: 'postal-code-billing-address',
-        validationFunction: RegistrationForm.validatePostalCode,
+        validationFunction: RegistrationForm.validateBillingPostalCode,
       },
     ];
 
@@ -377,11 +383,15 @@ export default class RegistrationForm {
           ) {
             RegistrationForm.validateCountry(inputField as HTMLSelectElement);
           }
-          if (
-            inputField.id === 'postal-code-shipping-address' ||
-            inputField.id === 'postal-code-billing-address'
-          ) {
-            RegistrationForm.validatePostalCode(inputField as HTMLInputElement);
+          if (inputField.id === 'postal-code-shipping-address') {
+            RegistrationForm.validateShippingPostalCode(
+              inputField as HTMLInputElement,
+            );
+          }
+          if (inputField.id === 'postal-code-billing-address') {
+            RegistrationForm.validateBillingPostalCode(
+              inputField as HTMLInputElement,
+            );
           }
         }
       });
@@ -522,30 +532,94 @@ export default class RegistrationForm {
     selectCountry.addEventListener('change', updateValidationClasses);
   }
 
-  static validatePostalCode(postalCodeInput: HTMLInputElement) {
-    const postalCodeValue = postalCodeInput.value.trim();
-    const countrySelect = document.querySelector(
-      '.select-country',
+  static validateShippingPostalCode(postalCodeInput: HTMLInputElement) {
+    const countrySelect = document.getElementById(
+      'country-shipping-address',
     ) as HTMLSelectElement;
 
-    const selectedCountry = countrySelect.value;
-    const isUSACountrySelected = selectedCountry === 'United States';
-    const isValidPostalCode = /^\d{5}(-\d{4})?$/.test(postalCodeValue);
+    const updateValidationClasses = () => {
+      const selectedCountry = countrySelect.value;
+      const isUSACountrySelected = selectedCountry === 'United States';
+      const isValidPostalCode = /^\d{5}(-\d{4})?$/.test(
+        postalCodeInput.value.trim(),
+      );
 
-    postalCodeInput.classList.toggle(
-      'error',
-      !(isUSACountrySelected && isValidPostalCode),
-    );
-    postalCodeInput.classList.toggle(
-      'correct',
-      isUSACountrySelected && isValidPostalCode,
-    );
+      if (!isUSACountrySelected) {
+        postalCodeInput.classList.add('error');
+        postalCodeInput.classList.remove('correct');
+        RegistrationForm.showError(postalCodeInput, ERROR.COUNTRY);
+      } else {
+        postalCodeInput.classList.toggle('error', !isValidPostalCode);
+        postalCodeInput.classList.toggle('correct', isValidPostalCode);
 
-    if (!isValidPostalCode) {
-      RegistrationForm.showError(postalCodeInput, ERROR.POSTAL_CODE);
-    } else {
-      RegistrationForm.hideError(postalCodeInput);
-    }
+        if (!isValidPostalCode) {
+          RegistrationForm.showError(postalCodeInput, ERROR.POSTAL_CODE);
+        } else {
+          RegistrationForm.hideError(postalCodeInput);
+        }
+      }
+    };
+
+    updateValidationClasses();
+
+    countrySelect.addEventListener('change', () => {
+      if (postalCodeInput.value.trim() !== '') {
+        RegistrationForm.hideError(postalCodeInput);
+        updateValidationClasses();
+      }
+    });
+
+    postalCodeInput.addEventListener('input', () => {
+      if (postalCodeInput.value.trim() !== '') {
+        RegistrationForm.hideError(postalCodeInput);
+        updateValidationClasses();
+      }
+    });
+  }
+
+  static validateBillingPostalCode(postalCodeInput: HTMLInputElement) {
+    const countrySelect = document.getElementById(
+      'country-billing-address',
+    ) as HTMLSelectElement;
+
+    const updateValidationClasses = () => {
+      const selectedCountry = countrySelect.value;
+      const isUSACountrySelected = selectedCountry === 'United States';
+      const isValidPostalCode = /^\d{5}(-\d{4})?$/.test(
+        postalCodeInput.value.trim(),
+      );
+
+      if (!isUSACountrySelected) {
+        postalCodeInput.classList.add('error');
+        postalCodeInput.classList.remove('correct');
+        RegistrationForm.showError(postalCodeInput, ERROR.COUNTRY);
+      } else {
+        postalCodeInput.classList.toggle('error', !isValidPostalCode);
+        postalCodeInput.classList.toggle('correct', isValidPostalCode);
+
+        if (!isValidPostalCode) {
+          RegistrationForm.showError(postalCodeInput, ERROR.POSTAL_CODE);
+        } else {
+          RegistrationForm.hideError(postalCodeInput);
+        }
+      }
+    };
+
+    updateValidationClasses();
+
+    countrySelect.addEventListener('change', () => {
+      if (postalCodeInput.value.trim() !== '') {
+        RegistrationForm.hideError(postalCodeInput);
+        updateValidationClasses();
+      }
+    });
+
+    postalCodeInput.addEventListener('input', () => {
+      if (postalCodeInput.value.trim() !== '') {
+        RegistrationForm.hideError(postalCodeInput);
+        updateValidationClasses();
+      }
+    });
   }
 
   static validateRequiredField(input: HTMLInputElement | HTMLSelectElement) {

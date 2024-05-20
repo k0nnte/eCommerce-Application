@@ -1,87 +1,85 @@
 @import './errorpopFonts.scss';
 
-.wrap_erpop{
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
+.wrap_erpop {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.err_pop{
- width: 35%;
- height: 25%;
- background-color: #fff;
- border-radius: 25px;
- display: flex;
- flex-direction: column;
- justify-content: space-around;
- align-items: center;
- transform: scale(0);
- transition:  transform 0.3s;
+.err_pop {
+  width: 35%;
+  height: 25%;
+  background-color: #fff;
+  border-radius: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  transform: scale(0);
+  transition: transform 0.3s;
 }
 
-.block{
-    overflow: hidden;
+.block {
+  overflow: hidden;
 }
 
-.text_error{
-    font-family: Josefin Sans;
-    font-size: 10px;
-    font-weight: 400;
-    line-height: -1px;
-    letter-spacing: 0%;
+.text_error {
+  font-family: Josefin Sans;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: -1px;
+  letter-spacing: 0%;
 }
 
-.btn_continue{
-    width: 20%;
-    height: 15%;
-    border-radius: 55px;
-    border: none;
-    cursor: pointer;
-    background: rgb(251, 46, 134);
-    color: #fff;
-    font-family: Josefin Sans;
-    font-size: 5px;
+.btn_continue {
+  width: 20%;
+  height: 15%;
+  border-radius: 55px;
+  border: none;
+  cursor: pointer;
+  background: rgb(251, 46, 134);
+  color: #fff;
+  font-family: Josefin Sans;
+  font-size: 15px;
 }
 
-.btn_continue:hover{
-    color: black;
-    font-size: 7px;
+.btn_continue:hover {
+  color: black;
+  font-size: 17px;
 }
 
-.visible{
-    animation: vis 0.3s ease forwards;
-    transform: scale(1);
+.visible {
+  animation: vis 0.3s ease forwards;
+  transform: scale(1);
 }
 
-.hidden{
-    animation: nevis 0.3s ease forwards;
-    transform: scale(0);
+.hidden {
+  animation: nevis 0.3s ease forwards;
+  transform: scale(0);
 }
 
 @keyframes vis {
-    0%{
-        transform: scale(0);
-    }
+  0% {
+    transform: scale(0);
+  }
 
-    100%{
-        transform: scale(1);
-    }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes nevis {
-    0%{
-        transform: scale(1);
-    }
+  0% {
+    transform: scale(1);
+  }
 
-    100%{
-        transform: scale(0);
-    }
-    
+  100% {
+    transform: scale(0);
+  }
 }
