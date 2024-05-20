@@ -1,4 +1,4 @@
-import createComponent from '@/components/components';
+import createComponent from '../../components/components'; // eslint-disable-line import/extensions
 import './errors.scss';
 import img from '../../../public/files/404.png';
 
