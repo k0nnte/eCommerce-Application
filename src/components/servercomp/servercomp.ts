@@ -1,10 +1,12 @@
 /* eslint-disable import/prefer-default-export */
 import { apiRoot } from '@/sdk/builder';
+import Cookies from 'js-cookie';
 import {
   ErrorResponse,
   LoginResponse,
   SuccessResponse,
 } from './servercorp.interface';
+import Header from '../header/header';
 
 async function loginCustomer(
   email: string,
@@ -34,9 +36,15 @@ async function loginCustomer(
   }
 }
 
-function costomerOn() {
+function customerOn(header: Header) {
+  const encryption = Cookies.get('log');
+  if (encryption) {
+    // if (header.homeLink) {
+    //   header.header.removeChild(header.homeLink);
+    // }
+  }
   // eslint-disable-next-line no-console
-  console.log('hi');
+  console.log(header);
 }
 
-export { loginCustomer, costomerOn };
+export { loginCustomer, customerOn };

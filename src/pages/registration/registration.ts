@@ -392,6 +392,10 @@ export default class RegistrationForm {
         }
       });
     }
+    if (this.isFormValid) {
+      // todo //
+      console.log('ok');
+    }
   }
 
   static checkAllFieldsValidity() {

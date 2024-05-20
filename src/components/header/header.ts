@@ -4,29 +4,32 @@ import './header.scss';
 export default class Header {
   header: HTMLElement;
 
+  homeLink: null | HTMLElement;
+
   constructor() {
     this.header = createComponent('header', ['header'], {});
+    this.homeLink = null;
     this.render();
   }
 
   render() {
     const nav = createComponent('nav', ['nav-items'], {});
 
-    const homeLink = createComponent('a', ['home-link'], {});
-    homeLink.textContent = 'Home';
+    this.homeLink = createComponent('a', ['home-link'], {});
+    this.homeLink.textContent = 'Home';
 
-    homeLink.setAttribute('href', '');
-    homeLink.innerHTML +=
+    this.homeLink.setAttribute('href', '');
+    this.homeLink.innerHTML +=
       '<img width="24" height="24" src="https://img.icons8.com/sf-regular/48/FFFFFF/home-page.png" alt="home-page"/>';
-    homeLink.addEventListener('click', (event: MouseEvent) => {
+    this.homeLink.addEventListener('click', (event: MouseEvent) => {
       event.preventDefault();
       window.history.pushState({}, '', '/');
       window.dispatchEvent(new PopStateEvent('popstate'));
     });
 
-    this.header.appendChild(homeLink);
+    this.header.appendChild(this.homeLink);
 
-    this.header.appendChild(homeLink);
+    this.header.appendChild(this.homeLink);
 
     const links = ['Login', 'Register', 'Logout'];
 

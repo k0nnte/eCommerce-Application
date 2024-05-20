@@ -1,9 +1,11 @@
 import 'font-awesome/css/font-awesome.min.css';
 import './login.scss';
-import Cookies from 'js-cookie';
-import { costomerOn, loginCustomer } from '@/components/servercomp/servercomp';
+
+import { customerOn, loginCustomer } from '@/components/servercomp/servercomp';
 import createErrorPopup from '@/components/erorpop/erorpop';
 import createComponent from '@/components/components';
+import Cookies from 'js-cookie';
+import Header from '@/components/header/header';
 
 interface ValidationResult {
   isValid: boolean;
@@ -11,6 +13,16 @@ interface ValidationResult {
 }
 
 export default class Login extends HTMLElement {
+  header: Header;
+
+  static SHeader: Header;
+
+  constructor(header: Header) {
+    super();
+    this.header = header;
+    Login.SHeader = this.header;
+  }
+
   static createLoginForm(): HTMLFormElement {
     const form = createComponent('form', ['login-form'], {
       noValidate: 'true',
@@ -55,22 +67,21 @@ export default class Login extends HTMLElement {
       if (isValid) {
         // Логика отправки данных формы
         const resp = loginCustomer(
-          emailInput.innerText,
-          passwordInput.innerText,
-          // 'email',
-          // 'password',
+          // emailInput.innerText,
+          // passwordInput.innerText,
+          'email',
+          'password',
         );
         resp.then((data) => {
           if (data.istrue) {
             Cookies.set('log', btoa(data.response!.customer.id));
-            costomerOn();
+            customerOn(Login.SHeader);
           } else {
             createErrorPopup(`${data.error!.message}`);
           }
         });
       }
     };
-
     return form;
   }
 

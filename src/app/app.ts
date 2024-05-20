@@ -31,11 +31,14 @@ export default class App {
 
   center: HTMLElement;
 
+  headermain: Header;
+
   constructor() {
-    this.header = new Header().getHeader();
+    this.headermain = new Header();
+    this.header = this.headermain.getHeader();
     this.main = createComponent('div', [], {});
     this.center = createComponent('main', CLASS.center, {});
-    this.login = new Login();
+    this.login = new Login(this.headermain);
     this.register = new RegistrationForm().getWrap();
     this.err = new ErrorPage().getWrap();
     this.wrapper = createComponent('div', CLASS.wrapper, {});
