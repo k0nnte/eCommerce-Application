@@ -264,7 +264,7 @@ export default class RegistrationForm {
       }
     });
 
-    const loginLink = createComponent('a', ['login-link'], {
+    const loginLink = createComponent('a', ['link-login'], {
       href: '/login',
     });
     loginLink.textContent = 'Already have an account? Login here';
