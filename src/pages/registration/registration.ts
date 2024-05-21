@@ -191,58 +191,75 @@ export default class RegistrationForm {
     }
 
     checkboxBillToShippingAddress.addEventListener('change', (event) => {
-      event.preventDefault();
+      const target = event.target as HTMLInputElement;
 
-      const shippingFields = {
-        street: document.getElementById(
-          'street-shipping-address',
-        ) as HTMLInputElement,
-        city: document.getElementById(
-          'city-shipping-address',
-        ) as HTMLInputElement,
-        country: document.getElementById(
-          'country-shipping-address',
-        ) as HTMLSelectElement,
-        postalCode: document.getElementById(
-          'postal-code-shipping-address',
-        ) as HTMLInputElement,
-      };
+      if (target) {
+        const isChecked = target.checked;
 
-      const billingFields = {
-        street: document.getElementById(
-          'street-billing-address',
-        ) as HTMLInputElement,
-        city: document.getElementById(
-          'city-billing-address',
-        ) as HTMLInputElement,
-        country: document.getElementById(
-          'country-billing-address',
-        ) as HTMLSelectElement,
-        postalCode: document.getElementById(
-          'postal-code-billing-address',
-        ) as HTMLInputElement,
-      };
+        const shippingFields = {
+          street: document.getElementById(
+            'street-shipping-address',
+          ) as HTMLInputElement,
+          city: document.getElementById(
+            'city-shipping-address',
+          ) as HTMLInputElement,
+          country: document.getElementById(
+            'country-shipping-address',
+          ) as HTMLSelectElement,
+          postalCode: document.getElementById(
+            'postal-code-shipping-address',
+          ) as HTMLInputElement,
+        };
 
-      const allFieldsPresent = Object.values(shippingFields)
-        .concat(Object.values(billingFields))
-        .every((field) => field);
+        const billingFields = {
+          street: document.getElementById(
+            'street-billing-address',
+          ) as HTMLInputElement,
+          city: document.getElementById(
+            'city-billing-address',
+          ) as HTMLInputElement,
+          country: document.getElementById(
+            'country-billing-address',
+          ) as HTMLSelectElement,
+          postalCode: document.getElementById(
+            'postal-code-billing-address',
+          ) as HTMLInputElement,
+        };
 
-      if (checkboxBillToShippingAddress.checked && allFieldsPresent) {
-        billingFields.street.value = shippingFields.street.value;
-        billingFields.city.value = shippingFields.city.value;
-        billingFields.country.selectedIndex =
-          shippingFields.country.selectedIndex;
-        billingFields.postalCode.value = shippingFields.postalCode.value;
+        const syncFields = () => {
+          if (isChecked) {
+            billingFields.street.value = shippingFields.street.value;
+            billingFields.city.value = shippingFields.city.value;
+            billingFields.country.selectedIndex =
+              shippingFields.country.selectedIndex;
+            billingFields.postalCode.value = shippingFields.postalCode.value;
+          }
+        };
 
-        Object.values(billingFields).forEach((field) => {
-          const currentField = field;
-          currentField.disabled = true;
+        const inputEventCallback = (
+          field: HTMLInputElement | HTMLSelectElement,
+        ) => {
+          field.addEventListener('input', () => {
+            if (isChecked) {
+              syncFields();
+            }
+          });
+        };
+
+        const disableBillingFields = (disable: boolean) => {
+          Object.values(billingFields).forEach((field) => {
+            const billingField = field as HTMLInputElement;
+            billingField.disabled = disable;
+          });
+        };
+
+        Object.values(shippingFields).forEach((field) => {
+          inputEventCallback(field as HTMLInputElement | HTMLSelectElement);
         });
-      } else {
-        Object.values(billingFields).forEach((field) => {
-          const currentField = field;
-          currentField.disabled = false;
-        });
+
+        syncFields();
+
+        disableBillingFields(isChecked);
       }
     });
 
@@ -282,26 +299,28 @@ export default class RegistrationForm {
     registrationForm.append(wrapper);
   }
 
-  static async handleRegistrationSubmit() {
-    const firstNameInput = document.getElementById(
+  static async processCustomerRegistration() {
+    const firstName = document.getElementById(
       'first-name-info',
     ) as HTMLInputElement;
-    const lastNameInput = document.getElementById(
+    const lastName = document.getElementById(
       'last-name-info',
     ) as HTMLInputElement;
-    const emailInput = document.getElementById(
-      'email-info',
-    ) as HTMLInputElement;
-    const passwordInput = document.getElementById(
+    const email = document.getElementById('email-info') as HTMLInputElement;
+    const password = document.getElementById(
       'password-info',
+    ) as HTMLInputElement;
+    const dateOfBirth = document.getElementById(
+      'birth-date-info',
     ) as HTMLInputElement;
 
     if (RegistrationForm.isFormValid) {
       const response = createCustomer(
-        firstNameInput.value,
-        lastNameInput.value,
-        emailInput.value,
-        passwordInput.value,
+        firstName.value,
+        lastName.value,
+        email.value,
+        password.value,
+        dateOfBirth.value,
       );
       response
         .then((data) => {
@@ -475,7 +494,7 @@ export default class RegistrationForm {
       });
     }
     if (this.isFormValid) {
-      RegistrationForm.handleRegistrationSubmit();
+      RegistrationForm.processCustomerRegistration();
     }
   }
 

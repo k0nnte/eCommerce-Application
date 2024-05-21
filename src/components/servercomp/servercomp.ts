@@ -72,6 +72,7 @@ async function createCustomer(
   lastName: string,
   email: string,
   password: string,
+  dateOfBirth: string,
 ) {
   return apiRoot
     .customers()
@@ -81,6 +82,7 @@ async function createCustomer(
         lastName,
         email,
         password,
+        dateOfBirth,
       },
     })
     .execute();
