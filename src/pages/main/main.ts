@@ -15,9 +15,9 @@ export default class Main {
   constructor() {
     this.main = createComponent('main', ['main'], {});
     this.nav = createComponent('nav', ['main-items'], {});
-    this.homeLink = createComponent('a', ['main-links', 'home-link'], {});
-    this.loginLink = createComponent('a', ['main-links', 'login-link'], {});
-    this.regLink = createComponent('a', ['main-links', 'reg-link'], {});
+    this.homeLink = createComponent('a', ['main-links', 'main-home'], {});
+    this.loginLink = createComponent('a', ['main-links', 'main-login'], {});
+    this.regLink = createComponent('a', ['main-links', 'main-reg'], {});
     this.render();
   }
 

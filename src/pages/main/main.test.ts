@@ -15,13 +15,13 @@ describe('Main component', () => {
     const navElement = mainElement.querySelector('.main-items');
     expect(navElement).not.toBeNull();
 
-    const homeLink = mainElement.querySelector('.home-link');
+    const homeLink = mainElement.querySelector('.main-home');
     expect(homeLink?.textContent).toBe('Home 🏠');
 
-    const loginLink = mainElement.querySelector('.login-link');
+    const loginLink = mainElement.querySelector('.main-login');
     expect(loginLink?.textContent).toBe('Login');
 
-    const regLink = mainElement.querySelector('.reg-link');
+    const regLink = mainElement.querySelector('.main-reg');
     expect(regLink?.textContent).toBe('Register');
   });
 });
