@@ -1,7 +1,11 @@
 /* eslint-disable no-console */
 import './registration.scss';
 import 'font-awesome/css/font-awesome.min.css';
-import { createCustomer, customerOn } from '@/components/servercomp/servercomp';
+import {
+  createCustomer,
+  customerOn,
+  gettoken,
+} from '@/components/servercomp/servercomp';
 import Cookies from 'js-cookie';
 import Header from '@/components/header/header';
 import createComponent from '../../components/components';
@@ -411,6 +415,10 @@ export default class RegistrationForm {
         .then((data) => {
           Cookies.set('log', btoa(data.body.customer.id));
           createErrorPopup(MODAL_MESSAGE.CORRECT);
+          const token = gettoken(email.value, password.value);
+          token.then((tok: { access_token: string }) => {
+            Cookies.set('token', btoa(tok.access_token));
+          });
           customerOn(this.Sheader);
         })
         .catch((error) => {

@@ -83,7 +83,6 @@ async function gettoken(email: string, password: string) {
   const auth = btoa(`${Env.CTP_CLIENT_ID}:${Env.CTP_CLIENT_SECRET}`);
 
   const response = await fetch(
-    // `https://${auth_host}/oauth/${projectKey}/customers/token`,
     `${Env.CTP_AUTH_URL}/oauth/${Env.CTP_PROJECT_KEY}/customers/token`,
     {
       method: 'POST',
@@ -96,8 +95,7 @@ async function gettoken(email: string, password: string) {
   );
   const data = await response.json();
 
-  // eslint-disable-next-line no-console
-  console.log(data);
+  return data;
 }
 
 async function getcust(id: string) {

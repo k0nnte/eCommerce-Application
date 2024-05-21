@@ -1,5 +1,9 @@
 import 'font-awesome/css/font-awesome.min.css';
-import { customerOn, loginCustomer } from '@/components/servercomp/servercomp';
+import {
+  customerOn,
+  gettoken,
+  loginCustomer,
+} from '@/components/servercomp/servercomp';
 import createErrorPopup from '@/components/erorpop/erorpop';
 import createComponent from '@/components/components';
 import Header from '@/components/header/header';
@@ -70,11 +74,6 @@ export default class Login extends HTMLElement {
         isValid = Login.validateInput(input as HTMLInputElement) && isValid;
       });
       if (isValid) {
-        // eslint-disable-next-line no-console
-        console.log(emailInput.innerText);
-        // eslint-disable-next-line no-console
-        console.log(passwordInput.innerText);
-
         // Логика отправки данных формы
         const email = document.querySelector('#email') as HTMLInputElement;
         const password = document.querySelector(
@@ -84,6 +83,11 @@ export default class Login extends HTMLElement {
         resp.then((data) => {
           if (data.istrue) {
             Cookies.set('log', btoa(data.response!.customer.id));
+            const token = gettoken(email.value, password.value);
+            token.then((tok) => {
+              Cookies.set('token', btoa(tok.access_token));
+            });
+
             customerOn(Login.SHeader);
           } else {
             createErrorPopup(`${data.error!.message}`);
