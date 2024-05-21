@@ -71,9 +71,9 @@ export default class Login extends HTMLElement {
       });
       if (isValid) {
         // eslint-disable-next-line no-console
-        console.log(emailInput.innerText);
+        // console.log(emailInput.innerText);
         // eslint-disable-next-line no-console
-        console.log(passwordInput.innerText);
+        // console.log(passwordInput.innerText);
 
         // Логика отправки данных формы
         const email = document.querySelector('#email') as HTMLInputElement;

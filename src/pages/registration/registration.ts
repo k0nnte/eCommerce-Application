@@ -282,6 +282,67 @@ export default class RegistrationForm {
     registrationForm.append(wrapper);
   }
 
+  static async handleRegistrationSubmit() {
+    const firstNameInput = document.getElementById(
+      'first-name-info',
+    ) as HTMLInputElement;
+    const lastNameInput = document.getElementById(
+      'last-name-info',
+    ) as HTMLInputElement;
+    const emailInput = document.getElementById(
+      'email-info',
+    ) as HTMLInputElement;
+    const passwordInput = document.getElementById(
+      'password-info',
+    ) as HTMLInputElement;
+
+    if (RegistrationForm.isFormValid) {
+      const response = createCustomer(
+        firstNameInput.value,
+        lastNameInput.value,
+        emailInput.value,
+        passwordInput.value,
+      );
+      response
+        .then((data) => {
+          Cookies.set('log', btoa(data.body.customer.id));
+          createErrorPopup(MODAL_MESSAGE.CORRECT);
+          customerOn(this.Sheader);
+        })
+        .catch((error) => {
+          createErrorPopup(error.body.message);
+        });
+    }
+  }
+
+  static clearErrorsAndInputs() {
+    const formElement = document.querySelector('.registration__form');
+
+    formElement
+      ?.querySelectorAll(`.${CLASS_NAME.ERROR_MESSAGE}`)
+      .forEach((error) => {
+        error.remove();
+      });
+
+    formElement?.querySelectorAll('input, select').forEach((field) => {
+      const inputField = field as HTMLInputElement | HTMLSelectElement;
+
+      if (inputField.type !== 'submit') {
+        if (inputField.type === 'checkbox') {
+          (inputField as HTMLInputElement).checked = false;
+        } else {
+          inputField.value = '';
+        }
+      }
+
+      if ('disabled' in inputField && inputField.disabled) {
+        inputField.disabled = false;
+      }
+
+      inputField.classList.remove('error', 'correct');
+    });
+  }
+
   static createFieldConfigs(): FieldConfig[] {
     const fieldConfigs: FieldConfig[] = [
       {
@@ -414,37 +475,31 @@ export default class RegistrationForm {
       });
     }
     if (this.isFormValid) {
-      const email = document.querySelector('#email-info') as HTMLInputElement;
-      const password = document.querySelector(
-        '#password-info',
-      ) as HTMLInputElement;
-      // todo //
-      const response = createCustomer(email.value, password.value);
-      response
-        .then((data) => {
-          Cookies.set('log', btoa(data.body.customer.id));
-          createErrorPopup(MODAL_MESSAGE.CORRECT);
-          customerOn(this.Sheader);
-        })
-        .catch((error) => {
-          createErrorPopup(error.body.message);
-        });
+      RegistrationForm.handleRegistrationSubmit();
     }
   }
 
   static checkAllFieldsValidity() {
+    let allFieldsValid = true;
+
     const inputFields = document.querySelectorAll('input, select');
 
     inputFields.forEach((element) => {
       const field = element as HTMLInputElement | HTMLSelectElement;
 
-      if (
-        (field instanceof HTMLInputElement ||
-          field instanceof HTMLSelectElement) &&
-        field.value.trim() === ''
-      ) {
-        const errorMessage = ERROR.ERROR;
-        RegistrationForm.showError(field, errorMessage);
+      if (!field.type || field.type !== 'checkbox') {
+        if (field.value.trim() === '' || !field.classList.contains('correct')) {
+          allFieldsValid = false;
+
+          const errorMessage = ERROR.ERROR;
+          RegistrationForm.showError(field, errorMessage);
+        } else {
+          RegistrationForm.hideError(field);
+        }
+      }
+
+      if (field.type === 'checkbox') {
+        return;
       }
 
       field.addEventListener('input', () => {
@@ -500,6 +555,12 @@ export default class RegistrationForm {
           }
         }
       });
+
+      if (allFieldsValid) {
+        RegistrationForm.isFormValid = true;
+      } else {
+        RegistrationForm.isFormValid = false;
+      }
     });
   }
 
@@ -819,3 +880,7 @@ export default class RegistrationForm {
     return this.registrationForm;
   }
 }
+
+window.addEventListener('popstate', () => {
+  RegistrationForm.clearErrorsAndInputs();
+});

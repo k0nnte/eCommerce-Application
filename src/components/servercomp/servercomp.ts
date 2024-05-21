@@ -67,11 +67,18 @@ function customerOn(header: Header) {
   }
 }
 
-async function createCustomer(email: string, password: string) {
+async function createCustomer(
+  firstName: string,
+  lastName: string,
+  email: string,
+  password: string,
+) {
   return apiRoot
     .customers()
     .post({
       body: {
+        firstName,
+        lastName,
         email,
         password,
       },
