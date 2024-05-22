@@ -1,3 +1,5 @@
+import { BaseAddress } from '@commercetools/platform-sdk';
+
 export interface ClientInfo {
   clientId: string;
   isPlatformClient: boolean;
@@ -22,6 +24,19 @@ export interface Customer {
   isEmailVerified: boolean;
   stores: unknown[];
   authenticationMode: string;
+}
+
+export interface CustomerSignUp {
+  email: string;
+  password: string | undefined;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  addresses: BaseAddress[];
+  shippingAddresses?: number[];
+  billingAddresses?: number[];
+  defaultBillingAddress?: number;
+  defaultShippingAddress?: number;
 }
 
 export interface SuccessResponse {

@@ -1,8 +1,13 @@
-/* eslint-disable camelcase */
 import { apiRoot } from '@/sdk/builder';
 import Cookies from 'js-cookie';
 import { Env } from '@/sdk/envar';
+
 import {
+  ClientResponse,
+  CustomerSignInResult,
+} from '@commercetools/platform-sdk';
+import {
+  CustomerSignUp,
   ErrorResponse,
   LoginResponse,
   SuccessResponse,
@@ -68,22 +73,12 @@ function customerOn(header: Header) {
 }
 
 async function createCustomer(
-  firstName: string,
-  lastName: string,
-  email: string,
-  password: string,
-  dateOfBirth: string,
-) {
+  customer: CustomerSignUp,
+): Promise<ClientResponse<CustomerSignInResult>> {
   return apiRoot
     .customers()
     .post({
-      body: {
-        firstName,
-        lastName,
-        email,
-        password,
-        dateOfBirth,
-      },
+      body: customer,
     })
     .execute();
 }
@@ -92,7 +87,6 @@ async function gettoken(email: string, password: string) {
   const auth = btoa(`${Env.CTP_CLIENT_ID}:${Env.CTP_CLIENT_SECRET}`);
 
   const response = await fetch(
-    // `https://${auth_host}/oauth/${projectKey}/customers/token`,
     `${Env.CTP_AUTH_URL}/oauth/${Env.CTP_PROJECT_KEY}/customers/token`,
     {
       method: 'POST',

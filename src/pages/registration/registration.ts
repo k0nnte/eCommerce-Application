@@ -3,9 +3,11 @@ import './registration.scss';
 import 'font-awesome/css/font-awesome.min.css';
 import { createCustomer, customerOn } from '@/components/servercomp/servercomp';
 import Cookies from 'js-cookie';
+import { BaseAddress } from '@commercetools/platform-sdk';
 import Header from '@/components/header/header';
+import { CustomerSignUp } from '@/components/servercomp/servercorp.interface';
 import createComponent from '../../components/components';
-import FieldConfig from './types/interfaces';
+import { FieldConfig } from './types/interfaces';
 import { CLASS_NAME, ERROR, MODAL_MESSAGE } from './constants/constants';
 import createErrorPopup from '../../components/erorpop/erorpop';
 
@@ -299,6 +301,48 @@ export default class RegistrationForm {
     registrationForm.append(wrapper);
   }
 
+  static getShippingAddressData() {
+    const shippingFields = {
+      streetName: (
+        document.getElementById('street-shipping-address') as HTMLInputElement
+      ).value,
+      city: (
+        document.getElementById('city-shipping-address') as HTMLInputElement
+      ).value,
+      country: (
+        document.getElementById('country-shipping-address') as HTMLSelectElement
+      ).value,
+      postalCode: (
+        document.getElementById(
+          'postal-code-shipping-address',
+        ) as HTMLInputElement
+      ).value,
+    };
+
+    return shippingFields;
+  }
+
+  static getBillingAddressData() {
+    const billingFields = {
+      streetName: (
+        document.getElementById('street-billing-address') as HTMLInputElement
+      ).value,
+      city: (
+        document.getElementById('city-billing-address') as HTMLInputElement
+      ).value,
+      country: (
+        document.getElementById('country-billing-address') as HTMLSelectElement
+      ).value,
+      postalCode: (
+        document.getElementById(
+          'postal-code-billing-address',
+        ) as HTMLInputElement
+      ).value,
+    };
+
+    return billingFields;
+  }
+
   static async processCustomerRegistration() {
     const firstName = document.getElementById(
       'first-name-info',
@@ -313,15 +357,29 @@ export default class RegistrationForm {
     const dateOfBirth = document.getElementById(
       'birth-date-info',
     ) as HTMLInputElement;
+    const shippingAddressData = RegistrationForm.getShippingAddressData();
+    const billingAddressData = RegistrationForm.getBillingAddressData();
+
+    const addressRequest: BaseAddress[] = [];
+
+    const body: CustomerSignUp = {
+      email: email.value,
+      password: password.value,
+      firstName: firstName.value,
+      lastName: lastName.value,
+      dateOfBirth: dateOfBirth.value,
+      addresses: addressRequest,
+      shippingAddresses: [0],
+      billingAddresses: [0],
+      defaultShippingAddress: 0,
+      defaultBillingAddress: 0,
+    };
+
+    addressRequest.push(shippingAddressData);
+    addressRequest.push(billingAddressData);
 
     if (RegistrationForm.isFormValid) {
-      const response = createCustomer(
-        firstName.value,
-        lastName.value,
-        email.value,
-        password.value,
-        dateOfBirth.value,
-      );
+      const response = createCustomer(body);
       response
         .then((data) => {
           Cookies.set('log', btoa(data.body.customer.id));
@@ -332,34 +390,6 @@ export default class RegistrationForm {
           createErrorPopup(error.body.message);
         });
     }
-  }
-
-  static clearErrorsAndInputs() {
-    const formElement = document.querySelector('.registration__form');
-
-    formElement
-      ?.querySelectorAll(`.${CLASS_NAME.ERROR_MESSAGE}`)
-      .forEach((error) => {
-        error.remove();
-      });
-
-    formElement?.querySelectorAll('input, select').forEach((field) => {
-      const inputField = field as HTMLInputElement | HTMLSelectElement;
-
-      if (inputField.type !== 'submit') {
-        if (inputField.type === 'checkbox') {
-          (inputField as HTMLInputElement).checked = false;
-        } else {
-          inputField.value = '';
-        }
-      }
-
-      if ('disabled' in inputField && inputField.disabled) {
-        inputField.disabled = false;
-      }
-
-      inputField.classList.remove('error', 'correct');
-    });
   }
 
   static createFieldConfigs(): FieldConfig[] {
@@ -425,7 +455,7 @@ export default class RegistrationForm {
         fieldType: 'select',
         id: 'country-shipping-address',
         validationFunction: RegistrationForm.validateCountry,
-        options: [{ value: 'United States', label: 'United States' }],
+        options: [{ value: 'US', label: 'US' }],
       },
       {
         label: 'Postal Code',
@@ -456,7 +486,7 @@ export default class RegistrationForm {
         fieldType: 'select',
         id: 'country-billing-address',
         validationFunction: RegistrationForm.validateCountry,
-        options: [{ value: 'United States', label: 'United States' }],
+        options: [{ value: 'US', label: 'US' }],
       },
       {
         label: 'Postal Code',
@@ -724,7 +754,7 @@ export default class RegistrationForm {
 
     const updateValidationClasses = () => {
       const selectedCountry = countrySelect.value;
-      const isUSACountrySelected = selectedCountry === 'United States';
+      const isUSACountrySelected = selectedCountry === 'US';
       const isValidPostalCode = /^\d{5}(-\d{4})?$/.test(
         postalCodeInput.value.trim(),
       );
@@ -769,7 +799,7 @@ export default class RegistrationForm {
 
     const updateValidationClasses = () => {
       const selectedCountry = countrySelect.value;
-      const isUSACountrySelected = selectedCountry === 'United States';
+      const isUSACountrySelected = selectedCountry === 'US';
       const isValidPostalCode = /^\d{5}(-\d{4})?$/.test(
         postalCodeInput.value.trim(),
       );
@@ -893,6 +923,34 @@ export default class RegistrationForm {
     containerSelect.append(select);
 
     return containerSelect;
+  }
+
+  static clearErrorsAndInputs() {
+    const formElement = document.querySelector('.registration__form');
+
+    formElement
+      ?.querySelectorAll(`.${CLASS_NAME.ERROR_MESSAGE}`)
+      .forEach((error) => {
+        error.remove();
+      });
+
+    formElement?.querySelectorAll('input, select').forEach((field) => {
+      const inputField = field as HTMLInputElement | HTMLSelectElement;
+
+      if (inputField.type !== 'submit') {
+        if (inputField.type === 'checkbox') {
+          (inputField as HTMLInputElement).checked = false;
+        } else {
+          inputField.value = '';
+        }
+      }
+
+      if ('disabled' in inputField && inputField.disabled) {
+        inputField.disabled = false;
+      }
+
+      inputField.classList.remove('error', 'correct');
+    });
   }
 
   getWrap(): HTMLElement {
