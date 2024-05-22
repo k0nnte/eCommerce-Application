@@ -37,14 +37,12 @@ export default class App {
   headermain: Header;
 
   constructor() {
-
     this.headermain = new Header();
     this.header = this.headermain.getHeader();
-    this.main = createComponent('div', [], {});
+    this.main = new Main().getMain();
     this.center = createComponent('main', CLASS.center, {});
     this.login = new Login(this.headermain);
     this.register = new RegistrationForm(this.headermain).getWrap();
-
     this.err = new ErrorPage().getWrap();
     this.wrapper = createComponent('div', CLASS.wrapper, {});
     this.routing = new Router(this.createRoutes(), this.center);

@@ -1,8 +1,13 @@
-/* eslint-disable camelcase */
 import { apiRoot } from '@/sdk/builder';
 import Cookies from 'js-cookie';
 import { Env } from '@/sdk/envar';
+
 import {
+  ClientResponse,
+  CustomerSignInResult,
+} from '@commercetools/platform-sdk';
+import {
+  CustomerSignUp,
   ErrorResponse,
   LoginResponse,
   SuccessResponse,
@@ -67,14 +72,13 @@ function customerOn(header: Header) {
   }
 }
 
-async function createCustomer(email: string, password: string) {
+async function createCustomer(
+  customer: CustomerSignUp,
+): Promise<ClientResponse<CustomerSignInResult>> {
   return apiRoot
     .customers()
     .post({
-      body: {
-        email,
-        password,
-      },
+      body: customer,
     })
     .execute();
 }

@@ -175,6 +175,9 @@ label {
 .correct {
   border: 1px solid $color-correct !important;
 }
+.empty {
+  border: 1px solid $color-text-grey !important;
+}
 
 .error-msg {
   position: absolute;
@@ -191,8 +194,11 @@ label {
   margin-top: 1.7rem;
   padding-bottom: 2rem;
 
-  @media (max-width: 580px) {
-    font-size: 1rem;
+  @media (max-width: 640px) {
+    font-size: 1.1rem;
+  }
+  @media (max-width: 460px) {
+    font-size: 0.9rem;
   }
 }
 
@@ -202,7 +208,7 @@ label {
   margin: 2rem 0 4rem;
 }
 
-.login-link {
+.link-login {
   display: flex;
   gap: 1rem;
   font-size: 1.7rem;

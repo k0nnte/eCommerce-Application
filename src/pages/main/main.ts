@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 import createComponent from '../../components/components';
 import './main.scss';
 
@@ -34,16 +35,22 @@ export default class Main {
     this.loginLink.setAttribute('href', '');
     this.loginLink.addEventListener('click', (event: MouseEvent) => {
       event.preventDefault();
-      window.history.pushState({}, '', '/login');
-      window.dispatchEvent(new PopStateEvent('popstate'));
+      const islog = Cookies.get('log');
+      if (!islog) {
+        window.history.pushState({}, '', '/login');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }
     });
 
     this.regLink.textContent = 'Register';
     this.regLink.setAttribute('href', '');
     this.regLink.addEventListener('click', (event: MouseEvent) => {
       event.preventDefault();
-      window.history.pushState({}, '', '/register');
-      window.dispatchEvent(new PopStateEvent('popstate'));
+      const islog = Cookies.get('log');
+      if (!islog) {
+        window.history.pushState({}, '', '/register');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }
     });
 
     this.main.appendChild(this.nav);

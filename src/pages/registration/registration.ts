@@ -7,9 +7,11 @@ import {
   gettoken,
 } from '@/components/servercomp/servercomp';
 import Cookies from 'js-cookie';
+import { BaseAddress } from '@commercetools/platform-sdk';
 import Header from '@/components/header/header';
+import { CustomerSignUp } from '@/components/servercomp/servercorp.interface';
 import createComponent from '../../components/components';
-import FieldConfig from './types/interfaces';
+import { FieldConfig } from './types/interfaces';
 import { CLASS_NAME, ERROR, MODAL_MESSAGE } from './constants/constants';
 import createErrorPopup from '../../components/erorpop/erorpop';
 
@@ -195,58 +197,75 @@ export default class RegistrationForm {
     }
 
     checkboxBillToShippingAddress.addEventListener('change', (event) => {
-      event.preventDefault();
+      const target = event.target as HTMLInputElement;
 
-      const shippingFields = {
-        street: document.getElementById(
-          'street-shipping-address',
-        ) as HTMLInputElement,
-        city: document.getElementById(
-          'city-shipping-address',
-        ) as HTMLInputElement,
-        country: document.getElementById(
-          'country-shipping-address',
-        ) as HTMLSelectElement,
-        postalCode: document.getElementById(
-          'postal-code-shipping-address',
-        ) as HTMLInputElement,
-      };
+      if (target) {
+        const isChecked = target.checked;
 
-      const billingFields = {
-        street: document.getElementById(
-          'street-billing-address',
-        ) as HTMLInputElement,
-        city: document.getElementById(
-          'city-billing-address',
-        ) as HTMLInputElement,
-        country: document.getElementById(
-          'country-billing-address',
-        ) as HTMLSelectElement,
-        postalCode: document.getElementById(
-          'postal-code-billing-address',
-        ) as HTMLInputElement,
-      };
+        const shippingFields = {
+          street: document.getElementById(
+            'street-shipping-address',
+          ) as HTMLInputElement,
+          city: document.getElementById(
+            'city-shipping-address',
+          ) as HTMLInputElement,
+          country: document.getElementById(
+            'country-shipping-address',
+          ) as HTMLSelectElement,
+          postalCode: document.getElementById(
+            'postal-code-shipping-address',
+          ) as HTMLInputElement,
+        };
 
-      const allFieldsPresent = Object.values(shippingFields)
-        .concat(Object.values(billingFields))
-        .every((field) => field);
+        const billingFields = {
+          street: document.getElementById(
+            'street-billing-address',
+          ) as HTMLInputElement,
+          city: document.getElementById(
+            'city-billing-address',
+          ) as HTMLInputElement,
+          country: document.getElementById(
+            'country-billing-address',
+          ) as HTMLSelectElement,
+          postalCode: document.getElementById(
+            'postal-code-billing-address',
+          ) as HTMLInputElement,
+        };
 
-      if (checkboxBillToShippingAddress.checked && allFieldsPresent) {
-        billingFields.street.value = shippingFields.street.value;
-        billingFields.city.value = shippingFields.city.value;
-        billingFields.country.selectedIndex =
-          shippingFields.country.selectedIndex;
-        billingFields.postalCode.value = shippingFields.postalCode.value;
+        const syncFields = () => {
+          if (isChecked) {
+            billingFields.street.value = shippingFields.street.value;
+            billingFields.city.value = shippingFields.city.value;
+            billingFields.country.selectedIndex =
+              shippingFields.country.selectedIndex;
+            billingFields.postalCode.value = shippingFields.postalCode.value;
+          }
+        };
 
-        Object.values(billingFields).forEach((field) => {
-          const currentField = field;
-          currentField.disabled = true;
+        const inputEventCallback = (
+          field: HTMLInputElement | HTMLSelectElement,
+        ) => {
+          field.addEventListener('input', () => {
+            if (isChecked) {
+              syncFields();
+            }
+          });
+        };
+
+        const disableBillingFields = (disable: boolean) => {
+          Object.values(billingFields).forEach((field) => {
+            const billingField = field as HTMLInputElement;
+            billingField.disabled = disable;
+          });
+        };
+
+        Object.values(shippingFields).forEach((field) => {
+          inputEventCallback(field as HTMLInputElement | HTMLSelectElement);
         });
-      } else {
-        Object.values(billingFields).forEach((field) => {
-          const currentField = field;
-          currentField.disabled = false;
-        });
+
+        syncFields();
+
+        disableBillingFields(isChecked);
       }
     });
 
@@ -268,7 +287,7 @@ export default class RegistrationForm {
       }
     });
 
-    const loginLink = createComponent('a', ['login-link'], {
+    const loginLink = createComponent('a', ['link-login'], {
       href: '/login',
     });
     loginLink.textContent = 'Already have an account? Login here';
@@ -284,6 +303,101 @@ export default class RegistrationForm {
     formContainer.append(generalInfoContainer, addressContainer, signUpButton);
     wrapper.append(title, formContainer, loginLink);
     registrationForm.append(wrapper);
+  }
+
+  static getShippingAddressData() {
+    const shippingFields = {
+      streetName: (
+        document.getElementById('street-shipping-address') as HTMLInputElement
+      ).value,
+      city: (
+        document.getElementById('city-shipping-address') as HTMLInputElement
+      ).value,
+      country: (
+        document.getElementById('country-shipping-address') as HTMLSelectElement
+      ).value,
+      postalCode: (
+        document.getElementById(
+          'postal-code-shipping-address',
+        ) as HTMLInputElement
+      ).value,
+    };
+
+    return shippingFields;
+  }
+
+  static getBillingAddressData() {
+    const billingFields = {
+      streetName: (
+        document.getElementById('street-billing-address') as HTMLInputElement
+      ).value,
+      city: (
+        document.getElementById('city-billing-address') as HTMLInputElement
+      ).value,
+      country: (
+        document.getElementById('country-billing-address') as HTMLSelectElement
+      ).value,
+      postalCode: (
+        document.getElementById(
+          'postal-code-billing-address',
+        ) as HTMLInputElement
+      ).value,
+    };
+
+    return billingFields;
+  }
+
+  static async processCustomerRegistration() {
+    const firstName = document.getElementById(
+      'first-name-info',
+    ) as HTMLInputElement;
+    const lastName = document.getElementById(
+      'last-name-info',
+    ) as HTMLInputElement;
+    const email = document.getElementById('email-info') as HTMLInputElement;
+    const password = document.getElementById(
+      'password-info',
+    ) as HTMLInputElement;
+    const dateOfBirth = document.getElementById(
+      'birth-date-info',
+    ) as HTMLInputElement;
+    const shippingAddressData = RegistrationForm.getShippingAddressData();
+    const billingAddressData = RegistrationForm.getBillingAddressData();
+
+    const addressRequest: BaseAddress[] = [];
+
+    const body: CustomerSignUp = {
+      email: email.value,
+      password: password.value,
+      firstName: firstName.value,
+      lastName: lastName.value,
+      dateOfBirth: dateOfBirth.value,
+      addresses: addressRequest,
+      shippingAddresses: [0],
+      billingAddresses: [0],
+      defaultShippingAddress: 0,
+      defaultBillingAddress: 0,
+    };
+
+    addressRequest.push(shippingAddressData);
+    addressRequest.push(billingAddressData);
+
+    if (RegistrationForm.isFormValid) {
+      const response = createCustomer(body);
+      response
+        .then((data) => {
+          Cookies.set('log', btoa(data.body.customer.id));
+          createErrorPopup(MODAL_MESSAGE.CORRECT);
+          customerOn(this.Sheader);
+          const token = gettoken(email.value, password.value);
+          token.then((tok) => {
+            Cookies.set('token', btoa(tok.access_token));
+          });
+        })
+        .catch((error) => {
+          createErrorPopup(error.body.message);
+        });
+    }
   }
 
   static createFieldConfigs(): FieldConfig[] {
@@ -349,7 +463,7 @@ export default class RegistrationForm {
         fieldType: 'select',
         id: 'country-shipping-address',
         validationFunction: RegistrationForm.validateCountry,
-        options: [{ value: 'United States', label: 'United States' }],
+        options: [{ value: 'US', label: 'US' }],
       },
       {
         label: 'Postal Code',
@@ -380,7 +494,7 @@ export default class RegistrationForm {
         fieldType: 'select',
         id: 'country-billing-address',
         validationFunction: RegistrationForm.validateCountry,
-        options: [{ value: 'United States', label: 'United States' }],
+        options: [{ value: 'US', label: 'US' }],
       },
       {
         label: 'Postal Code',
@@ -418,41 +532,31 @@ export default class RegistrationForm {
       });
     }
     if (this.isFormValid) {
-      const email = document.querySelector('#email-info') as HTMLInputElement;
-      const password = document.querySelector(
-        '#password-info',
-      ) as HTMLInputElement;
-      // todo //
-      const response = createCustomer(email.value, password.value);
-      response
-        .then((data) => {
-          Cookies.set('log', btoa(data.body.customer.id));
-          createErrorPopup(MODAL_MESSAGE.CORRECT);
-          const token = gettoken(email.value, password.value);
-          token.then((tok: { access_token: string }) => {
-            Cookies.set('token', btoa(tok.access_token));
-          });
-          customerOn(this.Sheader);
-        })
-        .catch((error) => {
-          createErrorPopup(error.body.message);
-        });
+      RegistrationForm.processCustomerRegistration();
     }
   }
 
   static checkAllFieldsValidity() {
+    let allFieldsValid = true;
+
     const inputFields = document.querySelectorAll('input, select');
 
     inputFields.forEach((element) => {
       const field = element as HTMLInputElement | HTMLSelectElement;
 
-      if (
-        (field instanceof HTMLInputElement ||
-          field instanceof HTMLSelectElement) &&
-        field.value.trim() === ''
-      ) {
-        const errorMessage = ERROR.ERROR;
-        RegistrationForm.showError(field, errorMessage);
+      if (!field.type || field.type !== 'checkbox') {
+        if (field.value.trim() === '' || !field.classList.contains('correct')) {
+          allFieldsValid = false;
+
+          const errorMessage = ERROR.ERROR;
+          RegistrationForm.showError(field, errorMessage);
+        } else {
+          RegistrationForm.hideError(field);
+        }
+      }
+
+      if (field.type === 'checkbox') {
+        return;
       }
 
       field.addEventListener('input', () => {
@@ -508,6 +612,12 @@ export default class RegistrationForm {
           }
         }
       });
+
+      if (allFieldsValid) {
+        RegistrationForm.isFormValid = true;
+      } else {
+        RegistrationForm.isFormValid = false;
+      }
     });
   }
 
@@ -652,7 +762,7 @@ export default class RegistrationForm {
 
     const updateValidationClasses = () => {
       const selectedCountry = countrySelect.value;
-      const isUSACountrySelected = selectedCountry === 'United States';
+      const isUSACountrySelected = selectedCountry === 'US';
       const isValidPostalCode = /^\d{5}(-\d{4})?$/.test(
         postalCodeInput.value.trim(),
       );
@@ -697,7 +807,7 @@ export default class RegistrationForm {
 
     const updateValidationClasses = () => {
       const selectedCountry = countrySelect.value;
-      const isUSACountrySelected = selectedCountry === 'United States';
+      const isUSACountrySelected = selectedCountry === 'US';
       const isValidPostalCode = /^\d{5}(-\d{4})?$/.test(
         postalCodeInput.value.trim(),
       );
@@ -823,7 +933,39 @@ export default class RegistrationForm {
     return containerSelect;
   }
 
+  static clearErrorsAndInputs() {
+    const formElement = document.querySelector('.registration__form');
+
+    formElement
+      ?.querySelectorAll(`.${CLASS_NAME.ERROR_MESSAGE}`)
+      .forEach((error) => {
+        error.remove();
+      });
+
+    formElement?.querySelectorAll('input, select').forEach((field) => {
+      const inputField = field as HTMLInputElement | HTMLSelectElement;
+
+      if (inputField.type !== 'submit') {
+        if (inputField.type === 'checkbox') {
+          (inputField as HTMLInputElement).checked = false;
+        } else {
+          inputField.value = '';
+        }
+      }
+
+      if ('disabled' in inputField && inputField.disabled) {
+        inputField.disabled = false;
+      }
+
+      inputField.classList.remove('error', 'correct');
+    });
+  }
+
   getWrap(): HTMLElement {
     return this.registrationForm;
   }
 }
+
+window.addEventListener('popstate', () => {
+  RegistrationForm.clearErrorsAndInputs();
+});
