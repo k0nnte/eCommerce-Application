@@ -99,8 +99,7 @@ async function gettoken(email: string, password: string) {
   );
   const data = await response.json();
 
-  // eslint-disable-next-line no-console
-  console.log(data);
+  return data;
 }
 
 async function getcust(id: string) {

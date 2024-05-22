@@ -70,6 +70,7 @@ export default class Header {
       window.history.pushState({}, '', '/');
       window.dispatchEvent(new PopStateEvent('popstate'));
       Cookies.remove('log');
+      Cookies.remove('token');
       customerOn(this);
     });
 
