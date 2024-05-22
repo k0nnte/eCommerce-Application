@@ -1,160 +1,160 @@
-@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 html {
-    height: 100%;
+  height: 100%;
 }
 
 body {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .center {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .login-form {
-    width: 100%;
-    max-width: 544px;
-    margin: auto;
-    padding: 50px 55px;
-    box-shadow: 0px 0px 25px 10px #f8f8fb;
-    text-align: center;
-    font-family: Lato, sans-serif;
+  width: 100%;
+  max-width: 544px;
+  margin: auto;
+  padding: 50px 55px;
+  box-shadow: 0px 0px 25px 10px #f8f8fb;
+  text-align: center;
+  font-family: Lato, sans-serif;
 }
 
 .form-title {
-    margin-bottom: 7px;
-    font-family:
-        Josefin Sans,
-        sans-serif;
+  margin-bottom: 7px;
+  font-family:
+    Josefin Sans,
+    sans-serif;
 }
 
 .form-subtitle {
-    margin-top: 0;
-    margin-bottom: 37px;
-    font-size: 17px;
-    color: #9096b2;
+  margin-top: 0;
+  margin-bottom: 37px;
+  font-size: 17px;
+  color: #9096b2;
 }
 
 .input-container {
-    margin-bottom: 35px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
+  margin-bottom: 35px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 
-    .input-field {
-        width: 100%;
-        height: 52px;
-        padding: 10px;
-        border: 1px solid #c2c5e1;
-        border-radius: 3px;
-        font-family: Lato, sans-serif;
-        font-size: 16px;
-        &:focus {
-            outline: none;
-            border: 1px solid #c2c5e1;
-            &.input-invalid {
-                border: 1px solid red;
-            }
-
-            &.input-valid {
-                border: 1px solid green;
-            }
-        }
-    }
-
-    .input-invalid {
+  .input-field {
+    width: 100%;
+    height: 52px;
+    padding: 10px;
+    border: 1px solid #c2c5e1;
+    border-radius: 3px;
+    font-family: Lato, sans-serif;
+    font-size: 16px;
+    &:focus {
+      outline: none;
+      border: 1px solid #c2c5e1;
+      &.input-invalid {
         border: 1px solid red;
-    }
+      }
 
-    .input-valid {
+      &.input-valid {
         border: 1px solid green;
+      }
     }
+  }
 
-    .error-message {
-        max-width: 100%;
-        position: absolute;
-        top: 105%;
-        font-size: 14px;
-        color: red;
-        word-wrap: break-word;
-        text-align: left;
-        line-height: 1;
+  .input-invalid {
+    border: 1px solid red;
+  }
+
+  .input-valid {
+    border: 1px solid green;
+  }
+
+  .error-message {
+    max-width: 100%;
+    position: absolute;
+    top: 105%;
+    font-size: 14px;
+    color: red;
+    word-wrap: break-word;
+    text-align: left;
+    line-height: 1;
+  }
+
+  .password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
     }
-
-    .password-toggle {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        border: none;
-        background: none;
-        cursor: pointer;
-
-        &:focus {
-            outline: none;
-        }
-        &.fa {
-            font-size: 1.2em;
-            color: #c2c5e1;
-        }
+    &.fa {
+      font-size: 1.2em;
+      color: #c2c5e1;
     }
+  }
 }
 
 .button {
-    width: 100%;
-    height: 47px;
-    margin-bottom: 30px;
-    border-radius: 3px;
-    background: #fb2e86;
-    color: #fff;
-    font-family: Lato, sans-serif;
-    font-size: 17px;
-    font-weight: 700;
-    text-align: center;
-    cursor: pointer;
-    transition:
-        transform 0.1s,
-        background-color 0.1s;
-    border: none;
+  width: 100%;
+  height: 47px;
+  margin-bottom: 30px;
+  border-radius: 3px;
+  background: #fb2e86;
+  color: #fff;
+  font-family: Lato, sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    transform 0.1s,
+    background-color 0.1s;
+  border: none;
 
-    &:active {
-        transform: scale(0.99);
-        background-color: darken(#fb2e86, 5%);
-    }
+  &:active {
+    transform: scale(0.99);
+    background-color: darken(#fb2e86, 5%);
+  }
 }
 
 .account-text,
 .create-account-link {
-    font-size: 17px;
-    color: #9096b2;
-    text-decoration: none;
-    transition: transform 0.2s;
-    a:hover {
-        color: #fb2e86;
-    }
+  font-size: 17px;
+  color: #9096b2;
+  text-decoration: none;
+  transition: transform 0.2s;
+  a:hover {
+    color: #fb2e86;
+  }
 }
 
 @media (max-width: 544px) {
-    .login-form {
-        max-width: 90%;
-        padding: 40px;
-    }
+  .login-form {
+    max-width: 90%;
+    padding: 40px;
+  }
 }
 
 @media (max-width: 425px) {
-    .login-form {
-        padding: 20px;
-    }
+  .login-form {
+    padding: 20px;
+  }
 }

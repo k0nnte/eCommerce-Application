@@ -8,7 +8,7 @@ const CLASS = {
   btn: ['btn_continue'],
 };
 
-const TEXTBTN = 'continue';
+const TEXTBTN = 'Continue';
 
 export default function createErrorPopup(textIn: string): HTMLElement {
   const wrapper = createComponent('div', CLASS.main, {});
