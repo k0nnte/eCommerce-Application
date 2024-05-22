@@ -201,3 +201,15 @@ label {
   max-width: 56rem;
   margin: 2rem 0 4rem;
 }
+
+.login-link {
+  display: flex;
+  gap: 1rem;
+  font-size: 1.7rem;
+  color: $color-text-grey;
+  margin-bottom: 4rem;
+  text-decoration: none;
+  &:hover {
+    color: #fb2e86;
+  }
+}

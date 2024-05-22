@@ -1,6 +1,7 @@
 import Router from '@/router/router';
 import createComponent from '@/components/components';
 import Header from '@/components/header/header';
+import Main from '@/pages/main/main';
 import ErrorPage from '@/pages/errors/error';
 import Login from '@/pages/Login/login';
 import RegistrationForm from '@/pages/registration/registration';
@@ -11,6 +12,7 @@ const CLASS = {
   wrapper: ['main_wrap'],
   header: ['header'],
   center: ['center'],
+  main: ['main'],
 };
 
 customElements.define('login-element', Login);
@@ -35,12 +37,14 @@ export default class App {
   headermain: Header;
 
   constructor() {
+
     this.headermain = new Header();
     this.header = this.headermain.getHeader();
     this.main = createComponent('div', [], {});
     this.center = createComponent('main', CLASS.center, {});
     this.login = new Login(this.headermain);
     this.register = new RegistrationForm(this.headermain).getWrap();
+
     this.err = new ErrorPage().getWrap();
     this.wrapper = createComponent('div', CLASS.wrapper, {});
     this.routing = new Router(this.createRoutes(), this.center);

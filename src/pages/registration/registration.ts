@@ -268,8 +268,21 @@ export default class RegistrationForm {
       }
     });
 
+    const loginLink = createComponent('a', ['login-link'], {
+      href: '/login',
+    });
+    loginLink.textContent = 'Already have an account? Login here';
+
+    if (loginLink) {
+      loginLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        window.history.pushState({}, '', '/login');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      });
+    }
+
     formContainer.append(generalInfoContainer, addressContainer, signUpButton);
-    wrapper.append(title, formContainer);
+    wrapper.append(title, formContainer, loginLink);
     registrationForm.append(wrapper);
   }
 
