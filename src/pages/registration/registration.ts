@@ -389,7 +389,7 @@ export default class RegistrationForm {
           Cookies.set('log', btoa(data.body.customer.id));
           createErrorPopup(MODAL_MESSAGE.CORRECT);
           customerOn(this.Sheader);
-          const token = gettoken(email.value, password.value);
+          const token = gettoken(body.email, body.password!);
           token.then((tok) => {
             Cookies.set('token', btoa(tok.access_token));
           });
