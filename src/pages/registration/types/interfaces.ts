@@ -1,4 +1,4 @@
-export default interface FieldConfig {
+export interface FieldConfig {
   label: string;
   fieldType: 'input' | 'select';
   inputType?: string;
