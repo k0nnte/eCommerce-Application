@@ -1,0 +1,115 @@
+@import './errorfonts.scss';
+
+
+.wrapper_errorlog{
+    width: 100%;
+    height: 100%;
+}
+
+.wrapper_top{
+    width: 100%;
+    height: 30%;
+    background: rgb(246, 245, 255);
+}
+
+.wrapper_bot{
+    width: 100%;
+    height: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+.messageError{
+    width: 257px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.four{
+    color: rgb(16, 23, 80);
+    font-family: Josefin Sans;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: -1px;
+    letter-spacing: 0%;
+    text-align: center;
+}
+
+.smallFour{
+    color: rgb(251, 46, 134);
+    font-family: "Lato", sans-serif;
+    font-size: 8px;
+    font-weight: 500;
+    line-height: 19px;
+    letter-spacing: 0%;
+    text-align: center;
+}
+
+.wraps_img{
+    width: 70%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.img_error{
+    width: 70%;
+   height: auto;
+    background-color: white;
+    align-self: center;
+   
+}
+
+.text_err{
+    font-family: Josefin Sans;
+    font-size: 100%;
+    font-weight: 700;
+    line-height: -1px;
+    letter-spacing: 0%;
+    text-align: center;
+    color: rgb(21, 41, 112);
+}
+
+.btn_main{
+    width: 30%;
+   height: 50%;
+
+
+   border-radius: 3px;
+
+   background: rgb(251, 46, 134);
+   border: none;
+
+   color: rgb(255, 255, 255);
+    font-family: Josefin Sans;
+    font-size: 150%;
+    font-weight: 400;
+    line-height: 25.6px;
+    letter-spacing: 0%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    margin-top: 10px;
+    cursor: pointer;
+  
+}
+
+.btn_main:hover{
+    color: black;
+}
+
+@media screen and (max-width: 1000px) {
+    .img_error{
+        width: 100%;
+    }
+    .btn_main{
+        font-size: 70%;
+    }
+}

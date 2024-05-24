@@ -1,8 +1,10 @@
 {
   "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": ["./tsconfig.json"]
+  },
   "extends": [
     "airbnb-base",
-    "plugin:@typescript-eslint/recommended",
     "eslint:recommended",
      "prettier"
   ],
@@ -12,10 +14,12 @@
         "extensions": [
         ".ts"
         ]
-      }
+      },
+      "typescript": {}
     }
   },
   "rules": {
+    "@typescript-eslint/no-explicit-any": "error",
     "prettier/prettier": "error",
     "import/extensions": [
       "error",
@@ -28,13 +32,15 @@
   },
   "plugins": [
     "@typescript-eslint",
+    // "@typescript-eslint-recommended",
     "prettier"
    
   ],
   "env": {
     "browser": true,
     "node": true,
-    "jest": true
+    "jest": true,
+    "es2020": true
   }
 }
   

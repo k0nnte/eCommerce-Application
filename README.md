@@ -49,13 +49,13 @@ The application is powered by CommerceTools 🌐, a leading provider of commerce
 1. To begin the development run:
 
    ```command-line
-    npm run dev
+   npm run dev
    ```
 
 2. For start application use:
 
    ```command-line
-    npm run start
+   npm run start
    ```
 
 3. Open [`https://localhost:8080`](https://localhost:8080) in a browser
@@ -63,13 +63,13 @@ The application is powered by CommerceTools 🌐, a leading provider of commerce
 4. To create a production bundle use:
 
    ```command-line
-    npm run prod
+   npm run prod
    ```
 
 5. Run test:
 
    ```command-line
-    npm test
+   npm run test
    ```
 
 6. Before creating a commit, the husky pre-commit hook is automatically launched, which includes scripts `lint` for running ESLint and `format` for Prettier.
@@ -91,29 +91,29 @@ Please install the following software before starting development:
    git clone https://github.com/k0nnte/eCommerce-Application.git
    ```
 
-2. Navigate into the directory where you've cloned the source code and install NPM dependencies
+2. Navigate into the directory where you've cloned the source code
 
    ```command-line
-    cd eCommerce-Application
-    npm install
+   cd eCommerce-Application
    ```
 
-3. Navigate into the branch `develop`
+3. Navigate into the branch `develop` and install NPM dependencies
 
    ```command-line
-     git checkout develop
+   git checkout develop
+   npm install
    ```
 
 4. Use `git pull` to update your local branch
 
    ```command-line
-     git pull
+   git pull
    ```
 
 5. Create a branch for your feature (for Sprint #1, for other sprints navigate into the script's branch and create your branch)
 
    ```command-line
-      git checkout -b feat/rss-ecomm-1_xx
+   git checkout -b feat/rss-ecomm-1_xx
    ```
 
 6. Run the application in development mode with live reload:
