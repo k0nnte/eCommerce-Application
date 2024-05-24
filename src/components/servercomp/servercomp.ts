@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { apiRoot } from '@/sdk/builder';
 import Cookies from 'js-cookie';
 import { Env } from '@/sdk/envar';
@@ -106,4 +107,17 @@ async function getcust(id: string) {
   return apiRoot.customers().withId({ ID: id }).get().execute();
 }
 
-export { loginCustomer, customerOn, createCustomer, gettoken, getcust };
+async function getAllProduct() {
+  const response = await apiRoot.products().get().execute();
+
+  return response.body;
+}
+
+export {
+  loginCustomer,
+  customerOn,
+  createCustomer,
+  gettoken,
+  getcust,
+  getAllProduct,
+};
