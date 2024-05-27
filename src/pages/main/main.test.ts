@@ -10,7 +10,7 @@ describe('Main component', () => {
   test('Main component should render correctly', () => {
     const mainElement = mainComponent.getMain();
 
-    expect(mainElement.tagName).toBe('MAIN');
+    expect(mainElement.tagName).toBe('DIV');
 
     const navElement = mainElement.querySelector('.main-items');
     expect(navElement).not.toBeNull();

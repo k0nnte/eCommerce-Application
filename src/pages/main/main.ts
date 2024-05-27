@@ -75,8 +75,12 @@ export default class Main {
         const imgUrl = result.masterVariant.images![0].url;
         const name = result.name['en-US'];
         const bref = result.masterVariant.attributes![0].value['en-US'];
+        const price = `${result.masterVariant.prices![2].value.centAmount} ${result.masterVariant.prices![2].value.currencyCode}`;
+        const discount = `${result.masterVariant.prices![2].discounted?.value.centAmount} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
 
-        this.wrapper_Catalog.append(new Card(imgUrl, name, bref).getCard());
+        this.wrapper_Catalog.append(
+          new Card(imgUrl, name, bref, price, discount).getCard(),
+        );
       }
     });
     this.wrap_main.append(this.wrapper_Catalog);
