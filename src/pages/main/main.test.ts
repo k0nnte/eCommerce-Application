@@ -24,4 +24,17 @@ describe('Main component', () => {
     const regLink = mainElement.querySelector('.reg-link');
     expect(regLink?.textContent).toBe('Register');
   });
+
+  test('renderCatalog method should render products correctly', async () => {
+    const mainElement = mainComponent.getMain();
+
+    const catalogWrapper = mainElement.querySelector('.wrapper_catalog');
+    await mainComponent.renderCatalog();
+
+    await new Promise((resolve) => {
+      setTimeout(resolve, 500);
+    });
+
+    expect(catalogWrapper?.children.length).toBeGreaterThan(0);
+  });
 });
