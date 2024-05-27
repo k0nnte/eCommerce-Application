@@ -106,4 +106,17 @@ async function getcust(id: string) {
   return apiRoot.customers().withId({ ID: id }).get().execute();
 }
 
-export { loginCustomer, customerOn, createCustomer, gettoken, getcust };
+async function getProd(key: string) {
+  const response = await apiRoot.products().withKey({ key }).get().execute();
+
+  return response.body;
+}
+
+export {
+  loginCustomer,
+  customerOn,
+  createCustomer,
+  gettoken,
+  getcust,
+  getProd,
+};
