@@ -106,6 +106,12 @@ async function getcust(id: string) {
   return apiRoot.customers().withId({ ID: id }).get().execute();
 }
 
+async function getAllProduct() {
+  const response = await apiRoot.products().get().execute();
+
+  return response.body;
+}
+
 async function getProd(key: string) {
   const response = await apiRoot.products().withKey({ key }).get().execute();
 
@@ -118,5 +124,6 @@ export {
   createCustomer,
   gettoken,
   getcust,
+  getAllProduct,
   getProd,
 };
