@@ -1,0 +1,148 @@
+/* eslint-disable no-console */
+import createComponent from '../components';
+import createErrorPopup from '../erorpop/erorpop';
+import { getAllCategories } from '../servercomp/servercomp';
+import './filter.scss';
+
+const CLASS = {
+  warper: ['wrapper_search'],
+  input: ['input_search'],
+  select: ['select'],
+  btn: ['search_btn'],
+  options: ['options'],
+  wrasses: ['wrap_select'],
+};
+
+const optionst = ['Best price', 'color', 'category'];
+
+export default class Filter {
+  search: HTMLElement;
+
+  wrapper: HTMLElement;
+
+  categories: HTMLElement;
+
+  price: HTMLElement;
+
+  btn: HTMLElement;
+
+  select: HTMLElement;
+
+  selectWrap: HTMLElement;
+
+  selectOption: string;
+
+  constructor() {
+    this.wrapper = createComponent('div', CLASS.warper, {});
+    this.search = createComponent('input', CLASS.input, {});
+    this.categories = createComponent('select', CLASS.select, {});
+    this.price = createComponent('input', CLASS.input, {});
+    this.select = createComponent('select', CLASS.select, {});
+    this.selectWrap = createComponent('div', CLASS.wrasses, {});
+    this.btn = createComponent('button', CLASS.btn, {});
+    this.selectOption = optionst[0]!;
+    this.render();
+    this.createSelect();
+    this.categoryAdd();
+    this.addSelectListener();
+    this.addBtnListner();
+  }
+
+  createSelect() {
+    for (let i = 0; i < optionst.length; i += 1) {
+      const options = createComponent(
+        'option',
+        CLASS.options,
+        {},
+      ) as HTMLOptionElement;
+
+      options.innerText = optionst[i]!;
+      this.select.append(options);
+    }
+  }
+
+  categoryAdd() {
+    const response = getAllCategories();
+    response
+      .then((data) => {
+        for (let i = 0; i < data.length; i += 1) {
+          const options = createComponent(
+            'option',
+            CLASS.options,
+            {},
+          ) as HTMLOptionElement;
+
+          options.innerText = data[i]!;
+          this.categories.append(options);
+        }
+      })
+      .catch((err) => {
+        createErrorPopup(`error ${err}`);
+      });
+  }
+
+  render() {
+    this.btn.innerText = 'Search';
+    this.selectWrap.append(this.price);
+    this.wrapper.append(this.select, this.selectWrap, this.btn);
+  }
+
+  addSelectListener() {
+    this.select.addEventListener('change', (event) => {
+      this.selectOption = (event.target as HTMLSelectElement).value;
+      this.selectWrap.innerHTML = ``;
+      switch (this.selectOption) {
+        case `Best price`:
+          (this.price as HTMLInputElement).value = ``;
+          this.selectWrap.append(this.price);
+          break;
+        case `color`:
+          (this.price as HTMLInputElement).value = ``;
+          this.selectWrap.append(this.price);
+          break;
+        case `category`:
+          this.selectWrap.append(this.categories);
+          break;
+        default:
+          (this.price as HTMLInputElement).value = ``;
+          this.selectWrap.append(this.price);
+          break;
+      }
+    });
+  }
+
+  addBtnListner() {
+    this.btn.addEventListener('click', () => {
+      if (this.selectOption === 'Best price') {
+        const price = (this.price as HTMLInputElement).value;
+        if (!price.match(/[A-Za-z]/) || price.trim() === '') {
+          (this.price as HTMLInputElement).setCustomValidity(
+            'Please enter letters A-Z or a-z',
+          );
+          (this.price as HTMLInputElement).reportValidity();
+        } else {
+          (this.price as HTMLInputElement).setCustomValidity('');
+          console.log(`price is ${price}`);
+        }
+      } else if (this.selectOption === 'color') {
+        const color = (this.price as HTMLInputElement).value;
+        if (!color.match(/[A-Za-z]/) || color.trim() === '') {
+          (this.price as HTMLInputElement).setCustomValidity(
+            'Please enter letters A-Z or a-z',
+          );
+          (this.price as HTMLInputElement).reportValidity();
+        } else {
+          (this.price as HTMLInputElement).setCustomValidity('');
+          console.log(`color is ${color}`);
+        }
+      } else {
+        const category = (this.categories as HTMLSelectElement).value;
+        console.log(`category is ${category}`);
+      }
+    });
+  }
+
+  getFilter() {
+    return this.wrapper;
+  }
+}

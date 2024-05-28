@@ -4,6 +4,7 @@ import createComponent from '../../components/components';
 import './main.scss';
 import Card from '../../components/cardProduct/cardProduct';
 import { getAllProduct } from '../../components/servercomp/servercomp';
+import Filter from '../../components/filter/filter';
 
 export default class Main {
   main: HTMLElement;
@@ -20,6 +21,8 @@ export default class Main {
 
   wrap_main: HTMLElement;
 
+  search: HTMLElement;
+
   constructor() {
     this.wrap_main = createComponent('div', ['wrap_main'], {});
     this.main = createComponent('main', ['main'], {});
@@ -28,6 +31,7 @@ export default class Main {
     this.loginLink = createComponent('a', ['main-links', 'login-link'], {});
     this.regLink = createComponent('a', ['main-links', 'reg-link'], {});
     this.wrapper_Catalog = createComponent('div', ['wrapper_catalog'], {});
+    this.search = new Filter().getFilter();
     this.render();
     this.renderCatalog();
   }
@@ -65,6 +69,8 @@ export default class Main {
     this.wrap_main.append(this.main);
     this.main.appendChild(this.nav);
     this.nav.append(this.homeLink, this.loginLink, this.regLink);
+
+    this.wrap_main.append(this.search);
   }
 
   renderCatalog() {

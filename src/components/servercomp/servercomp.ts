@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { apiRoot } from '@/sdk/builder';
 import Cookies from 'js-cookie';
 import { Env } from '@/sdk/envar';
@@ -102,6 +103,19 @@ async function gettoken(email: string, password: string) {
   return data;
 }
 
+async function getAllCategories() {
+  const response = await apiRoot
+    .categories()
+    .get({
+      queryArgs: {
+        where: 'parent is not defined',
+      },
+    })
+    .execute();
+  const rez = response.body.results.map((item) => item.key);
+  return rez;
+}
+
 async function getcust(id: string) {
   return apiRoot.customers().withId({ ID: id }).get().execute();
 }
@@ -119,4 +133,5 @@ export {
   gettoken,
   getcust,
   getAllProduct,
+  getAllCategories,
 };
