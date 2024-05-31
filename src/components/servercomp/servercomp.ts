@@ -112,6 +112,12 @@ async function getAllProduct() {
   return response.body;
 }
 
+async function getProd(key: string) {
+  const response = await apiRoot.products().withKey({ key }).get().execute();
+
+  return response.body;
+}
+
 export {
   loginCustomer,
   customerOn,
@@ -119,4 +125,5 @@ export {
   gettoken,
   getcust,
   getAllProduct,
+  getProd,
 };
