@@ -1,7 +1,13 @@
 /* eslint-disable no-console */
 import createComponent from '../components';
 import createErrorPopup from '../erorpop/erorpop';
-import { getAllCategories } from '../servercomp/servercomp';
+import {
+  addCard,
+  getAllCategories,
+  sortCategory,
+  sortPriceHigh,
+  sortPriceSmall,
+} from '../servercomp/servercomp';
 import './filter.scss';
 
 const CLASS = {
@@ -13,7 +19,7 @@ const CLASS = {
   wrasses: ['wrap_select'],
 };
 
-const optionst = ['Best price', 'color', 'category'];
+const optionst = ['price is less', 'price is higher', 'category'];
 
 export default class Filter {
   search: HTMLElement;
@@ -32,11 +38,16 @@ export default class Filter {
 
   selectOption: string;
 
-  constructor() {
+  head: HTMLElement;
+
+  constructor(head: HTMLElement) {
+    this.head = head;
     this.wrapper = createComponent('div', CLASS.warper, {});
     this.search = createComponent('input', CLASS.input, {});
     this.categories = createComponent('select', CLASS.select, {});
-    this.price = createComponent('input', CLASS.input, {});
+    this.price = createComponent('input', CLASS.input, {
+      type: 'number',
+    });
     this.select = createComponent('select', CLASS.select, {});
     this.selectWrap = createComponent('div', CLASS.wrasses, {});
     this.btn = createComponent('button', CLASS.btn, {});
@@ -92,11 +103,11 @@ export default class Filter {
       this.selectOption = (event.target as HTMLSelectElement).value;
       this.selectWrap.innerHTML = ``;
       switch (this.selectOption) {
-        case `Best price`:
+        case `price is less`:
           (this.price as HTMLInputElement).value = ``;
           this.selectWrap.append(this.price);
           break;
-        case `color`:
+        case `price is higher`:
           (this.price as HTMLInputElement).value = ``;
           this.selectWrap.append(this.price);
           break;
@@ -113,31 +124,41 @@ export default class Filter {
 
   addBtnListner() {
     this.btn.addEventListener('click', () => {
-      if (this.selectOption === 'Best price') {
+      if (this.selectOption === 'price is less') {
         const price = (this.price as HTMLInputElement).value;
-        if (!price.match(/[A-Za-z]/) || price.trim() === '') {
+        if (!price.match(/[0-9]/) || price.trim() === '') {
           (this.price as HTMLInputElement).setCustomValidity(
-            'Please enter letters A-Z or a-z',
+            'Please enter letters 0-9',
           );
           (this.price as HTMLInputElement).reportValidity();
         } else {
           (this.price as HTMLInputElement).setCustomValidity('');
-          console.log(`price is ${price}`);
+          const response = sortPriceSmall(Number(price));
+          response.then((data) => {
+            addCard(data, this.head);
+          });
         }
-      } else if (this.selectOption === 'color') {
-        const color = (this.price as HTMLInputElement).value;
-        if (!color.match(/[A-Za-z]/) || color.trim() === '') {
+      } else if (this.selectOption === 'price is higher') {
+        const price = (this.price as HTMLInputElement).value;
+        if (!price.match(/[0-9]/) || price.trim() === '') {
           (this.price as HTMLInputElement).setCustomValidity(
-            'Please enter letters A-Z or a-z',
+            'Please enter letters 0-9',
           );
           (this.price as HTMLInputElement).reportValidity();
         } else {
           (this.price as HTMLInputElement).setCustomValidity('');
-          console.log(`color is ${color}`);
+          const response = sortPriceHigh(Number(price));
+          response.then((data) => {
+            addCard(data, this.head);
+          });
         }
       } else {
         const category = (this.categories as HTMLSelectElement).value;
-        console.log(`category is ${category}`);
+        const response = sortCategory(category);
+        response.then((data) => {
+          addCard(data, this.head);
+        });
+        // console.log(`category is ${category}`);
       }
     });
   }
