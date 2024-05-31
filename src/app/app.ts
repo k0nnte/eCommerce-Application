@@ -50,7 +50,7 @@ export default class App {
     this.register = new RegistrationForm(this.headermain).getWrap();
     this.err = new ErrorPage().getWrap();
     this.wrapper = createComponent('div', CLASS.wrapper, {});
-    this.product = new Product(this.headermain, 'indoor-jute-planter');
+    this.product = new Product('indoor-jute-planter');
     if (this.product) {
       this.product.getProd();
     }

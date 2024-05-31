@@ -1,5 +1,4 @@
 import createComponent from '@/components/components';
-import Header from '@/components/header/header';
 import { getProd } from '@/components/servercomp/servercomp';
 import './product.scss';
 
@@ -13,22 +12,19 @@ const CLASS = {
 };
 
 export default class Product {
-  private pageProd: HTMLElement;
+  pageProd: HTMLElement;
 
-  private infoContainer: HTMLElement;
+  infoContainer: HTMLElement;
 
-  private image: HTMLImageElement;
+  image: HTMLImageElement;
 
-  private title: HTMLElement;
+  title: HTMLElement;
 
-  private price: HTMLElement;
+  price: HTMLElement;
 
-  private description: HTMLElement;
-
-  header: Header;
+  description: HTMLElement;
 
   constructor(
-    header: Header,
     key: string,
     urlImg: string = '',
     title: string = '',
@@ -44,7 +40,6 @@ export default class Product {
     this.title = createComponent('h2', CLASS.title, {});
     this.price = createComponent('div', CLASS.price, {});
     this.description = createComponent('p', CLASS.description, {});
-    this.header = header;
     this.createProductPage(title, price, description);
     this.renderProduct(key);
   }
@@ -57,25 +52,19 @@ export default class Product {
     this.infoContainer.append(this.title, this.price, this.description);
   }
 
-  renderProduct(key: string) {
+  async renderProduct(key: string) {
     const response = getProd(key);
     response.then((data) => {
       const product = data.masterData.current;
       const imgUrl = product.masterVariant.images![0].url;
       const title = product.name['en-US'];
-      const price = product.masterVariant.prices![2].value.centAmount;
-      // const { currencyCode } = product.masterVariant.prices![2].value;
+      const price = product.masterVariant.prices![2].value.centAmount / 100;
       const { 'en-US': description } = product.description!;
       this.image.src = imgUrl;
       this.title.innerText = title;
-      this.price.innerText = price.toString();
+      this.price.innerText = `$${price}`;
       this.description.innerText = description;
-      this.createProductPage(title, price.toString(), description);
     });
-  }
-
-  static createProductPage(header: Header) {
-    return new Product(header, '', '', '');
   }
 
   getPage() {
