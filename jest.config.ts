@@ -6,7 +6,6 @@ const jestConfig: Config = {
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
-  silent: true,
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css|scss)$': 'identity-obj-proxy',

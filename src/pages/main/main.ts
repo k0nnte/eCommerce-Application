@@ -1,10 +1,8 @@
 import Cookies from 'js-cookie';
 import createComponent from '../../components/components';
 import './main.scss';
-// import Card from '../../components/cardProduct/cardProduct';
 import { addCard, getAllProduct } from '../../components/servercomp/servercomp';
 import Filter from '../../components/filter/filter';
-// import Card from '../../components/cardProduct/cardProduct';
 import Profile from '../profile/profile';
 
 export default class Main {

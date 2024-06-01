@@ -4,6 +4,7 @@ import createErrorPopup from '../erorpop/erorpop';
 import {
   addCard,
   getAllCategories,
+  getAllProduct,
   sortCategory,
   sortPriceHigh,
   sortPriceSmall,
@@ -40,6 +41,8 @@ export default class Filter {
 
   head: HTMLElement;
 
+  btnReset: HTMLElement;
+
   constructor(head: HTMLElement) {
     this.head = head;
     this.wrapper = createComponent('div', CLASS.warper, {});
@@ -51,6 +54,7 @@ export default class Filter {
     this.select = createComponent('select', CLASS.select, {});
     this.selectWrap = createComponent('div', CLASS.wrasses, {});
     this.btn = createComponent('button', CLASS.btn, {});
+    this.btnReset = createComponent('button', CLASS.btn, {});
     this.selectOption = optionst[0]!;
     this.render();
     this.createSelect();
@@ -94,8 +98,9 @@ export default class Filter {
 
   render() {
     this.btn.innerText = 'Search';
+    this.btnReset.innerText = `Reset`;
     this.selectWrap.append(this.price);
-    this.wrapper.append(this.select, this.selectWrap, this.btn);
+    this.wrapper.append(this.select, this.selectWrap, this.btn, this.btnReset);
   }
 
   addSelectListener() {
@@ -158,8 +163,13 @@ export default class Filter {
         response.then((data) => {
           addCard(data, this.head);
         });
-        // console.log(`category is ${category}`);
       }
+    });
+    this.btnReset.addEventListener('click', () => {
+      const response = getAllProduct();
+      response.then((data) => {
+        addCard(data, this.head);
+      });
     });
   }
 
