@@ -1,9 +1,15 @@
 import Cookies from 'js-cookie';
 import createComponent from '../../components/components';
 import './main.scss';
-import { addCard, getAllProduct } from '../../components/servercomp/servercomp';
+import {
+  addCard,
+  getAllProduct,
+  getProd,
+  getvalueCardProduct,
+} from '../../components/servercomp/servercomp';
 import Filter from '../../components/filter/filter';
 import Profile from '../profile/profile';
+import vector from '../../../public/files/Vector.svg';
 
 export default class Main {
   main: HTMLElement;
@@ -24,6 +30,14 @@ export default class Main {
 
   search: HTMLElement;
 
+  searchName: HTMLElement;
+
+  search_wrapper: HTMLElement;
+
+  btnSech: HTMLElement;
+
+  btmImg: HTMLElement;
+
   constructor() {
     this.wrap_main = createComponent('div', ['wrap_main'], {});
     this.main = createComponent('main', ['main'], {});
@@ -34,6 +48,11 @@ export default class Main {
     this.profileLink = createComponent('a', ['main-links', 'profile-link'], {});
     this.wrapper_Catalog = createComponent('div', ['wrapper_catalog'], {});
     this.search = new Filter(this.wrapper_Catalog).getFilter();
+    this.searchName = createComponent('input', ['select_sech'], {});
+    this.search_wrapper = createComponent('div', ['wrapper_searchs'], {});
+    this.btnSech = createComponent('button', ['btn_sech'], {});
+    this.btmImg = createComponent('img', [], {});
+
     this.render();
     this.renderCatalog();
   }
@@ -87,6 +106,7 @@ export default class Main {
 
     this.wrap_main.append(this.main);
     this.main.appendChild(this.nav);
+
     this.nav.append(this.homeLink, this.loginLink, this.regLink);
     this.wrap_main.append(this.search);
     this.nav.append(
@@ -95,6 +115,12 @@ export default class Main {
       this.regLink,
       this.profileLink,
     );
+
+    this.search_wrapper.append(this.searchName, this.btnSech);
+    (this.btmImg as HTMLImageElement).src = vector;
+    this.btnSech.append(this.btmImg);
+    this.main.append(this.search_wrapper);
+    this.addListnerBtn();
   }
 
   renderCatalog() {
@@ -107,5 +133,24 @@ export default class Main {
 
   public getMain() {
     return this.wrap_main;
+  }
+
+  addListnerBtn() {
+    this.btnSech.addEventListener('click', () => {
+      const { value } = this.searchName as HTMLInputElement;
+      const reques = value.toLowerCase().replace(/ /g, '-');
+      const response = getProd(reques);
+      response
+        .then((data) => {
+          // eslint-disable-next-line no-console
+          console.log(data);
+
+          getvalueCardProduct(data, this.wrapper_Catalog);
+        })
+        .catch((err) => {
+          // eslint-disable-next-line no-console
+          console.log(err);
+        });
+    });
   }
 }
