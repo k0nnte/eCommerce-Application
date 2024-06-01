@@ -1,10 +1,13 @@
+/* eslint-disable no-console */
 import { apiRoot } from '@/sdk/builder';
 import Cookies from 'js-cookie';
 import { Env } from '@/sdk/envar';
 
 import {
-  // ClientResponse,
+  ClientResponse,
   CustomerSignInResult,
+  ProductPagedQueryResponse,
+  ProductProjectionPagedSearchResponse,
 } from '@commercetools/platform-sdk';
 import {
   CustomerSignUp,
@@ -13,6 +16,9 @@ import {
   SuccessResponse,
 } from './servercorp.interface';
 import Header from '../header/header';
+import Card from '../cardProduct/cardProduct';
+
+const limit = 500;
 
 async function loginCustomer(
   email: string,
@@ -113,6 +119,19 @@ async function getToken(email: string, password: string) {
   return data;
 }
 
+async function getAllCategories() {
+  const response = await apiRoot
+    .categories()
+    .get({
+      queryArgs: {
+        where: 'parent is not defined',
+      },
+    })
+    .execute();
+  const rez = response.body.results.map((item) => item.key);
+  return rez;
+}
+
 async function fetchCustomerData(customerId: string) {
   const response = await apiRoot
     .customers()
@@ -128,6 +147,92 @@ async function getAllProduct() {
   return response.body;
 }
 
+async function sortPriceSmall(price: number) {
+  return apiRoot
+    .productProjections()
+    .search()
+    .get({
+      queryArgs: {
+        filter: `variants.price.centAmount:range (0 to ${price})`,
+        sort: `price asc`,
+        limit,
+      },
+    })
+    .execute();
+}
+
+function addCard(
+  data:
+    | ProductPagedQueryResponse
+    | ClientResponse<ProductProjectionPagedSearchResponse>,
+  wrapper: HTMLElement,
+) {
+  // eslint-disable-next-line no-param-reassign
+  wrapper.innerHTML = ``;
+  if ('results' in data) {
+    for (let i = 0; i < data.results.length; i += 1) {
+      const result = data.results[i].masterData.current;
+      const imgUrl = result.masterVariant.images![0].url;
+      const name = result.name['en-US'];
+      const bref = result.masterVariant.attributes![0].value['en-US'];
+      const price = `${result.masterVariant.prices![2].value.centAmount} ${result.masterVariant.prices![2].value.currencyCode}`;
+      const discount = `${result.masterVariant.prices![2].discounted?.value.centAmount} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
+
+      wrapper.append(new Card(imgUrl, name, bref, price, discount).getCard());
+    }
+  } else {
+    for (let i = 0; i < data.body.results.length; i += 1) {
+      const result = data.body.results[i];
+      const imgUrl = result.masterVariant.images![0].url;
+      const name = result.name['en-US'];
+      const bref = result.masterVariant.attributes![0].value['en-US'];
+      const price = `${result.masterVariant.prices![2].value.centAmount} ${result.masterVariant.prices![2].value.currencyCode}`;
+      const discount = `${result.masterVariant.prices![2].discounted?.value.centAmount} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
+      wrapper.append(new Card(imgUrl, name, bref, price, discount).getCard());
+    }
+  }
+}
+
+async function getCategoryId(name: string) {
+  const response = await apiRoot
+    .categories()
+    .withKey({
+      key: name,
+    })
+    .get()
+    .execute();
+  return response.body.id;
+}
+
+async function sortCategory(category: string) {
+  const id = await getCategoryId(category);
+  const response = await apiRoot
+    .productProjections()
+    .search()
+    .get({
+      queryArgs: {
+        filter: [`categories.id:"${id}"`],
+        limit: 500,
+      },
+    })
+    .execute();
+  return response;
+}
+
+async function sortPriceHigh(price: number) {
+  return apiRoot
+    .productProjections()
+    .search()
+    .get({
+      queryArgs: {
+        filter: `variants.price.centAmount:range (${price} to *)`,
+        sort: `price asc`,
+        limit,
+      },
+    })
+    .execute();
+}
+
 async function getProd(key: string) {
   const response = await apiRoot.products().withKey({ key }).get().execute();
 
@@ -141,5 +246,10 @@ export {
   getToken,
   fetchCustomerData,
   getAllProduct,
+  getAllCategories,
+  sortPriceSmall,
+  addCard,
+  sortCategory,
+  sortPriceHigh,
   getProd,
 };

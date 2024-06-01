@@ -33,7 +33,7 @@ const ctpClient = new ClientBuilder()
   .withProjectKey(projectKey)
   .withClientCredentialsFlow(authMiddlewareOptions)
   .withHttpMiddleware(httpMiddlewareOptions)
-  .withLoggerMiddleware()
+  // .withLoggerMiddleware()
   .build();
 
 export const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
