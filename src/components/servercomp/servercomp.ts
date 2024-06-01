@@ -63,6 +63,9 @@ function customerOn(header: Header) {
     if (!header.nav.contains(header.logoutLink!)) {
       header.nav.append(header.logoutLink!);
     }
+    if (!header.nav.contains(header.profileLink!)) {
+      header.nav.append(header.profileLink!);
+    }
     const { pathname } = window.location;
     if (pathname === '/login' || pathname === '/register') {
       window.history.pushState({}, '', './');
@@ -77,6 +80,9 @@ function customerOn(header: Header) {
     }
     if (header.nav.contains(header.logoutLink!)) {
       header.nav.removeChild(header.logoutLink!);
+    }
+    if (header.nav.contains(header.profileLink!)) {
+      header.nav.removeChild(header.profileLink!);
     }
   }
 }
