@@ -8,7 +8,7 @@ import EslintWebpackPlugin from 'eslint-webpack-plugin';
 
 type Mode = 'production' | 'development';
 
-interface InvVar{
+interface InvVar {
   mode: Mode;
   port: number;
 }
@@ -24,21 +24,27 @@ export default (env: InvVar) => {
       path: path.resolve(__dirname, 'dist'),
       filename: '[name].[contenthash].js',
       clean: true,
-
     },
     plugins: [
-      new HtmlWebpackPlugin({ template: path.resolve(__dirname, 'public', 'index.html'), favicon: path.resolve(__dirname, 'public', 'favicon.ico') }),
-      !isDevelop && new MiniCssExtractPlugin({
-        filename: 'css/[name].[contenthash].css',
-        chunkFilename: 'css/[name].[contenthash].css',
+      new HtmlWebpackPlugin({
+        template: path.resolve(__dirname, 'public', 'index.html'),
+        favicon: path.resolve(__dirname, 'public', 'favicon.ico'),
       }),
+      !isDevelop &&
+        new MiniCssExtractPlugin({
+          filename: 'css/[name].[contenthash].css',
+          chunkFilename: 'css/[name].[contenthash].css',
+        }),
       new EslintWebpackPlugin({
         extensions: ['ts'],
         exclude: ['node_modules'],
       }),
       new CopyPlugin({
         patterns: [
-          { from: path.resolve(__dirname, 'public', 'files'), to: path.resolve(__dirname, 'dist', 'files') },
+          {
+            from: path.resolve(__dirname, 'public', 'files'),
+            to: path.resolve(__dirname, 'dist', 'files'),
+          },
         ],
       }),
     ],
@@ -70,11 +76,13 @@ export default (env: InvVar) => {
       },
     },
     devtool: isDevelop ? 'inline-source-map' : false,
-    devServer: isDevelop ? {
-      port: env.port ?? 8080,
-      hot: true,
-      historyApiFallback: true,
-    } : undefined,
+    devServer: isDevelop
+      ? {
+          port: env.port ?? 8080,
+          hot: true,
+          historyApiFallback: true,
+        }
+      : undefined,
   };
   return config;
 };

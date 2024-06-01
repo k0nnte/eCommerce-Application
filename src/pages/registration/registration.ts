@@ -1,10 +1,11 @@
-/* eslint-disable no-console */
+// /* eslint-disable no-console */
+// /* eslint-disable no-unused-vars */
 import './registration.scss';
 import 'font-awesome/css/font-awesome.min.css';
 import {
   createCustomer,
   customerOn,
-  gettoken,
+  getToken,
 } from '@/components/servercomp/servercomp';
 import Cookies from 'js-cookie';
 import { BaseAddress } from '@commercetools/platform-sdk';
@@ -27,16 +28,16 @@ export default class RegistrationForm {
   constructor(header: Header) {
     this.registrationForm = document.createElement('div');
     this.registrationForm.classList.add('registration__wrapper');
-    RegistrationForm.renderForm(this.registrationForm);
+    RegistrationForm.renderRegistrationForm(this.registrationForm);
     this.header = header;
     RegistrationForm.Sheader = this.header;
   }
 
-  static renderForm(registrationForm: HTMLElement) {
+  static renderRegistrationForm(registrationForm: HTMLElement) {
     const wrapper = createComponent('div', ['registration'], {});
-    const title = createComponent('h2', ['registration__title'], {});
+    const title = createComponent('h2', ['page__title'], {});
     title.textContent = 'Registration';
-    const formContainer = createComponent('form', ['registration__form'], {});
+    const formContainer = createComponent('form', ['page__form'], {});
     const generalInfoContainer = createComponent('div', ['general-info'], {});
     const addressContainer = createComponent('div', ['addresses'], {});
     const titleInfo = createComponent('p', ['general-info-title'], {});
@@ -305,48 +306,6 @@ export default class RegistrationForm {
     registrationForm.append(wrapper);
   }
 
-  static getShippingAddressData() {
-    const shippingFields = {
-      streetName: (
-        document.getElementById('street-shipping-address') as HTMLInputElement
-      ).value,
-      city: (
-        document.getElementById('city-shipping-address') as HTMLInputElement
-      ).value,
-      country: (
-        document.getElementById('country-shipping-address') as HTMLSelectElement
-      ).value,
-      postalCode: (
-        document.getElementById(
-          'postal-code-shipping-address',
-        ) as HTMLInputElement
-      ).value,
-    };
-
-    return shippingFields;
-  }
-
-  static getBillingAddressData() {
-    const billingFields = {
-      streetName: (
-        document.getElementById('street-billing-address') as HTMLInputElement
-      ).value,
-      city: (
-        document.getElementById('city-billing-address') as HTMLInputElement
-      ).value,
-      country: (
-        document.getElementById('country-billing-address') as HTMLSelectElement
-      ).value,
-      postalCode: (
-        document.getElementById(
-          'postal-code-billing-address',
-        ) as HTMLInputElement
-      ).value,
-    };
-
-    return billingFields;
-  }
-
   static async processCustomerRegistration() {
     const firstName = document.getElementById(
       'first-name-info',
@@ -385,14 +344,15 @@ export default class RegistrationForm {
     if (RegistrationForm.isFormValid) {
       const response = createCustomer(body);
       response
-        .then((data) => {
-          Cookies.set('log', btoa(data.body.customer.id));
-          createErrorPopup(MODAL_MESSAGE.CORRECT);
-          customerOn(this.Sheader);
-          const token = gettoken(body.email, body.password!);
-          token.then((tok) => {
-            Cookies.set('token', btoa(tok.access_token));
+        .then((signInResult) => {
+          const customerId = signInResult.customer.id;
+          Cookies.set('log', btoa(customerId));
+          getToken(body.email, body.password).then((tokenData) => {
+            Cookies.set('token', btoa(tokenData.access_token));
+            customerOn(this.Sheader);
+            createErrorPopup(MODAL_MESSAGE.CORRECT);
           });
+          return customerId;
         })
         .catch((error) => {
           createErrorPopup(error.body.message);
@@ -959,6 +919,48 @@ export default class RegistrationForm {
 
       inputField.classList.remove('error', 'correct');
     });
+  }
+
+  static getShippingAddressData() {
+    const shippingFields = {
+      streetName: (
+        document.getElementById('street-shipping-address') as HTMLInputElement
+      ).value,
+      city: (
+        document.getElementById('city-shipping-address') as HTMLInputElement
+      ).value,
+      country: (
+        document.getElementById('country-shipping-address') as HTMLSelectElement
+      ).value,
+      postalCode: (
+        document.getElementById(
+          'postal-code-shipping-address',
+        ) as HTMLInputElement
+      ).value,
+    };
+
+    return shippingFields;
+  }
+
+  static getBillingAddressData() {
+    const billingFields = {
+      streetName: (
+        document.getElementById('street-billing-address') as HTMLInputElement
+      ).value,
+      city: (
+        document.getElementById('city-billing-address') as HTMLInputElement
+      ).value,
+      country: (
+        document.getElementById('country-billing-address') as HTMLSelectElement
+      ).value,
+      postalCode: (
+        document.getElementById(
+          'postal-code-billing-address',
+        ) as HTMLInputElement
+      ).value,
+    };
+
+    return billingFields;
   }
 
   getWrap(): HTMLElement {

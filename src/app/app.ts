@@ -1,4 +1,4 @@
-// app.ts
+import './app.scss';
 import Router from '@/router/router';
 import createComponent from '@/components/components';
 import Header from '@/components/header/header';
@@ -6,9 +6,9 @@ import Main from '@/pages/main/main';
 import ErrorPage from '@/pages/errors/error';
 import Login from '@/pages/login/login';
 import RegistrationForm from '@/pages/registration/registration';
+import Profile from '@/pages/profile/profile';
 import { customerOn } from '@/components/servercomp/servercomp';
 import Product from '@/pages/product/product';
-import './app.scss';
 import { router } from '@/router/routerType';
 
 const CLASS = {
@@ -35,6 +35,8 @@ export default class App {
 
   register: HTMLElement;
 
+  profile: HTMLElement;
+
   center: HTMLElement;
 
   headermain: Header;
@@ -48,6 +50,7 @@ export default class App {
     this.center = createComponent('main', CLASS.center, {});
     this.login = new Login(this.headermain);
     this.register = new RegistrationForm(this.headermain).getWrap();
+    this.profile = new Profile().getWrap();
     this.err = new ErrorPage().getWrap();
     this.wrapper = createComponent('div', CLASS.wrapper, {});
     this.product = new Product('indoor-jute-planter');
@@ -64,6 +67,7 @@ export default class App {
       '/login': Login.createLoginForm(),
       '/err': this.err,
       '/register': this.register,
+      '/profile': this.profile,
       '/product': productPage as HTMLElement,
     };
   }
