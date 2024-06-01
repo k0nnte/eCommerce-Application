@@ -1,21 +1,20 @@
-.wrapper_search{
-    display: flex;
-    gap: 25px;
-    justify-content: flex-end;
-    margin: 0 auto;
+.wrapper_search {
+  display: flex;
+  gap: 25px;
+  justify-content: flex-end;
+  margin: 0 auto;
 }
 
-.search_btn{
-    min-height: 3rem;
-   width: 100px;
+.search_btn {
+  min-height: 3rem;
+  width: 100px;
 }
 
-.input_search{
-    height: 100%;
-    width: 250px;
+.input_search {
+  height: 100%;
+  width: 250px;
 }
 
-.select{
-    height: 100%;
-    
+.select {
+  height: 30px;
 }
