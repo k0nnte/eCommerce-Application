@@ -1,8 +1,8 @@
 import Cookies from 'js-cookie';
 import createComponent from '../../components/components';
 import './main.scss';
-import Card from '../../components/cardProduct/cardProduct';
-import { getAllProduct } from '../../components/servercomp/servercomp';
+import { addCard, getAllProduct } from '../../components/servercomp/servercomp';
+import Filter from '../../components/filter/filter';
 import Profile from '../profile/profile';
 
 export default class Main {
@@ -22,6 +22,8 @@ export default class Main {
 
   wrap_main: HTMLElement;
 
+  search: HTMLElement;
+
   constructor() {
     this.wrap_main = createComponent('div', ['wrap_main'], {});
     this.main = createComponent('main', ['main'], {});
@@ -31,6 +33,7 @@ export default class Main {
     this.regLink = createComponent('a', ['main-links', 'reg-link'], {});
     this.profileLink = createComponent('a', ['main-links', 'profile-link'], {});
     this.wrapper_Catalog = createComponent('div', ['wrapper_catalog'], {});
+    this.search = new Filter(this.wrapper_Catalog).getFilter();
     this.render();
     this.renderCatalog();
   }
@@ -84,6 +87,8 @@ export default class Main {
 
     this.wrap_main.append(this.main);
     this.main.appendChild(this.nav);
+    this.nav.append(this.homeLink, this.loginLink, this.regLink);
+    this.wrap_main.append(this.search);
     this.nav.append(
       this.homeLink,
       this.loginLink,
@@ -95,18 +100,7 @@ export default class Main {
   renderCatalog() {
     const response = getAllProduct();
     response.then((data) => {
-      for (let i = 0; i < data.results.length; i += 1) {
-        const result = data.results[i].masterData.current;
-        const imgUrl = result.masterVariant.images![0].url;
-        const name = result.name['en-US'];
-        const bref = result.masterVariant.attributes![0].value['en-US'];
-        const price = `${result.masterVariant.prices![2].value.centAmount} ${result.masterVariant.prices![2].value.currencyCode}`;
-        const discount = `${result.masterVariant.prices![2].discounted?.value.centAmount} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
-
-        this.wrapper_Catalog.append(
-          new Card(imgUrl, name, bref, price, discount).getCard(),
-        );
-      }
+      addCard(data, this.wrapper_Catalog);
     });
     this.wrap_main.append(this.wrapper_Catalog);
   }
