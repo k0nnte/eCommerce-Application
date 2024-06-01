@@ -10,8 +10,7 @@
     "lint": "eslint \"src/**/*.ts\"",
     "format": "prettier --write \"src/**/*.ts\"",
     "test": "jest",
-    "prepare": "husky install",
-    "test:p": "jest --testPathPattern=profile.test.ts"
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "k0nnte, liudmilarodzina, valeriastav",

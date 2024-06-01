@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import Profile from '@/pages/profile/profile';
 import createComponent from '../components';
 import './header.scss';
 import { customerOn } from '../servercomp/servercomp';
@@ -16,12 +17,15 @@ export default class Header {
 
   logoutLink: null | HTMLElement;
 
+  profileLink: null | HTMLElement;
+
   constructor() {
     this.header = createComponent('header', ['header'], {});
     this.nav = createComponent('nav', ['nav-items'], {});
     this.homeLink = null;
     this.loginLink = null;
     this.regLink = null;
+    this.profileLink = null;
     this.logoutLink = null;
     this.render();
   }
@@ -74,8 +78,23 @@ export default class Header {
       customerOn(this);
     });
 
+    this.profileLink = createComponent('a', ['nav-link', 'profile-link'], {});
+    this.profileLink.textContent = 'Profile';
+    this.profileLink.setAttribute('href', '/');
+    this.profileLink.innerHTML +=
+      '<img width="22" height="22" src="https://img.icons8.com/sf-black/64/FFFFFF/user-male.png" alt="user-profile"/>';
+    this.profileLink.addEventListener('click', (event: MouseEvent) => {
+      event.preventDefault();
+      window.history.pushState({}, '', '/profile');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+      Profile.populateProfileForm();
+      // Cookies.remove('log');
+      // Cookies.remove('token');
+      // customerOn(this);
+    });
+
     this.header.append(this.homeLink, this.nav);
-    this.nav.append(this.loginLink, this.regLink);
+    this.nav.append(this.loginLink, this.regLink, this.profileLink);
   }
 
   public getHeader() {
