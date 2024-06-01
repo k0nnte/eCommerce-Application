@@ -1,7 +1,7 @@
 import 'font-awesome/css/font-awesome.min.css';
 import {
   customerOn,
-  gettoken,
+  getToken,
   loginCustomer,
 } from '@/components/servercomp/servercomp';
 import createErrorPopup from '@/components/erorpop/erorpop';
@@ -83,7 +83,7 @@ export default class Login extends HTMLElement {
         resp.then((data) => {
           if (data.istrue) {
             Cookies.set('log', btoa(data.response!.customer.id));
-            const token = gettoken(email.value, password.value);
+            const token = getToken(email.value, password.value);
             token.then((tok) => {
               Cookies.set('token', btoa(tok.access_token));
             });

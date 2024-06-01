@@ -1,9 +1,9 @@
-/* eslint-disable no-console */
 import Cookies from 'js-cookie';
 import createComponent from '../../components/components';
 import './main.scss';
 import Card from '../../components/cardProduct/cardProduct';
 import { getAllProduct } from '../../components/servercomp/servercomp';
+import Profile from '../profile/profile';
 
 export default class Main {
   main: HTMLElement;
@@ -16,6 +16,8 @@ export default class Main {
 
   regLink: HTMLElement;
 
+  profileLink: HTMLElement;
+
   wrapper_Catalog: HTMLElement;
 
   wrap_main: HTMLElement;
@@ -27,6 +29,7 @@ export default class Main {
     this.homeLink = createComponent('a', ['main-links', 'home-link'], {});
     this.loginLink = createComponent('a', ['main-links', 'login-link'], {});
     this.regLink = createComponent('a', ['main-links', 'reg-link'], {});
+    this.profileLink = createComponent('a', ['main-links', 'profile-link'], {});
     this.wrapper_Catalog = createComponent('div', ['wrapper_catalog'], {});
     this.render();
     this.renderCatalog();
@@ -62,9 +65,31 @@ export default class Main {
         window.dispatchEvent(new PopStateEvent('popstate'));
       }
     });
+
+    this.profileLink.textContent = 'Profile';
+    this.profileLink.setAttribute('href', '');
+    this.profileLink.addEventListener('click', (event: MouseEvent) => {
+      event.preventDefault();
+      const islog = Cookies.get('log');
+      if (islog) {
+        Profile.populateProfileForm();
+        window.history.pushState({}, '', '/profile');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }
+      if (!islog) {
+        window.history.pushState({}, '', '/login');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }
+    });
+
     this.wrap_main.append(this.main);
     this.main.appendChild(this.nav);
-    this.nav.append(this.homeLink, this.loginLink, this.regLink);
+    this.nav.append(
+      this.homeLink,
+      this.loginLink,
+      this.regLink,
+      this.profileLink,
+    );
   }
 
   renderCatalog() {
