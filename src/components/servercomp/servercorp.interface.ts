@@ -28,7 +28,7 @@ export interface Customer {
 
 export interface CustomerSignUp {
   email: string;
-  password: string | undefined;
+  password: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string;

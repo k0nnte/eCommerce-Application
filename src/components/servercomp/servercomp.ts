@@ -50,6 +50,15 @@ async function loginCustomer(
 
 function customerOn(header: Header) {
   const encryption = Cookies.get('log');
+
+  if (!encryption) {
+    const { pathname } = window.location;
+    if (pathname === '/profile') {
+      window.history.pushState({}, '', './');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  }
+
   if (encryption) {
     if (header.nav.contains(header.loginLink!)) {
       header.nav.removeChild(header.loginLink!);
@@ -80,16 +89,12 @@ function customerOn(header: Header) {
 
 async function createCustomer(
   customer: CustomerSignUp,
-): Promise<ClientResponse<CustomerSignInResult>> {
-  return apiRoot
-    .customers()
-    .post({
-      body: customer,
-    })
-    .execute();
+): Promise<CustomerSignInResult> {
+  const response = await apiRoot.customers().post({ body: customer }).execute();
+  return response.body;
 }
 
-async function gettoken(email: string, password: string) {
+async function getToken(email: string, password: string) {
   const auth = btoa(`${Env.CTP_CLIENT_ID}:${Env.CTP_CLIENT_SECRET}`);
 
   const response = await fetch(
@@ -121,8 +126,13 @@ async function getAllCategories() {
   return rez;
 }
 
-async function getcust(id: string) {
-  return apiRoot.customers().withId({ ID: id }).get().execute();
+async function fetchCustomerData(customerId: string) {
+  const response = await apiRoot
+    .customers()
+    .withId({ ID: customerId })
+    .get()
+    .execute();
+  return response.body;
 }
 
 async function getAllProduct() {
@@ -217,16 +227,23 @@ async function sortPriceHigh(price: number) {
     .execute();
 }
 
+async function getProd(key: string) {
+  const response = await apiRoot.products().withKey({ key }).get().execute();
+
+  return response.body;
+}
+
 export {
   loginCustomer,
   customerOn,
   createCustomer,
-  gettoken,
-  getcust,
+  getToken,
+  fetchCustomerData,
   getAllProduct,
   getAllCategories,
   sortPriceSmall,
   addCard,
   sortCategory,
   sortPriceHigh,
+  getProd,
 };

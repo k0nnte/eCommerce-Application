@@ -10,7 +10,8 @@
     "lint": "eslint \"src/**/*.ts\"",
     "format": "prettier --write \"src/**/*.ts\"",
     "test": "jest",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test:p": "jest --testPathPattern=profile.test.ts"
   },
   "keywords": [],
   "author": "k0nnte, liudmilarodzina, valeriastav",
@@ -59,6 +60,7 @@
     "@commercetools/platform-sdk": "^7.8.0",
     "@commercetools/sdk-client-v2": "^2.5.0",
     "@testing-library/dom": "^10.1.0",
+    "@testing-library/jest-dom": "^6.4.5",
     "font-awesome": "^4.7.0",
     "js-cookie": "^3.0.5"
   }
