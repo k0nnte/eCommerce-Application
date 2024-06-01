@@ -88,13 +88,10 @@ export default class Header {
       window.history.pushState({}, '', '/profile');
       window.dispatchEvent(new PopStateEvent('popstate'));
       Profile.populateProfileForm();
-      // Cookies.remove('log');
-      // Cookies.remove('token');
-      // customerOn(this);
     });
 
     this.header.append(this.homeLink, this.nav);
-    this.nav.append(this.loginLink, this.regLink, this.profileLink);
+    this.nav.append(this.profileLink, this.loginLink, this.regLink);
   }
 
   public getHeader() {
