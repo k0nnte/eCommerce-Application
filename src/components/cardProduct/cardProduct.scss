@@ -13,20 +13,20 @@
     transition: all 1s ease;
 }
 
-.wrapper_card:hover{
-    .img_card{
-        transform: scale(1.1);
-    } 
+.wrapper_card:hover {
+  .img_card {
     transform: scale(1.1);
+  }
+  transform: scale(1.1);
 }
 
-.img_card{
-    transition: all 1s ease;
-    width: 80%;
-    height: auto;
+.img_card {
+  transition: all 1s ease;
+  width: 80%;
+  height: auto;
 }
 
-.zagolov_card{
+.title_card{
     color: rgb(13, 19, 78);
     font-family: Josefin Sans;
     font-size: 18px;
@@ -36,36 +36,36 @@
     text-align: center;
 }
 
-.description_card{
-    width: 100%;
-    color: rgb(169, 172, 198);
-    font-family: Josefin Sans;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 29px;
-    letter-spacing: 0%;
-    text-align: left;
-    word-wrap: break-word;
-    text-align: center;
+.description_card {
+  width: 100%;
+  color: rgb(169, 172, 198);
+  font-family: Josefin Sans;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 29px;
+  letter-spacing: 0%;
+  text-align: left;
+  word-wrap: break-word;
+  text-align: center;
 }
 
-.price{
-    color: rgb(35, 42, 105);
-    font-family: Josefin Sans;
-    font-size: 13.89px;
-    font-weight: 400;
-    line-height: -1px;
-    letter-spacing: 1%;
-    text-align: left;
+.price {
+  color: rgb(35, 42, 105);
+  font-family: Josefin Sans;
+  font-size: 13.89px;
+  font-weight: 400;
+  line-height: -1px;
+  letter-spacing: 1%;
+  text-align: left;
 }
 
-.discount{
-    color: rgb(255, 56, 176);
-    font-family: Josefin Sans;
-    font-size: 13.89px;
-    font-weight: 400;
-    line-height: -1px;
-    letter-spacing: 0%;
-    text-align: left;
-    text-decoration-line: line-through;
+.discount {
+  color: rgb(255, 56, 176);
+  font-family: Josefin Sans;
+  font-size: 13.89px;
+  font-weight: 400;
+  line-height: -1px;
+  letter-spacing: 0%;
+  text-align: left;
+  text-decoration-line: line-through;
 }
