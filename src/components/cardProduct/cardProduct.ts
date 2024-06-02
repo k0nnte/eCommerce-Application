@@ -4,7 +4,7 @@ import './cardProduct.scss';
 const CLASS = {
   wrapper: ['wrapper_card'],
   image: ['img_card'],
-  zag: ['zagolov_card'],
+  title: ['title_card'],
   description: ['description_card'],
   price: ['price'],
 };
@@ -14,7 +14,7 @@ export default class Card {
 
   private wrapper_Card: HTMLElement;
 
-  private zag: HTMLElement;
+  private title: HTMLElement;
 
   private description: HTMLElement;
 
@@ -24,7 +24,7 @@ export default class Card {
 
   constructor(
     urlImg: string,
-    zag: string,
+    title: string,
     description: string,
     price: string,
     discount?: string,
@@ -34,25 +34,25 @@ export default class Card {
       src: urlImg,
       alt: 'catalogImg',
     }) as HTMLImageElement;
-    this.zag = createComponent('h2', CLASS.zag, {});
+    this.title = createComponent('h2', CLASS.title, {});
     this.description = createComponent('p', CLASS.description, {});
     this.price = createComponent('p', CLASS.price, {});
     this.discount = createComponent('p', CLASS.price, {});
-    this.render(zag, description, price, discount);
+    this.render(title, description, price, discount);
   }
 
   private render(
-    zag: string,
+    title: string,
     description: string,
     price: string,
     discount?: string,
   ) {
-    this.zag.innerText = zag;
+    this.title.innerText = title;
     this.description.innerText = description;
     this.price.innerText = price;
     this.wrapper_Card.append(
       this.image,
-      this.zag,
+      this.title,
       this.description,
       this.price,
     );
