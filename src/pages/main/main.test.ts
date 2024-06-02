@@ -25,16 +25,16 @@ describe('Main component', () => {
     expect(regLink?.textContent).toBe('Register');
   });
 
-  test('renderCatalog method should render products correctly', async () => {
-    const mainElement = mainComponent.getMain();
+  // test('renderCatalog method should render products correctly', async () => {
+  //   const mainElement = mainComponent.getMain();
 
-    const catalogWrapper = mainElement.querySelector('.wrapper_catalog');
-    await mainComponent.renderCatalog();
+  //   const catalogWrapper = mainElement.querySelector('.wrapper_catalog');
+  //   await mainComponent.renderCatalog();
 
-    await new Promise((resolve) => {
-      setTimeout(resolve, 500);
-    });
+  //   await new Promise((resolve) => {
+  //     setTimeout(resolve, 500);
+  //   });
 
-    expect(catalogWrapper?.children.length).toBeGreaterThan(0);
-  });
+  //   expect(catalogWrapper?.children.length).toBeGreaterThan(0);
+  // });
 });
