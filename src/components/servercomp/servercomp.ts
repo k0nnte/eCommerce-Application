@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-console */
 import { apiRoot } from '@/sdk/builder';
 import Cookies from 'js-cookie';
@@ -6,6 +7,7 @@ import { Env } from '@/sdk/envar';
 import {
   ClientResponse,
   CustomerSignInResult,
+  Product,
   ProductPagedQueryResponse,
   ProductProjectionPagedSearchResponse,
 } from '@commercetools/platform-sdk';
@@ -161,22 +163,42 @@ async function sortPriceSmall(price: number) {
     .execute();
 }
 
+function getvalueCardProduct(data: Product, wrapper: HTMLElement) {
+  wrapper.innerHTML = ``;
+  const result = data.masterData.current;
+  const imgUrl = result.masterVariant.images![0].url;
+  const name = result.name['en-US'];
+  const bref = result.masterVariant.attributes![0].value['en-US'];
+  const price = `${result.masterVariant.prices![2].value.centAmount / 100} ${result.masterVariant.prices![2].value.currencyCode}`;
+  let discount;
+  const disc = result.masterVariant.prices![2].discounted?.value.centAmount;
+  if (typeof disc === 'number') {
+    discount = `${(disc / 100).toFixed(2)} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
+  }
+  wrapper.append(new Card(imgUrl, name, bref, price, discount).getCard());
+  wrapper.classList.add('oneCard');
+}
+
 function addCard(
   data:
     | ProductPagedQueryResponse
     | ClientResponse<ProductProjectionPagedSearchResponse>,
   wrapper: HTMLElement,
 ) {
-  // eslint-disable-next-line no-param-reassign
   wrapper.innerHTML = ``;
+  wrapper.classList.remove('oneCard');
   if ('results' in data) {
     for (let i = 0; i < data.results.length; i += 1) {
       const result = data.results[i].masterData.current;
       const imgUrl = result.masterVariant.images![0].url;
       const name = result.name['en-US'];
       const bref = result.masterVariant.attributes![0].value['en-US'];
-      const price = `${result.masterVariant.prices![2].value.centAmount} ${result.masterVariant.prices![2].value.currencyCode}`;
-      const discount = `${result.masterVariant.prices![2].discounted?.value.centAmount} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
+      const price = `${result.masterVariant.prices![2].value.centAmount / 100} ${result.masterVariant.prices![2].value.currencyCode}`;
+      let discount;
+      const disc = result.masterVariant.prices![2].discounted?.value.centAmount;
+      if (typeof disc === 'number') {
+        discount = `${(disc / 100).toFixed(2)} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
+      }
 
       wrapper.append(new Card(imgUrl, name, bref, price, discount).getCard());
     }
@@ -186,8 +208,12 @@ function addCard(
       const imgUrl = result.masterVariant.images![0].url;
       const name = result.name['en-US'];
       const bref = result.masterVariant.attributes![0].value['en-US'];
-      const price = `${result.masterVariant.prices![2].value.centAmount} ${result.masterVariant.prices![2].value.currencyCode}`;
-      const discount = `${result.masterVariant.prices![2].discounted?.value.centAmount} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
+      const price = `${result.masterVariant.prices![2].value.centAmount / 100} ${result.masterVariant.prices![2].value.currencyCode}`;
+      let discount;
+      const disc = result.masterVariant.prices![2].discounted?.value.centAmount;
+      if (typeof disc === 'number') {
+        discount = `${(disc / 100).toFixed(2)} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
+      }
       wrapper.append(new Card(imgUrl, name, bref, price, discount).getCard());
     }
   }
@@ -235,7 +261,6 @@ async function sortPriceHigh(price: number) {
 
 async function getProd(key: string) {
   const response = await apiRoot.products().withKey({ key }).get().execute();
-
   return response.body;
 }
 
@@ -252,4 +277,5 @@ export {
   sortCategory,
   sortPriceHigh,
   getProd,
+  getvalueCardProduct,
 };

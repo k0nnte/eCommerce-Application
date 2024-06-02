@@ -2,6 +2,7 @@ import type { Config } from 'jest';
 
 const jestConfig: Config = {
   preset: 'ts-jest',
+  verbose: true,
   testEnvironment: 'jsdom',
   transform: {
     '^.+\\.ts$': 'ts-jest',
@@ -14,10 +15,10 @@ const jestConfig: Config = {
   collectCoverage: true,
   coverageThreshold: {
     global: {
-      statements: 25,
-      branches: 25,
-      functions: 25,
-      lines: 25,
+      statements: 30,
+      branches: 30,
+      functions: 30,
+      lines: 30,
     },
   },
 };
