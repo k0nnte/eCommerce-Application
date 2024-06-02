@@ -149,16 +149,14 @@ export default class Profile {
               dateOfBirthField?.setAttribute('value', dateOfBirth);
             }
 
-            const inputFields = document.querySelectorAll('input');
+            const inputFields = document.querySelectorAll(
+              '.profile__wrapper input, .profile__wrapper select',
+            );
             inputFields.forEach((inputField) => {
-              const currentInputField = inputField as HTMLInputElement;
-              currentInputField.disabled = true;
-            });
-
-            const selectFields = document.querySelectorAll('select');
-            selectFields.forEach((selectField) => {
-              const currentSelectField = selectField as HTMLSelectElement;
-              currentSelectField.disabled = true;
+              const currentField = inputField as
+                | HTMLInputElement
+                | HTMLSelectElement;
+              currentField.disabled = true;
             });
           }
         })
