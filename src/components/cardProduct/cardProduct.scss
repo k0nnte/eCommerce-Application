@@ -1,3 +1,4 @@
+@import '../../app/variables.scss';
 .wrapper_card{
     height: auto;
     display: flex;
@@ -5,10 +6,9 @@
     justify-content: center;
     align-items: center;
     gap: 20px;
-    border: 2px solid black;
+    border: $border;
     border-radius: 10px;
     padding: 15px;
-    margin-bottom: 20px;
     cursor: pointer;
     transition: all 1s ease;
 }
@@ -29,8 +29,8 @@
 .zagolov_card{
     color: rgb(13, 19, 78);
     font-family: Josefin Sans;
-    font-size: 36px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 700;
     line-height: -1px;
     letter-spacing: 0%;
     text-align: center;

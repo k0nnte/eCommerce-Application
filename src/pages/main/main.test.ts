@@ -18,7 +18,7 @@ describe('Main component', () => {
     expect(navElement).not.toBeNull();
 
     const homeLink = mainElement.querySelector('.home-link');
-    expect(homeLink?.textContent).toBe('Home 🏠');
+    expect(homeLink?.textContent).toBe('Home');
 
     const loginLink = mainElement.querySelector('.login-link');
     expect(loginLink?.textContent).toBe('Login');

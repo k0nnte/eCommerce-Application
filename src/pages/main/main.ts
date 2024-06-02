@@ -60,7 +60,7 @@ export default class Main {
   }
 
   render() {
-    this.homeLink.textContent = 'Home 🏠';
+    this.homeLink.textContent = 'Home';
     this.homeLink.setAttribute('href', '');
     this.homeLink.addEventListener('click', (event: MouseEvent) => {
       event.preventDefault();

@@ -169,8 +169,12 @@ function getvalueCardProduct(data: Product, wrapper: HTMLElement) {
   const imgUrl = result.masterVariant.images![0].url;
   const name = result.name['en-US'];
   const bref = result.masterVariant.attributes![0].value['en-US'];
-  const price = `${result.masterVariant.prices![2].value.centAmount} ${result.masterVariant.prices![2].value.currencyCode}`;
-  const discount = `${result.masterVariant.prices![2].discounted?.value.centAmount} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
+  const price = `${result.masterVariant.prices![2].value.centAmount / 100} ${result.masterVariant.prices![2].value.currencyCode}`;
+  let discount;
+  const disc = result.masterVariant.prices![2].discounted?.value.centAmount;
+  if (typeof disc === 'number') {
+    discount = `${(disc / 100).toFixed(2)} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
+  }
   wrapper.append(new Card(imgUrl, name, bref, price, discount).getCard());
   wrapper.classList.add('oneCard');
 }
@@ -189,8 +193,12 @@ function addCard(
       const imgUrl = result.masterVariant.images![0].url;
       const name = result.name['en-US'];
       const bref = result.masterVariant.attributes![0].value['en-US'];
-      const price = `${result.masterVariant.prices![2].value.centAmount} ${result.masterVariant.prices![2].value.currencyCode}`;
-      const discount = `${result.masterVariant.prices![2].discounted?.value.centAmount} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
+      const price = `${result.masterVariant.prices![2].value.centAmount / 100} ${result.masterVariant.prices![2].value.currencyCode}`;
+      let discount;
+      const disc = result.masterVariant.prices![2].discounted?.value.centAmount;
+      if (typeof disc === 'number') {
+        discount = `${(disc / 100).toFixed(2)} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
+      }
 
       wrapper.append(new Card(imgUrl, name, bref, price, discount).getCard());
     }
@@ -200,8 +208,12 @@ function addCard(
       const imgUrl = result.masterVariant.images![0].url;
       const name = result.name['en-US'];
       const bref = result.masterVariant.attributes![0].value['en-US'];
-      const price = `${result.masterVariant.prices![2].value.centAmount} ${result.masterVariant.prices![2].value.currencyCode}`;
-      const discount = `${result.masterVariant.prices![2].discounted?.value.centAmount} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
+      const price = `${result.masterVariant.prices![2].value.centAmount / 100} ${result.masterVariant.prices![2].value.currencyCode}`;
+      let discount;
+      const disc = result.masterVariant.prices![2].discounted?.value.centAmount;
+      if (typeof disc === 'number') {
+        discount = `${(disc / 100).toFixed(2)} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
+      }
       wrapper.append(new Card(imgUrl, name, bref, price, discount).getCard());
     }
   }
