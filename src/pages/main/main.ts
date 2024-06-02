@@ -9,7 +9,9 @@ import {
 } from '../../components/servercomp/servercomp';
 import Filter from '../../components/filter/filter';
 import Profile from '../profile/profile';
-import vector from '../../../public/files/Vector.svg';
+// eslint-disable-next-line import/order
+import vector from '../../../public/files/Vector.png';
+import createErrorPopup from '../../components/erorpop/erorpop';
 
 export default class Main {
   main: HTMLElement;
@@ -47,11 +49,11 @@ export default class Main {
     this.regLink = createComponent('a', ['main-links', 'reg-link'], {});
     this.profileLink = createComponent('a', ['main-links', 'profile-link'], {});
     this.wrapper_Catalog = createComponent('div', ['wrapper_catalog'], {});
-    this.search = new Filter(this.wrapper_Catalog).getFilter();
     this.searchName = createComponent('input', ['select_sech'], {});
     this.search_wrapper = createComponent('div', ['wrapper_searchs'], {});
     this.btnSech = createComponent('button', ['btn_sech'], {});
     this.btmImg = createComponent('img', [], {});
+    this.search = new Filter(this.wrapper_Catalog, this.searchName).getFilter();
 
     this.render();
     this.renderCatalog();
@@ -138,18 +140,15 @@ export default class Main {
   addListnerBtn() {
     this.btnSech.addEventListener('click', () => {
       const { value } = this.searchName as HTMLInputElement;
+      if (value.trim() === ``) return;
       const reques = value.toLowerCase().replace(/ /g, '-');
       const response = getProd(reques);
       response
         .then((data) => {
-          // eslint-disable-next-line no-console
-          console.log(data);
-
           getvalueCardProduct(data, this.wrapper_Catalog);
         })
         .catch((err) => {
-          // eslint-disable-next-line no-console
-          console.log(err);
+          createErrorPopup(err.body.message);
         });
     });
   }

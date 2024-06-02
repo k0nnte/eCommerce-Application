@@ -1,5 +1,7 @@
 import Main from './main';
 
+jest.mock('../../../public/files/Vector.png', () => 'mock-vector-image-path');
+
 describe('Main component', () => {
   let mainComponent: Main;
 
@@ -35,6 +37,26 @@ describe('Main component', () => {
       setTimeout(resolve, 500);
     });
 
+    expect(catalogWrapper?.children.length).toBeGreaterThan(0);
+  });
+
+  test('Search button should trigger product search', async () => {
+    const mainElement = mainComponent.getMain();
+    const searchInput = mainElement.querySelector(
+      '.select_sech',
+    ) as HTMLInputElement;
+    const searchButton = mainElement.querySelector(
+      '.btn_sech',
+    ) as HTMLButtonElement;
+
+    searchInput.value = 'Test Product';
+    searchButton.click();
+
+    await new Promise((resolve) => {
+      setTimeout(resolve, 500);
+    });
+
+    const catalogWrapper = mainElement.querySelector('.wrapper_catalog');
     expect(catalogWrapper?.children.length).toBeGreaterThan(0);
   });
 });

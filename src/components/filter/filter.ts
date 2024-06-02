@@ -43,7 +43,10 @@ export default class Filter {
 
   btnReset: HTMLElement;
 
-  constructor(head: HTMLElement) {
+  header: HTMLElement;
+
+  constructor(head: HTMLElement, header: HTMLElement) {
+    this.header = header;
     this.head = head;
     this.wrapper = createComponent('div', CLASS.warper, {});
     this.search = createComponent('input', CLASS.input, {});
@@ -167,6 +170,8 @@ export default class Filter {
     });
     this.btnReset.addEventListener('click', () => {
       const response = getAllProduct();
+      (this.header as HTMLInputElement).value = ``;
+      (this.price as HTMLInputElement).value = ``;
       response.then((data) => {
         addCard(data, this.head);
       });
