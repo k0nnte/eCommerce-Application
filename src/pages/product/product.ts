@@ -35,6 +35,8 @@ export default class Product {
 
   swiperContainer: HTMLElement;
 
+  currentModal: HTMLElement | null = null;
+
   constructor(
     key: string,
     title: string = '',
@@ -120,8 +122,7 @@ export default class Product {
       this.swiperContainer.appendChild(prevButton);
       this.swiperContainer.appendChild(pagination);
 
-      // eslint-disable-next-line no-new
-      new Swiper(this.swiperContainer, {
+      const swiper = new Swiper(this.swiperContainer, {
         modules: [Navigation, Pagination],
         navigation: {
           nextEl: '.swiper-button-next',
@@ -136,7 +137,13 @@ export default class Product {
         centeredSlides: true,
         slidesPerView: 1,
         watchOverflow: true,
+        on: {
+          init: () => {
+            this.addClickHandlersToImages();
+          },
+        },
       });
+      swiper.init();
     } else {
       // eslint-disable-next-line no-new
       new Swiper(this.swiperContainer, {
@@ -145,6 +152,58 @@ export default class Product {
         centeredSlides: true,
         slidesPerView: 1,
       });
+    }
+  }
+
+  addClickHandlersToImages() {
+    this.swiperContainer.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement;
+      if (target && target.closest('.swiper-slide')) {
+        const slide = target.closest('.swiper-slide');
+        if (slide) {
+          const img = slide.querySelector('img');
+          if (img) {
+            const imageUrl = (img as HTMLImageElement).src;
+            if (imageUrl) {
+              this.openModal(imageUrl);
+            }
+          }
+        }
+      }
+    });
+  }
+
+  openModal(imageUrl: string) {
+    const modal = createComponent('div', ['product-modal'], {});
+    const modalContent = createComponent('div', ['modal-content'], {});
+    const closeButton = createComponent('span', ['close-button'], {});
+    closeButton.innerHTML = '&times;';
+    closeButton.onclick = () => this.closeModal();
+
+    const modalImage = createComponent('img', ['modal-image'], {
+      src: imageUrl,
+      alt: 'Enlarged Product Image',
+    }) as HTMLImageElement;
+
+    modalContent.appendChild(closeButton);
+    modalContent.appendChild(modalImage);
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+
+    this.currentModal = modal;
+    modal.style.display = 'block';
+    modal.onclick = (event) => {
+      if (event.target === modal) {
+        this.closeModal();
+      }
+    };
+  }
+
+  closeModal() {
+    if (this.currentModal) {
+      this.currentModal.style.display = 'none';
+      this.currentModal.remove();
+      this.currentModal = null;
     }
   }
 
