@@ -53,7 +53,7 @@ describe('Main component', () => {
     searchButton.click();
 
     await new Promise((resolve) => {
-      setTimeout(resolve, 500);
+      setTimeout(resolve, 1000);
     });
 
     const catalogWrapper = mainElement.querySelector('.wrapper_catalog');

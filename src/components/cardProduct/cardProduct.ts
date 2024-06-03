@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import createComponent from '../components';
 import './cardProduct.scss';
 
@@ -22,13 +23,17 @@ export default class Card {
 
   discount: HTMLElement;
 
+  key: string;
+
   constructor(
     urlImg: string,
     title: string,
     description: string,
     price: string,
+    key: string,
     discount?: string,
   ) {
+    this.key = key;
     this.wrapper_Card = createComponent('div', CLASS.wrapper, {});
     this.image = createComponent('img', CLASS.image, {
       src: urlImg,
@@ -39,6 +44,7 @@ export default class Card {
     this.price = createComponent('p', CLASS.price, {});
     this.discount = createComponent('p', CLASS.price, {});
     this.render(title, description, price, discount);
+    this.addListner();
   }
 
   private render(
@@ -50,6 +56,7 @@ export default class Card {
     this.title.innerText = title;
     this.description.innerText = description;
     this.price.innerText = price;
+
     this.wrapper_Card.append(
       this.image,
       this.title,
@@ -65,5 +72,12 @@ export default class Card {
 
   getCard() {
     return this.wrapper_Card;
+  }
+
+  addListner() {
+    this.wrapper_Card.addEventListener('click', () => {
+      window.history.pushState({}, '', `/${this.key}`);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
   }
 }
