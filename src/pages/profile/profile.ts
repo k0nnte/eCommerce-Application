@@ -6,7 +6,9 @@ import createComponent from '@/components/components';
 import { fetchCustomerData } from '@/components/servercomp/servercomp';
 import showModal from '@/components/modal/modal';
 import { apiRoot } from '@/sdk/builder';
+import { MODAL_MESSAGE } from '../registration/constants/constants';
 import { FieldConfig } from '../registration/types/interfaces';
+import ValidationUtils from '../../utils/validation/validationUtils';
 
 export default class Profile {
   private profile: HTMLElement;
@@ -111,7 +113,7 @@ export default class Profile {
     Profile.populateProfileForm();
   }
 
-  static async updateCustomerNameAndEmail(
+  static async updateGeneralInfo(
     customerId: string,
     newFirstName: string,
     newLastName: string,
@@ -148,13 +150,13 @@ export default class Profile {
           },
         })
         .execute();
-      showModal('Congratulations! Your changes are saved!');
+      showModal(MODAL_MESSAGE.SAVED);
       return response.body;
     } catch (error) {
       if (error instanceof Error) {
-        showModal(`${error.message} Please, enter another email address`);
+        showModal(`${error.message} ${MODAL_MESSAGE.NOT_SAVED}`);
       } else {
-        showModal('An error occurred while updating customer information.');
+        showModal(MODAL_MESSAGE.UNKNOWN);
       }
       return null;
     }
@@ -198,43 +200,114 @@ export default class Profile {
       saveButton.addEventListener('click', async (event) => {
         event.preventDefault();
 
-        const firstNameField = document.getElementById(
-          'first-name-info',
-        ) as HTMLInputElement;
-        const lastNameField = document.getElementById(
-          'last-name-info',
-        ) as HTMLInputElement;
-        const birthDateField = document.getElementById(
-          'birth-date-info',
-        ) as HTMLInputElement;
-        const emailField = document.getElementById(
-          'email-info',
-        ) as HTMLInputElement;
+        const formContainer = document.querySelector('.profile__form');
+        const allInputs = formContainer?.querySelectorAll('input, select');
 
-        const newFirstName = firstNameField.value;
-        const newLastName = lastNameField.value;
-        const newEmail = emailField.value;
-        const newDateOfBirth = birthDateField.value;
+        let hasError = false;
 
-        try {
-          await Profile.updateCustomerNameAndEmail(
-            customerId,
-            newFirstName,
-            newLastName,
-            newEmail,
-            newDateOfBirth,
-          );
+        if (allInputs) {
+          allInputs.forEach((input) => {
+            if (input.classList.contains('error')) {
+              hasError = true;
+            }
+          });
+        }
 
-          firstNameField.disabled = true;
-          lastNameField.disabled = true;
-          birthDateField.disabled = true;
-          emailField.disabled = true;
+        if (!hasError) {
+          const firstNameField = document.getElementById(
+            'first-name-info',
+          ) as HTMLInputElement;
+          const lastNameField = document.getElementById(
+            'last-name-info',
+          ) as HTMLInputElement;
+          const birthDateField = document.getElementById(
+            'birth-date-info',
+          ) as HTMLInputElement;
+          const emailField = document.getElementById(
+            'email-info',
+          ) as HTMLInputElement;
 
-          editButton?.classList.remove('btn-hidden');
-          saveButton.classList.add('btn-hidden');
-        } catch (error) {
-          if (error instanceof Error) {
-            showModal(error.message);
+          if (
+            Profile.validateInputs(
+              firstNameField,
+              lastNameField,
+              birthDateField,
+              emailField,
+            )
+          ) {
+            const newFirstName = firstNameField.value;
+            const newLastName = lastNameField.value;
+            const newEmail = emailField.value;
+            const newDateOfBirth = birthDateField.value;
+
+            try {
+              await Profile.updateGeneralInfo(
+                customerId,
+                newFirstName,
+                newLastName,
+                newEmail,
+                newDateOfBirth,
+              );
+
+              firstNameField.disabled = true;
+              lastNameField.disabled = true;
+              birthDateField.disabled = true;
+              emailField.disabled = true;
+
+              firstNameField.classList.remove('correct');
+              lastNameField.classList.remove('correct');
+              birthDateField.classList.remove('correct');
+              emailField.classList.remove('correct');
+
+              editButton?.classList.remove('btn-hidden');
+              saveButton.classList.add('btn-hidden');
+            } catch (error) {
+              if (error instanceof Error) {
+                showModal(error.message);
+              }
+            }
+          }
+        } else {
+          showModal(MODAL_MESSAGE.ERROR);
+        }
+      });
+    }
+  }
+
+  static validateInputs(
+    firstNameField: HTMLInputElement,
+    lastNameField: HTMLInputElement,
+    birthDateField: HTMLInputElement,
+    emailField: HTMLInputElement,
+  ) {
+    ValidationUtils.validateName(firstNameField);
+    ValidationUtils.validateName(lastNameField);
+    ValidationUtils.validateDateOfBirth(birthDateField);
+    ValidationUtils.validateEmail(emailField);
+
+    Profile.checkFormValidity();
+
+    return ValidationUtils.isFormValid;
+  }
+
+  static checkFormValidity() {
+    const formContainer = document.querySelector('.registration__form');
+    const allInputs = formContainer?.querySelectorAll('input, select');
+
+    ValidationUtils.isFormValid = true;
+
+    if (allInputs) {
+      allInputs.forEach((input) => {
+        if (
+          input instanceof HTMLInputElement ||
+          input instanceof HTMLSelectElement
+        ) {
+          const isFieldValid =
+            input.value.trim() !== '' && !input.classList.contains('error');
+
+          if (!isFieldValid) {
+            input.classList.add('error');
+            ValidationUtils.isFormValid = false;
           }
         }
       });
@@ -316,7 +389,7 @@ export default class Profile {
         inputType: 'text',
         placeholder: '',
         id: 'first-name-info',
-        validationFunction: Profile.dummyValidationFunction,
+        validationFunction: ValidationUtils.validateName,
       },
       {
         label: 'Last name',
@@ -324,7 +397,7 @@ export default class Profile {
         inputType: 'text',
         placeholder: '',
         id: 'last-name-info',
-        validationFunction: Profile.dummyValidationFunction,
+        validationFunction: ValidationUtils.validateName,
       },
       {
         label: 'Date of Birth',
@@ -332,7 +405,7 @@ export default class Profile {
         inputType: 'date',
         placeholder: '',
         id: 'birth-date-info',
-        validationFunction: Profile.dummyValidationFunction,
+        validationFunction: ValidationUtils.validateDateOfBirth,
       },
       {
         label: 'E-mail',
@@ -340,7 +413,7 @@ export default class Profile {
         inputType: 'text',
         placeholder: '',
         id: 'email-info',
-        validationFunction: Profile.dummyValidationFunction,
+        validationFunction: ValidationUtils.validateEmail,
       },
       {
         label: 'Street',
@@ -435,6 +508,14 @@ export default class Profile {
 
     inputContainer.append(label);
     inputContainer.append(input);
+
+    input.addEventListener('input', () => {
+      fieldConfig.validationFunction(input);
+    });
+
+    input.addEventListener('blur', () => {
+      fieldConfig.validationFunction(input);
+    });
 
     return inputContainer;
   }
