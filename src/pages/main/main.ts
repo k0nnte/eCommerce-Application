@@ -120,7 +120,7 @@ export default class Main {
     (this.btmImg as HTMLImageElement).src = vector;
     this.btnSech.append(this.btmImg);
     this.main.append(this.search_wrapper);
-    this.addListnerBtn();
+    this.addListenerBtn();
   }
 
   renderCatalog() {
@@ -135,12 +135,12 @@ export default class Main {
     return this.wrap_main;
   }
 
-  addListnerBtn() {
+  addListenerBtn() {
     this.btnSech.addEventListener('click', () => {
       const { value } = this.searchName as HTMLInputElement;
       if (value.trim() === ``) return;
-      const reques = value.toLowerCase().replace(/ /g, '-');
-      const response = getProd(reques);
+      const request = value.toLowerCase().replace(/ /g, '-');
+      const response = getProd(request);
       response
         .then((data) => {
           getvalueCardProduct(data, this.wrapper_Catalog);
