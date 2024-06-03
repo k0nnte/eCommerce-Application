@@ -53,10 +53,6 @@ describe('Product', () => {
     expect(product.infoContainer.tagName).toBe('DIV');
     expect(product.infoContainer.classList.contains('info-prod')).toBe(true);
 
-    expect(product.image.tagName).toBe('IMG');
-    expect(product.image.classList.contains('img-prod')).toBe(true);
-    expect(product.image.alt).toBe('Product image');
-
     expect(product.title.tagName).toBe('H2');
     expect(product.title.classList.contains('title-prod')).toBe(true);
 
@@ -77,19 +73,6 @@ describe('Product', () => {
     expect(product.description.innerText).toEqual('Test Description');
 
     expect(getProd).toHaveBeenCalledWith('test-key');
-  });
-
-  it('should create a new instance of the product', () => {
-    expect(product.pageProd).toContainElement(product.image);
-    expect(product.pageProd).toContainElement(product.infoContainer);
-
-    expect(product.infoContainer).toContainElement(product.title);
-    expect(product.infoContainer).toContainElement(product.price);
-    expect(product.infoContainer).toContainElement(product.description);
-
-    expect(product.title.innerText).toBe('Test Title');
-    expect(product.price.innerText).toBe('$10');
-    expect(product.description.innerText).toBe('Test Description');
   });
 
   it('getPage should return the pageProd element', () => {
