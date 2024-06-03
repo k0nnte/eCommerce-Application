@@ -1,3 +1,4 @@
+import Product from '@/pages/product/product';
 import { router } from './routerType';
 
 export default class Router {
@@ -25,8 +26,9 @@ export default class Router {
       this.wrapper.innerHTML = '';
       this.wrapper.append(routPath);
     } else {
+      const road = path.split('/').join('');
       this.wrapper.innerHTML = '';
-      this.wrapper.append(this.routers['/err']);
+      this.wrapper.append(new Product(road).getPage());
     }
   }
 }

@@ -73,9 +73,9 @@ export default class Product {
   }
 
   async renderProduct(key: string) {
-    const response = getProd(key);
-    response.then((data) => {
-      const product = data.masterData.current;
+    try {
+      const response = await getProd(key);
+      const product = response.masterData.current;
       const { images = [] } = product.masterVariant;
       const title = product.name['en-US'];
       let discountPrice: number | undefined;
@@ -94,7 +94,10 @@ export default class Product {
       this.price.innerText = `$${price}`;
       this.description.innerText = description;
       this.createImageSlider(images);
-    });
+    } catch (err) {
+      window.history.pushState({}, '', '/err');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
   }
 
   createImageSlider(images: Array<{ url: string }>) {

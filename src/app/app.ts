@@ -8,7 +8,6 @@ import Login from '@/pages/login/login';
 import RegistrationForm from '@/pages/registration/registration';
 import Profile from '@/pages/profile/profile';
 import { customerOn } from '@/components/servercomp/servercomp';
-import Product from '@/pages/product/product';
 import { router } from '@/router/routerType';
 
 const CLASS = {
@@ -41,8 +40,6 @@ export default class App {
 
   headermain: Header;
 
-  product: Product | undefined;
-
   constructor() {
     this.headermain = new Header();
     this.header = this.headermain.getHeader();
@@ -53,22 +50,16 @@ export default class App {
     this.profile = new Profile().getWrap();
     this.err = new ErrorPage().getWrap();
     this.wrapper = createComponent('div', CLASS.wrapper, {});
-    this.product = new Product('indoor-jute-planter');
-    if (this.product) {
-      this.product.getProd();
-    }
     this.routing = new Router(this.createRoutes(), this.center);
   }
 
   createRoutes(): router {
-    const productPage = this.product?.getPage();
     return {
       '/': this.main,
       '/login': Login.createLoginForm(),
       '/err': this.err,
       '/register': this.register,
       '/profile': this.profile,
-      '/product': productPage as HTMLElement,
     };
   }
 

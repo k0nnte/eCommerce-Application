@@ -13,6 +13,7 @@ const jestConfig: Config = {
     '\\.(png|jpg|jpeg|gif|svg)$': 'identity-obj-proxy',
   },
   collectCoverage: true,
+  collectCoverageFrom: ['src/**/*.ts', '!**/node_modules/**'],
   coverageThreshold: {
     global: {
       statements: 30,
