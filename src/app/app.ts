@@ -40,8 +40,6 @@ export default class App {
 
   headermain: Header;
 
-  // product: Product | undefined;
-
   constructor() {
     this.headermain = new Header();
     this.header = this.headermain.getHeader();
