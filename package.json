@@ -47,7 +47,7 @@
     "sass": "^1.76.0",
     "sass-loader": "^14.2.1",
     "style-loader": "^4.0.0",
-    "ts-jest": "^29.1.2",
+    "ts-jest": "^29.1.4",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
@@ -63,6 +63,7 @@
     "@testing-library/dom": "^10.1.0",
     "@testing-library/jest-dom": "^6.4.5",
     "font-awesome": "^4.7.0",
-    "js-cookie": "^3.0.5"
+    "js-cookie": "^3.0.5",
+    "swiper": "^11.1.4"
   }
 }
