@@ -171,12 +171,14 @@ function getvalueCardProduct(data: Product, wrapper: HTMLElement) {
   const name = result.name['en-US'];
   const bref = result.masterVariant.attributes![0].value['en-US'];
   const price = `${result.masterVariant.prices![2].value.centAmount / 100} ${result.masterVariant.prices![2].value.currencyCode}`;
+  const key = data.key!;
+
   let discount;
   const disc = result.masterVariant.prices![2].discounted?.value.centAmount;
   if (typeof disc === 'number') {
     discount = `${(disc / 100).toFixed(2)} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
   }
-  wrapper.append(new Card(imgUrl, name, bref, price, discount).getCard());
+  wrapper.append(new Card(imgUrl, name, bref, price, key, discount).getCard());
   wrapper.classList.add('oneCard');
 }
 
@@ -195,13 +197,16 @@ function addCard(
       const name = result.name['en-US'];
       const bref = result.masterVariant.attributes![0].value['en-US'];
       const price = `${result.masterVariant.prices![2].value.centAmount / 100} ${result.masterVariant.prices![2].value.currencyCode}`;
+      const key = data.results[i].key!;
       let discount;
       const disc = result.masterVariant.prices![2].discounted?.value.centAmount;
       if (typeof disc === 'number') {
         discount = `${(disc / 100).toFixed(2)} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
       }
 
-      wrapper.append(new Card(imgUrl, name, bref, price, discount).getCard());
+      wrapper.append(
+        new Card(imgUrl, name, bref, price, key, discount).getCard(),
+      );
     }
   } else {
     for (let i = 0; i < data.body.results.length; i += 1) {
@@ -210,12 +215,15 @@ function addCard(
       const name = result.name['en-US'];
       const bref = result.masterVariant.attributes![0].value['en-US'];
       const price = `${result.masterVariant.prices![2].value.centAmount / 100} ${result.masterVariant.prices![2].value.currencyCode}`;
+      const key = result.key!;
       let discount;
       const disc = result.masterVariant.prices![2].discounted?.value.centAmount;
       if (typeof disc === 'number') {
         discount = `${(disc / 100).toFixed(2)} ${result.masterVariant.prices![2].discounted?.value.currencyCode}`;
       }
-      wrapper.append(new Card(imgUrl, name, bref, price, discount).getCard());
+      wrapper.append(
+        new Card(imgUrl, name, bref, price, key, discount).getCard(),
+      );
     }
   }
 }
