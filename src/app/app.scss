@@ -25,10 +25,15 @@ button {
     transform 0.1s,
     background-color 0.1s;
   border: none;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: darken($color-primary, 5%);
+  }
 
   &:active {
     transform: scale(0.99);
-    background-color: darken($color-primary, 5%);
+    background-color: darken($color-primary, 10%);
   }
 }
 
