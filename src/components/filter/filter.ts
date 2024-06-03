@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import createComponent from '../components';
-import createErrorPopup from '../erorpop/erorpop';
+import createModal from '../modal/modal';
 import {
   addCard,
   getAllCategories,
@@ -95,7 +95,7 @@ export default class Filter {
         }
       })
       .catch((err) => {
-        createErrorPopup(`error ${err}`);
+        createModal(`error ${err}`);
       });
   }
 

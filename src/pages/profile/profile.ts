@@ -4,7 +4,8 @@ import Cookies from 'js-cookie';
 import './profile.scss';
 import createComponent from '@/components/components';
 import { fetchCustomerData } from '@/components/servercomp/servercomp';
-import createErrorPopup from '@/components/erorpop/erorpop';
+import showModal from '@/components/modal/modal';
+import { apiRoot } from '@/sdk/builder';
 import { FieldConfig } from '../registration/types/interfaces';
 
 export default class Profile {
@@ -20,8 +21,7 @@ export default class Profile {
     const wrapper = createComponent('div', ['profile'], {});
     const title = createComponent('h2', ['page__title'], {});
     title.textContent = 'User Profile';
-
-    const formContainer = createComponent('form', ['page__form'], {});
+    const formContainer = createComponent('form', ['profile__form'], {});
     const generalInfoContainer = createComponent(
       'div',
       ['general-info', 'profile-page'],
@@ -74,17 +74,19 @@ export default class Profile {
       }
     });
 
-    const submitButton = createComponent('button', ['btn', 'btn-submit'], {
+    const editButton = createComponent('button', ['btn', 'btn-edit'], {
       type: 'submit',
     });
-    submitButton.textContent = 'Back To Home';
-
-    submitButton.addEventListener('click', (event) => {
-      event.preventDefault();
-
-      window.history.pushState({}, '', '/');
-      window.dispatchEvent(new PopStateEvent('popstate'));
-    });
+    editButton.textContent = 'Edit';
+    const saveButton = createComponent(
+      'button',
+      ['btn', 'btn-save', 'btn-hidden'],
+      {
+        type: 'submit',
+      },
+    );
+    saveButton.textContent = 'Save';
+    generalInfoContainer.append(editButton, saveButton);
 
     const mainLink = createComponent('a', ['link-main'], { href: '/' });
     mainLink.textContent = 'Back To Home';
@@ -102,11 +104,141 @@ export default class Profile {
       Profile.resetOnLogout();
     });
 
-    formContainer.append(generalInfoContainer, addressContainer, submitButton);
+    formContainer.append(generalInfoContainer, addressContainer);
     wrapper.append(title, formContainer, mainLink);
     profile.append(wrapper);
 
     Profile.populateProfileForm();
+  }
+
+  static async updateCustomerNameAndEmail(
+    customerId: string,
+    newFirstName: string,
+    newLastName: string,
+    newEmail: string,
+    newDateOfBirth: string,
+  ) {
+    try {
+      const customerData = await fetchCustomerData(customerId);
+
+      const response = await apiRoot
+        .customers()
+        .withId({ ID: customerId })
+        .post({
+          body: {
+            version: customerData.version,
+            actions: [
+              {
+                action: 'setFirstName',
+                firstName: newFirstName,
+              },
+              {
+                action: 'setLastName',
+                lastName: newLastName,
+              },
+              {
+                action: 'setDateOfBirth',
+                dateOfBirth: newDateOfBirth,
+              },
+              {
+                action: 'changeEmail',
+                email: newEmail,
+              },
+            ],
+          },
+        })
+        .execute();
+      showModal('Congratulations! Your changes are saved!');
+      return response.body;
+    } catch (error) {
+      if (error instanceof Error) {
+        showModal(`${error.message} Please, enter another email address`);
+      } else {
+        showModal('An error occurred while updating customer information.');
+      }
+      return null;
+    }
+  }
+
+  static enableInputs() {
+    const editButton = document.querySelector('.btn-edit');
+    const saveButton = document.querySelector('.btn-save');
+
+    if (editButton) {
+      editButton.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        const firstNameField = document.getElementById(
+          'first-name-info',
+        ) as HTMLInputElement;
+        const lastNameField = document.getElementById(
+          'last-name-info',
+        ) as HTMLInputElement;
+        const birthDateField = document.getElementById(
+          'birth-date-info',
+        ) as HTMLInputElement;
+        const email = document.getElementById('email-info') as HTMLInputElement;
+
+        firstNameField.disabled = false;
+        lastNameField.disabled = false;
+        birthDateField.disabled = false;
+        email.disabled = false;
+
+        editButton.classList.add('btn-hidden');
+        saveButton?.classList.remove('btn-hidden');
+      });
+    }
+  }
+
+  static saveInputs(customerId: string) {
+    const editButton = document.querySelector('.btn-edit');
+    const saveButton = document.querySelector('.btn-save');
+
+    if (saveButton) {
+      saveButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+
+        const firstNameField = document.getElementById(
+          'first-name-info',
+        ) as HTMLInputElement;
+        const lastNameField = document.getElementById(
+          'last-name-info',
+        ) as HTMLInputElement;
+        const birthDateField = document.getElementById(
+          'birth-date-info',
+        ) as HTMLInputElement;
+        const emailField = document.getElementById(
+          'email-info',
+        ) as HTMLInputElement;
+
+        const newFirstName = firstNameField.value;
+        const newLastName = lastNameField.value;
+        const newEmail = emailField.value;
+        const newDateOfBirth = birthDateField.value;
+
+        try {
+          await Profile.updateCustomerNameAndEmail(
+            customerId,
+            newFirstName,
+            newLastName,
+            newEmail,
+            newDateOfBirth,
+          );
+
+          firstNameField.disabled = true;
+          lastNameField.disabled = true;
+          birthDateField.disabled = true;
+          emailField.disabled = true;
+
+          editButton?.classList.remove('btn-hidden');
+          saveButton.classList.add('btn-hidden');
+        } catch (error) {
+          if (error instanceof Error) {
+            showModal(error.message);
+          }
+        }
+      });
+    }
   }
 
   static populateProfileForm() {
@@ -117,7 +249,7 @@ export default class Profile {
       fetchCustomerData(customerId)
         .then((fetchedCustomerData) => {
           if (fetchedCustomerData) {
-            const { firstName, lastName, dateOfBirth, addresses } =
+            const { firstName, lastName, dateOfBirth, email, addresses } =
               fetchedCustomerData;
 
             addresses.forEach((address, index) => {
@@ -137,16 +269,26 @@ export default class Profile {
               postalCodeField?.setAttribute('value', address.postalCode || '');
             });
 
-            if (firstName && lastName && dateOfBirth) {
-              const firstNameField = document.getElementById('first-name-info');
+            if (firstName && lastName && dateOfBirth && email) {
+              const firstNameField = document.getElementById(
+                'first-name-info',
+              ) as HTMLInputElement;
               firstNameField?.setAttribute('value', firstName);
 
-              const lastNameField = document.getElementById('last-name-info');
+              const lastNameField = document.getElementById(
+                'last-name-info',
+              ) as HTMLInputElement;
               lastNameField?.setAttribute('value', lastName);
 
-              const dateOfBirthField =
-                document.getElementById('birth-date-info');
+              const dateOfBirthField = document.getElementById(
+                'birth-date-info',
+              ) as HTMLInputElement;
               dateOfBirthField?.setAttribute('value', dateOfBirth);
+
+              const emailField = document.getElementById(
+                'email-info',
+              ) as HTMLInputElement;
+              emailField?.setAttribute('value', email);
             }
 
             const inputFields = document.querySelectorAll(
@@ -161,7 +303,7 @@ export default class Profile {
           }
         })
         .catch((error) => {
-          createErrorPopup(error.body.message);
+          showModal(error.body.message);
         });
     }
   }
@@ -190,6 +332,14 @@ export default class Profile {
         inputType: 'date',
         placeholder: '',
         id: 'birth-date-info',
+        validationFunction: Profile.dummyValidationFunction,
+      },
+      {
+        label: 'E-mail',
+        fieldType: 'input',
+        inputType: 'text',
+        placeholder: '',
+        id: 'email-info',
         validationFunction: Profile.dummyValidationFunction,
       },
       {
@@ -326,3 +476,12 @@ export default class Profile {
     return this.profile;
   }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const customerLog = Cookies.get('log');
+  if (customerLog) {
+    const customerId = atob(customerLog);
+    Profile.enableInputs();
+    Profile.saveInputs(customerId);
+  }
+});

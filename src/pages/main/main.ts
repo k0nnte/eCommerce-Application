@@ -9,9 +9,8 @@ import {
 } from '../../components/servercomp/servercomp';
 import Filter from '../../components/filter/filter';
 import Profile from '../profile/profile';
-// eslint-disable-next-line import/order
 import vector from '../../../public/files/Vector.png';
-import createErrorPopup from '../../components/erorpop/erorpop';
+import createModal from '../../components/modal/modal';
 
 export default class Main {
   main: HTMLElement;
@@ -49,9 +48,9 @@ export default class Main {
     this.regLink = createComponent('a', ['main-links', 'reg-link'], {});
     this.profileLink = createComponent('a', ['main-links', 'profile-link'], {});
     this.wrapper_Catalog = createComponent('div', ['wrapper_catalog'], {});
-    this.searchName = createComponent('input', ['select_sech'], {});
+    this.searchName = createComponent('input', ['select_search'], {});
     this.search_wrapper = createComponent('div', ['wrapper_searchs'], {});
-    this.btnSech = createComponent('button', ['btn_sech'], {});
+    this.btnSech = createComponent('button', ['btn_search'], {});
     this.btmImg = createComponent('img', [], {});
     this.search = new Filter(this.wrapper_Catalog, this.searchName).getFilter();
 
@@ -109,7 +108,6 @@ export default class Main {
     this.wrap_main.append(this.main);
     this.main.appendChild(this.nav);
 
-    this.nav.append(this.homeLink, this.loginLink, this.regLink);
     this.wrap_main.append(this.search);
     this.nav.append(
       this.homeLink,
@@ -148,7 +146,7 @@ export default class Main {
           getvalueCardProduct(data, this.wrapper_Catalog);
         })
         .catch((err) => {
-          createErrorPopup(err.body.message);
+          createModal(err.body.message);
         });
     });
   }

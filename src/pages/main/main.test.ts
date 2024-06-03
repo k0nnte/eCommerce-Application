@@ -43,10 +43,10 @@ describe('Main component', () => {
   test('Search button should trigger product search', async () => {
     const mainElement = mainComponent.getMain();
     const searchInput = mainElement.querySelector(
-      '.select_sech',
+      '.select_search',
     ) as HTMLInputElement;
     const searchButton = mainElement.querySelector(
-      '.btn_sech',
+      '.btn_search',
     ) as HTMLButtonElement;
 
     searchInput.value = 'Test Product';

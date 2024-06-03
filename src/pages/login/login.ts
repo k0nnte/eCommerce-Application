@@ -4,7 +4,7 @@ import {
   getToken,
   loginCustomer,
 } from '@/components/servercomp/servercomp';
-import createErrorPopup from '@/components/erorpop/erorpop';
+import showModal from '@/components/modal/modal';
 import createComponent from '@/components/components';
 import Header from '@/components/header/header';
 import Cookies from 'js-cookie';
@@ -90,7 +90,7 @@ export default class Login extends HTMLElement {
 
             customerOn(Login.SHeader);
           } else {
-            createErrorPopup(`${data.error!.message}`);
+            showModal(`${data.error!.message}`);
           }
         });
       }

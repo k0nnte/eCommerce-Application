@@ -72,7 +72,6 @@ describe('Profile', () => {
 
 describe('Profile', () => {
   let appContainer: HTMLElement | null;
-  let submitButton: HTMLElement | null;
   let mainLink: HTMLElement | null;
 
   beforeEach(() => {
@@ -86,7 +85,6 @@ describe('Profile', () => {
     appContainer = document.getElementById('app');
     Profile.renderProfileForm(appContainer as HTMLElement);
 
-    submitButton = appContainer!.querySelector('.btn-submit');
     mainLink = appContainer!.querySelector('.link-main');
   });
 
@@ -99,7 +97,12 @@ describe('Profile', () => {
   });
 
   it('should have a submit button of type "submit"', () => {
-    expect(submitButton?.getAttribute('type')).toBe('submit');
+    const submitButton = document.querySelector('.btn-edit');
+    expect(submitButton).not.toBeNull();
+
+    if (submitButton) {
+      expect(submitButton.getAttribute('type')).toBe('submit');
+    }
   });
 
   it('should navigate to the main link location on clicking the main link', () => {
@@ -134,5 +137,27 @@ describe('Profile', () => {
       expect(firstNameLabel).toBeTruthy();
       expect(firstNameLabel!.textContent).toBe('First Name');
     }, 1000);
+  });
+
+  it('should reset form fields on logout', () => {
+    Profile.resetOnLogout();
+
+    const firstNameField = appContainer!.querySelector(
+      '#first-name-info',
+    ) as HTMLInputElement;
+
+    expect(firstNameField.value).toBe('');
+  });
+
+  it('should render address container with shipping and billing address sections', () => {
+    const shippingAddressContainer = appContainer!.querySelector(
+      '.shipping-address-container',
+    );
+    const billingAddressContainer = appContainer!.querySelector(
+      '.billing-address-container',
+    );
+
+    expect(shippingAddressContainer).toBeTruthy();
+    expect(billingAddressContainer).toBeTruthy();
   });
 });

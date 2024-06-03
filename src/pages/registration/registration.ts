@@ -14,7 +14,7 @@ import { CustomerSignUp } from '@/components/servercomp/servercorp.interface';
 import createComponent from '../../components/components';
 import { FieldConfig } from './types/interfaces';
 import { CLASS_NAME, ERROR, MODAL_MESSAGE } from './constants/constants';
-import createErrorPopup from '../../components/erorpop/erorpop';
+import showModal from '../../components/modal/modal';
 
 export default class RegistrationForm {
   static isFormValid = false;
@@ -37,7 +37,7 @@ export default class RegistrationForm {
     const wrapper = createComponent('div', ['registration'], {});
     const title = createComponent('h2', ['page__title'], {});
     title.textContent = 'Registration';
-    const formContainer = createComponent('form', ['page__form'], {});
+    const formContainer = createComponent('form', ['registration__form'], {});
     const generalInfoContainer = createComponent('div', ['general-info'], {});
     const addressContainer = createComponent('div', ['addresses'], {});
     const titleInfo = createComponent('p', ['general-info-title'], {});
@@ -284,7 +284,7 @@ export default class RegistrationForm {
         window.history.pushState({}, '', '/');
         window.dispatchEvent(new PopStateEvent('popstate'));
       } else {
-        createErrorPopup(MODAL_MESSAGE.ERROR);
+        showModal(MODAL_MESSAGE.ERROR);
       }
     });
 
@@ -350,12 +350,12 @@ export default class RegistrationForm {
           getToken(body.email, body.password).then((tokenData) => {
             Cookies.set('token', btoa(tokenData.access_token));
             customerOn(this.Sheader);
-            createErrorPopup(MODAL_MESSAGE.CORRECT);
+            showModal(MODAL_MESSAGE.CORRECT);
           });
           return customerId;
         })
         .catch((error) => {
-          createErrorPopup(error.body.message);
+          showModal(error.body.message);
         });
     }
   }

@@ -16,7 +16,7 @@ const CLASS = {
 };
 
 const TEXT_ERR = '404 Not Found';
-const FULL_TEXT = `oops!  The page you requested was not found!`;
+const FULL_TEXT = `Oops!  The page you requested was not found!`;
 const TEXT_BTN = `Back To Home`;
 
 export default class ErrorPage {

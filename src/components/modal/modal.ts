@@ -1,16 +1,16 @@
 import createComponent from '../components';
-import './erorpop.scss';
+import './modal.scss';
 
 const CLASS = {
-  main: ['wrap_erpop'],
-  pop: ['err_pop'],
-  text: ['text_error'],
+  main: ['wrap_modal'],
+  pop: ['modal'],
+  text: ['text_modal'],
   btn: ['btn_continue'],
 };
 
 const TEXTBTN = 'Continue';
 
-export default function createErrorPopup(textIn: string): HTMLElement {
+export default function createModal(textIn: string): HTMLElement {
   const wrapper = createComponent('div', CLASS.main, {});
   const pop = createComponent('div', CLASS.pop, {});
   const text = createComponent('p', CLASS.text, {});

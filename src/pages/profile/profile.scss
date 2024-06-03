@@ -22,6 +22,16 @@
   text-align: center;
 }
 
+.profile__form {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+}
+
 .link-main {
   display: flex;
   gap: 1rem;
@@ -50,4 +60,8 @@
 .shipping-address-container.profile-page,
 .billing-address-container.profile-page {
   gap: 1rem;
+}
+
+.btn-hidden {
+  display: none;
 }
