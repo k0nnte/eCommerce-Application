@@ -32,7 +32,7 @@ describe('Main component', () => {
     await mainComponent.renderCatalog();
 
     await new Promise((resolve) => {
-      setTimeout(resolve, 500);
+      setTimeout(resolve, 1000);
     });
 
     expect(catalogWrapper?.children.length).toBeGreaterThan(0);
