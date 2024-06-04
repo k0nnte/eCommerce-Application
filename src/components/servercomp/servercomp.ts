@@ -284,6 +284,20 @@ async function getProd(key: string) {
   return response.body;
 }
 
+async function getgetProdByName(name: string) {
+  const response = await apiRoot
+    .productProjections()
+    .search()
+    .get({
+      queryArgs: {
+        'text.en-US': `{${name}}`,
+        staged: false,
+      },
+    })
+    .execute();
+  return response;
+}
+
 export {
   loginCustomer,
   customerOn,
@@ -299,4 +313,5 @@ export {
   getProd,
   getvalueCardProduct,
   sortByName,
+  getgetProdByName,
 };

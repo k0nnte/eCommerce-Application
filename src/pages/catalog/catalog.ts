@@ -4,8 +4,7 @@ import createModal from '@/components/modal/modal';
 import {
   addCard,
   getAllProduct,
-  getProd,
-  getvalueCardProduct,
+  getgetProdByName,
 } from '@/components/servercomp/servercomp';
 import vector from '../../../public/files/Vector.png';
 import './catalog.scss';
@@ -66,11 +65,10 @@ export default class Catalog {
     this.btnSech.addEventListener('click', () => {
       const { value } = this.searchName as HTMLInputElement;
       if (value.trim() === ``) return;
-      const request = value.toLowerCase().replace(/ /g, '-');
-      const response = getProd(request);
+      const response = getgetProdByName(value);
       response
         .then((data) => {
-          getvalueCardProduct(data, this.wrapper_Catalog);
+          addCard(data, this.wrapper_Catalog);
         })
         .catch((err) => {
           createModal(err.body.message);

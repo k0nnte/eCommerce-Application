@@ -1,12 +1,18 @@
-import { getAllProduct, getProd } from '@/components/servercomp/servercomp';
+import {
+  getAllProduct,
+  getgetProdByName,
+  addCard,
+} from '@/components/servercomp/servercomp';
 import createComponent from '@/components/components';
 import Filter from '@/components/filter/filter';
+import createModal from '@/components/modal/modal';
 import Catalog from './catalog';
 
 jest.mock('@/components/components');
 jest.mock('@/components/filter/filter');
 jest.mock('@/components/servercomp/servercomp');
 jest.mock('../../../public/files/Vector.png');
+jest.mock('@/components/modal/modal');
 
 describe('Catalog', () => {
   let catalog: Catalog;
@@ -58,9 +64,7 @@ describe('Catalog', () => {
     const mockData = [{ id: 1, name: 'Product 1' }];
     (getAllProduct as jest.Mock).mockResolvedValue(mockData); // Ensure mock returns a resolved promise
     const addCardMock = jest.fn();
-    jest.spyOn(catalog, 'renderCatalog').mockImplementationOnce(() => {
-      addCardMock(mockData, catalog.wrapper_Catalog);
-    });
+    (addCard as jest.Mock).mockImplementation(addCardMock);
 
     await catalog.renderCatalog();
 
@@ -69,49 +73,34 @@ describe('Catalog', () => {
   });
 
   it('should handle search button click correctly', async () => {
-    const mockData = { id: 1, name: 'Product 1' };
+    const mockData = [{ id: 1, name: 'Product 1' }];
     const value = 'Product';
-    (getProd as jest.Mock).mockResolvedValue(mockData);
+    (getgetProdByName as jest.Mock).mockResolvedValue(mockData);
     (catalog.searchName as HTMLInputElement).value = value;
-    const getCardProduct = jest.fn();
-    jest.spyOn(catalog, 'addListenerBtn').mockImplementationOnce(() => {
-      getCardProduct(mockData, catalog.wrapper_Catalog);
-    });
+    const addCardMock = jest.fn();
+    (addCard as jest.Mock).mockImplementation(addCardMock);
 
     catalog.addListenerBtn();
     catalog.btnSech.click();
 
-    expect(getProd).toHaveBeenCalledWith(
-      value.toLowerCase().replace(/ /g, '-'),
-    );
-    await expect(
-      getProd(value.toLowerCase().replace(/ /g, '-')),
-    ).resolves.toEqual(mockData);
-    expect(getCardProduct).toHaveBeenCalledWith(
-      mockData,
-      catalog.wrapper_Catalog,
-    );
+    expect(getgetProdByName).toHaveBeenCalledWith(value);
+    await expect(getgetProdByName(value)).resolves.toEqual(mockData);
+    expect(addCardMock).toHaveBeenCalledWith(mockData, catalog.wrapper_Catalog);
   });
 
   it('should handle search button click error correctly', async () => {
     const Error = { body: { message: 'Error message' } };
     const value = 'Nonexistent Product';
-    (getProd as jest.Mock).mockRejectedValue(Error);
+    (getgetProdByName as jest.Mock).mockRejectedValue(Error);
     (catalog.searchName as HTMLInputElement).value = value;
-    const createModall = jest.fn();
-    jest.spyOn(catalog, 'addListenerBtn').mockImplementationOnce(() => {
-      createModall(Error.body.message);
-    });
+    const createModalMock = jest.fn();
+    (createModal as jest.Mock).mockImplementation(createModalMock);
 
     catalog.addListenerBtn();
     catalog.btnSech.click();
 
-    expect(getProd).toHaveBeenCalledWith(
-      value.toLowerCase().replace(/ /g, '-'),
-    );
-    await expect(
-      getProd(value.toLowerCase().replace(/ /g, '-')),
-    ).rejects.toEqual(Error);
-    expect(createModall).toHaveBeenCalledWith(Error.body.message);
+    expect(getgetProdByName).toHaveBeenCalledWith(value);
+    await expect(getgetProdByName(value)).rejects.toEqual(Error);
+    expect(createModalMock).toHaveBeenCalledWith(Error.body.message);
   });
 });
