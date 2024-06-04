@@ -117,7 +117,9 @@ export default class Product {
 
     this.swiperContainer.appendChild(swiperWrapper);
 
-    if (images.length > 1) {
+    if (images.length === 1) {
+      this.addClickHandlerToSingleImage(images[0].url);
+    } else {
       const nextButton = createComponent('div', ['swiper-button-next'], {});
       const prevButton = createComponent('div', ['swiper-button-prev'], {});
       const pagination = createComponent('div', ['swiper-pagination'], {});
@@ -147,14 +149,14 @@ export default class Product {
         },
       });
       swiper.init();
-    } else {
-      // eslint-disable-next-line no-new
-      new Swiper(this.swiperContainer, {
-        loop: false,
-        spaceBetween: 30,
-        centeredSlides: true,
-        slidesPerView: 1,
-      });
+    }
+  }
+
+  addClickHandlerToSingleImage(imageUrl: string) {
+    const singleImage = this.swiperContainer.querySelector('.swiper-slide');
+    if (singleImage) {
+      singleImage.classList.add('swiper-slide-active');
+      singleImage.addEventListener('click', () => this.openModal(imageUrl));
     }
   }
 
@@ -177,6 +179,7 @@ export default class Product {
   }
 
   openModal(imageUrl: string) {
+    document.body.style.overflow = 'hidden';
     const modal = createComponent('div', ['product-modal'], {});
     const modalContent = createComponent('div', ['modal-content'], {});
     const closeButton = createComponent('span', ['close-button'], {});
@@ -188,13 +191,12 @@ export default class Product {
       alt: 'Enlarged Product Image',
     }) as HTMLImageElement;
 
-    modalContent.appendChild(closeButton);
-    modalContent.appendChild(modalImage);
+    modalContent.append(modalImage, closeButton);
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 
     this.currentModal = modal;
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
     modal.onclick = (event) => {
       if (event.target === modal) {
         this.closeModal();
@@ -203,6 +205,7 @@ export default class Product {
   }
 
   closeModal() {
+    document.body.style.overflow = '';
     if (this.currentModal) {
       this.currentModal.style.display = 'none';
       this.currentModal.remove();
