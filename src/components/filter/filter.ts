@@ -5,7 +5,7 @@ import {
   addCard,
   getAllCategories,
   getAllProduct,
-  sortCategory,
+  sortByName,
   sortPriceHigh,
   sortPriceSmall,
 } from '../servercomp/servercomp';
@@ -20,7 +20,7 @@ const CLASS = {
   wrasses: ['wrap_select'],
 };
 
-const optionst = ['price is less', 'price is higher', 'category'];
+const optionst = ['price is less', 'price is higher', 'by name'];
 
 export default class Filter {
   search: HTMLElement;
@@ -119,8 +119,7 @@ export default class Filter {
           (this.price as HTMLInputElement).value = ``;
           this.selectWrap.append(this.price);
           break;
-        case `category`:
-          this.selectWrap.append(this.categories);
+        case `by name`:
           break;
         default:
           (this.price as HTMLInputElement).value = ``;
@@ -161,8 +160,7 @@ export default class Filter {
           });
         }
       } else {
-        const category = (this.categories as HTMLSelectElement).value;
-        const response = sortCategory(category);
+        const response = sortByName();
         response.then((data) => {
           addCard(data, this.head);
         });

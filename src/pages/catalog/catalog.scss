@@ -1,0 +1,77 @@
+@import './../../app/app.scss';
+
+.wrapper_searchs {
+    display: flex;
+    gap: 5px;
+    max-width: 350px;
+    width: 100%;
+  }
+
+  .btn_search {
+    width: 33px;
+    height: 30px;
+    min-height: 0;
+  
+    & > img {
+      margin-top: 2px;
+    }
+  }
+
+
+  .select_search {
+    width: 100%;
+    height: 30px;
+    padding: 10px;
+    border-radius: 3px;
+    border: $border;
+    outline: none;
+    transition: all 0.3s ease;
+  
+    &:hover,
+    &:active {
+      border: 1px solid $color-text-grey;
+      transform: scale(1.01);
+    }
+  }
+
+
+  .wrapper_catalog {
+    margin: 0 auto;
+    width: 90%;
+    height: auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    @media screen and (max-width: 1024px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  
+    @media screen and (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  
+    @media screen and (max-width: 585px) {
+      grid-template-columns: repeat(1, 1fr);
+    }
+  }
+
+  .catalog{
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+  }
+
+  .filter{
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    margin-top: 25px;
+  }
+
+  
+.oneCard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 30%;
+}

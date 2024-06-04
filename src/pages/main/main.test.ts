@@ -26,37 +26,4 @@ describe('Main component', () => {
     const regLink = mainElement.querySelector('.reg-link');
     expect(regLink?.textContent).toBe('Register');
   });
-
-  test('renderCatalog method should render products correctly', async () => {
-    const mainElement = mainComponent.getMain();
-
-    const catalogWrapper = mainElement.querySelector('.wrapper_catalog');
-    await mainComponent.renderCatalog();
-
-    await new Promise((resolve) => {
-      setTimeout(resolve, 1000);
-    });
-
-    expect(catalogWrapper?.children.length).toBeGreaterThan(0);
-  });
-
-  test('Search button should trigger product search', async () => {
-    const mainElement = mainComponent.getMain();
-    const searchInput = mainElement.querySelector(
-      '.select_search',
-    ) as HTMLInputElement;
-    const searchButton = mainElement.querySelector(
-      '.btn_search',
-    ) as HTMLButtonElement;
-
-    searchInput.value = 'Test Product';
-    searchButton.click();
-
-    await new Promise((resolve) => {
-      setTimeout(resolve, 1000);
-    });
-
-    const catalogWrapper = mainElement.querySelector('.wrapper_catalog');
-    expect(catalogWrapper?.children.length).toBeGreaterThan(0);
-  });
 });

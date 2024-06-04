@@ -95,6 +95,8 @@ export default class Profile {
 
     if (mainLink) {
       mainLink.addEventListener('click', (event) => {
+        const centerElement = document.querySelector('.centercard');
+        centerElement?.classList.remove('centercard');
         event.preventDefault();
         window.history.pushState({}, '', '/');
         window.dispatchEvent(new PopStateEvent('popstate'));

@@ -49,6 +49,18 @@ async function loginCustomer(
   }
 }
 
+async function sortByName() {
+  return apiRoot
+    .productProjections()
+    .search()
+    .get({
+      queryArgs: {
+        sort: 'name.en-US asc',
+      },
+    })
+    .execute();
+}
+
 function customerOn(header: Header) {
   const encryption = Cookies.get('log');
 
@@ -155,7 +167,7 @@ async function sortPriceSmall(price: number) {
     .search()
     .get({
       queryArgs: {
-        filter: `variants.price.centAmount:range (0 to ${price})`,
+        filter: `variants.price.centAmount:range (0 to ${price * 100})`,
         sort: `price asc`,
         limit,
       },
@@ -259,7 +271,7 @@ async function sortPriceHigh(price: number) {
     .search()
     .get({
       queryArgs: {
-        filter: `variants.price.centAmount:range (${price} to *)`,
+        filter: `variants.price.centAmount:range (${price * 100} to *)`,
         sort: `price asc`,
         limit,
       },
@@ -286,4 +298,5 @@ export {
   sortPriceHigh,
   getProd,
   getvalueCardProduct,
+  sortByName,
 };
