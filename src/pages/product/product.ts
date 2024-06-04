@@ -211,6 +211,9 @@ export default class Product {
   }
 
   getPage() {
+    const centerElement = document.querySelector('.center');
+    centerElement?.classList.add('centercard');
+
     return this.pageProd;
   }
 
