@@ -250,7 +250,9 @@
 }
 
 .modal-image {
-  max-width: 100%;
+  object-fit: cover;
+  max-width: 90vw;
+  max-height: 85vh;
   transition: transform 0.3s ease;
 
   &:hover {
