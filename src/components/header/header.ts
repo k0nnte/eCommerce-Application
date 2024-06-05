@@ -37,6 +37,8 @@ export default class Header {
     this.homeLink.innerHTML +=
       '<img width="24" height="24" src="https://img.icons8.com/sf-regular/48/FFFFFF/home-page.png" alt="home-page"/>';
     this.homeLink.addEventListener('click', (event: MouseEvent) => {
+      const centerElement = document.querySelector('.centercard');
+      centerElement?.classList.remove('centercard');
       event.preventDefault();
       window.history.pushState({}, '', '/');
       window.dispatchEvent(new PopStateEvent('popstate'));
@@ -59,6 +61,8 @@ export default class Header {
     this.regLink.innerHTML +=
       '<img width="22" height="22" src="https://img.icons8.com/sf-black/64/FFFFFF/add-user-male.png" alt="add-user-male"/>';
     this.regLink.addEventListener('click', (event: MouseEvent) => {
+      const centerElement = document.querySelector('.centercard');
+      centerElement?.classList.remove('centercard');
       event.preventDefault();
       window.history.pushState({}, '', '/register');
       window.dispatchEvent(new PopStateEvent('popstate'));
@@ -70,6 +74,8 @@ export default class Header {
     this.logoutLink.innerHTML +=
       '<img width="22" height="22" src="https://img.icons8.com/sf-black/64/FFFFFF/exit.png" alt="exit"/>';
     this.logoutLink.addEventListener('click', (event: MouseEvent) => {
+      const centerElement = document.querySelector('.centercard');
+      centerElement?.classList.remove('centercard');
       event.preventDefault();
       window.history.pushState({}, '', '/');
       window.dispatchEvent(new PopStateEvent('popstate'));
