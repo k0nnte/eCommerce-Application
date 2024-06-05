@@ -87,3 +87,8 @@ export interface LoginResponse {
   response?: SuccessResponse;
   error?: ErrorResponse;
 }
+
+export interface AddressInfo {
+  addressId: string | undefined;
+  currentVersion: number;
+}

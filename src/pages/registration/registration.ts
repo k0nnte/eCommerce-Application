@@ -39,11 +39,11 @@ export default class RegistrationForm {
     const title = createComponent('h2', ['page__title'], {});
     title.textContent = 'Registration';
     const formContainer = createComponent('form', ['registration__form'], {});
-    const generalInfoContainer = createComponent('div', ['general-info'], {});
+    const personalInfoContainer = createComponent('div', ['personal-info'], {});
     const addressContainer = createComponent('div', ['addresses'], {});
-    const titleInfo = createComponent('p', ['general-info-title'], {});
-    titleInfo.innerText = 'General Information';
-    generalInfoContainer.prepend(titleInfo);
+    const titleInfo = createComponent('p', ['personal-info-title'], {});
+    titleInfo.innerText = 'Personal Information';
+    personalInfoContainer.prepend(titleInfo);
     const titleShipping = createComponent('p', ['shipping-title'], {});
     titleShipping.innerText = 'Shipping Address';
     const titleBilling = createComponent('p', ['billing-title'], {});
@@ -161,9 +161,9 @@ export default class RegistrationForm {
           billingAddressContainer.append(selectField);
         }
       } else if (inputField) {
-        generalInfoContainer.append(inputField);
+        personalInfoContainer.append(inputField);
       } else if (selectField) {
-        generalInfoContainer.append(selectField);
+        personalInfoContainer.append(selectField);
       }
 
       if (fieldConfig.inputType === 'password') {
@@ -302,7 +302,7 @@ export default class RegistrationForm {
       });
     }
 
-    formContainer.append(generalInfoContainer, addressContainer, signUpButton);
+    formContainer.append(personalInfoContainer, addressContainer, signUpButton);
     wrapper.append(title, formContainer, loginLink);
     registrationForm.append(wrapper);
   }
