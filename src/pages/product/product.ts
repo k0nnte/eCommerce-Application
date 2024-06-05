@@ -105,19 +105,30 @@ export default class Product {
 
     const swiperWrapper = createComponent('div', ['swiper-wrapper'], {});
 
-    images.forEach((image) => {
+    images.forEach((image, index) => {
       const slide = createComponent('div', ['swiper-slide'], {});
-      const img = createComponent('img', CLASS.image, {
+      const imgElement = createComponent('img', CLASS.image, {
         src: image.url,
         alt: 'Product image',
       }) as HTMLImageElement;
-      slide.appendChild(img);
+      slide.appendChild(imgElement);
       swiperWrapper.appendChild(slide);
+
+      this.swiperContainer.appendChild(swiperWrapper);
+
+      imgElement.addEventListener('click', () =>
+        this.openModal(
+          images.map((img) => img.url),
+          index,
+        ),
+      );
     });
 
     this.swiperContainer.appendChild(swiperWrapper);
 
-    if (images.length > 1) {
+    if (images.length === 1) {
+      this.addClickHandlerToSingleImage(images[0].url);
+    } else {
       const nextButton = createComponent('div', ['swiper-button-next'], {});
       const prevButton = createComponent('div', ['swiper-button-prev'], {});
       const pagination = createComponent('div', ['swiper-pagination'], {});
@@ -140,69 +151,118 @@ export default class Product {
         centeredSlides: true,
         slidesPerView: 1,
         watchOverflow: true,
-        on: {
-          init: () => {
-            this.addClickHandlersToImages();
-          },
-        },
       });
       swiper.init();
-    } else {
-      // eslint-disable-next-line no-new
-      new Swiper(this.swiperContainer, {
-        loop: false,
-        spaceBetween: 30,
-        centeredSlides: true,
-        slidesPerView: 1,
-      });
     }
   }
 
-  addClickHandlersToImages() {
-    this.swiperContainer.addEventListener('click', (event) => {
-      const target = event.target as HTMLElement;
-      if (target && target.closest('.swiper-slide')) {
-        const slide = target.closest('.swiper-slide');
-        if (slide) {
-          const img = slide.querySelector('img');
-          if (img) {
-            const imageUrl = (img as HTMLImageElement).src;
-            if (imageUrl) {
-              this.openModal(imageUrl);
-            }
-          }
-        }
-      }
-    });
+  addClickHandlerToSingleImage(imageUrl: string) {
+    const singleImage = this.swiperContainer.querySelector('.swiper-slide');
+    if (singleImage) {
+      singleImage.classList.add('swiper-slide-active');
+      singleImage.addEventListener('click', () =>
+        this.openModal([imageUrl], 0),
+      );
+    }
   }
 
-  openModal(imageUrl: string) {
+  /* MODAL */
+
+  openModal(imageUrls: string[], activeIndex: number) {
+    if (this.currentModal) {
+      return;
+    }
+
+    document.body.style.overflow = 'hidden';
     const modal = createComponent('div', ['product-modal'], {});
     const modalContent = createComponent('div', ['modal-content'], {});
     const closeButton = createComponent('span', ['close-button'], {});
     closeButton.innerHTML = '&times;';
     closeButton.onclick = () => this.closeModal();
 
-    const modalImage = createComponent('img', ['modal-image'], {
-      src: imageUrl,
-      alt: 'Enlarged Product Image',
-    }) as HTMLImageElement;
+    const modalSwiperContainer = createComponent(
+      'div',
+      ['modal-swiper-container', 'swiper-container'],
+      {},
+    );
+    const modalSwiperWrapper = createComponent('div', ['swiper-wrapper'], {});
+
+    if (imageUrls.length > 1) {
+      imageUrls.forEach((url) => {
+        const slide = createComponent(
+          'div',
+          ['swiper-slide', 'swiper-slide-modal'],
+          {},
+        );
+        const modalImgElement = createComponent('img', ['modal-image'], {
+          src: url,
+          alt: 'Enlarged Product Image',
+        }) as HTMLImageElement;
+        slide.appendChild(modalImgElement);
+        modalSwiperWrapper.appendChild(slide);
+      });
+
+      modalSwiperContainer.appendChild(modalSwiperWrapper);
+      modalContent.append(modalSwiperContainer);
+    }
 
     modalContent.appendChild(closeButton);
-    modalContent.appendChild(modalImage);
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 
     this.currentModal = modal;
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
     modal.onclick = (event) => {
       if (event.target === modal) {
         this.closeModal();
       }
     };
+
+    if (imageUrls.length > 1) {
+      const modalNextButton = createComponent(
+        'div',
+        ['swiper-button-next'],
+        {},
+      );
+      const modalPrevButton = createComponent(
+        'div',
+        ['swiper-button-prev'],
+        {},
+      );
+      const modalPagination = createComponent('div', ['swiper-pagination'], {});
+      modalSwiperContainer.appendChild(modalNextButton);
+      modalSwiperContainer.appendChild(modalPrevButton);
+      modalSwiperContainer.appendChild(modalPagination);
+
+      const modalSwiper = new Swiper(modalSwiperContainer, {
+        modules: [Navigation, Pagination],
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+        loop: true,
+        spaceBetween: 30,
+        centeredSlides: true,
+        slidesPerView: 1,
+        watchOverflow: true,
+        initialSlide: activeIndex,
+      });
+      modalSwiper.init();
+    } else {
+      const modalImgElement = createComponent('img', ['modal-image'], {
+        src: imageUrls[0],
+        alt: 'Enlarged Product Image',
+      }) as HTMLImageElement;
+      modalContent.appendChild(modalImgElement);
+    }
   }
 
   closeModal() {
+    document.body.style.overflow = '';
     if (this.currentModal) {
       this.currentModal.style.display = 'none';
       this.currentModal.remove();
