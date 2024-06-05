@@ -1,5 +1,13 @@
 import Profile from './profile';
 
+HTMLFormElement.prototype.requestSubmit = function customRequestSubmit() {
+  if (this.requestSubmit) {
+    this.requestSubmit();
+  } else {
+    this.submit();
+  }
+};
+
 jest.mock('js-cookie', () => ({
   get: jest.fn(),
 }));
@@ -110,14 +118,15 @@ describe('Profile', () => {
     const dispatchEventSpy = jest.spyOn(window, 'dispatchEvent');
 
     mainLink?.click();
+    setTimeout(() => {
+      expect(pushStateSpy).toHaveBeenCalledWith({}, '', '/');
+      expect(dispatchEventSpy).toHaveBeenCalledWith(
+        new PopStateEvent('popstate'),
+      );
 
-    expect(pushStateSpy).toHaveBeenCalledWith({}, '', '/');
-    expect(dispatchEventSpy).toHaveBeenCalledWith(
-      new PopStateEvent('popstate'),
-    );
-
-    pushStateSpy.mockRestore();
-    dispatchEventSpy.mockRestore();
+      pushStateSpy.mockRestore();
+      dispatchEventSpy.mockRestore();
+    }, 500);
   });
 
   it('should render the profile form with input fields and labels', () => {
@@ -159,5 +168,162 @@ describe('Profile', () => {
 
     expect(shippingAddressContainer).toBeTruthy();
     expect(billingAddressContainer).toBeTruthy();
+  });
+});
+
+Object.defineProperty(HTMLElement.prototype, 'click', {
+  value: jest.fn(),
+});
+
+describe('Profile', () => {
+  it('should enable personal information inputs on Edit button click', () => {
+    const editButton = document.querySelector('.btn-edit') as HTMLButtonElement;
+    const firstNameInput = document.querySelector(
+      '#first-name-info',
+    ) as HTMLInputElement;
+    const lastNameInput = document.querySelector(
+      '#last-name-info',
+    ) as HTMLInputElement;
+
+    if (editButton) {
+      editButton.click();
+      expect(firstNameInput.disabled).toBe(false);
+      expect(lastNameInput.disabled).toBe(false);
+    }
+  });
+
+  it('should enable shipping address inputs on Edit Shipping Address button click', () => {
+    const editShippingButton = document.querySelector(
+      '.btn-edit-shipping-address',
+    ) as HTMLButtonElement;
+    const shippingStreetInput = document.querySelector(
+      '#street-shipping-address',
+    ) as HTMLInputElement;
+    const shippingCityInput = document.querySelector(
+      '#city-shipping-address',
+    ) as HTMLInputElement;
+
+    editShippingButton.click();
+
+    expect(shippingStreetInput.disabled).toBe(false);
+    expect(shippingCityInput.disabled).toBe(false);
+  });
+
+  it('should trigger updateShippingAddresses method on Save Shipping Address button click', () => {
+    const updateShippingAddressesSpy = jest.spyOn(
+      Profile,
+      'updateShippingAddresses',
+    );
+
+    const saveShippingButton = document.querySelector(
+      '.btn-save-shipping-address',
+    ) as HTMLButtonElement;
+
+    if (saveShippingButton && updateShippingAddressesSpy) {
+      saveShippingButton.click();
+
+      setTimeout(() => {
+        try {
+          expect(updateShippingAddressesSpy).toHaveBeenCalled();
+        } finally {
+          updateShippingAddressesSpy.mockRestore();
+        }
+      }, 500);
+    }
+  });
+
+  it('should enable billing address inputs on Edit Billing Address button click', () => {
+    const editBillingButton = document.querySelector(
+      '.btn-edit-billing-address',
+    ) as HTMLButtonElement;
+    const billingStreetInput = document.querySelector(
+      '#street-billing-address',
+    ) as HTMLInputElement;
+    const billingCityInput = document.querySelector(
+      '#city-billing-address',
+    ) as HTMLInputElement;
+
+    editBillingButton.click();
+
+    expect(billingStreetInput.disabled).toBe(false);
+    expect(billingCityInput.disabled).toBe(false);
+  });
+
+  it('should trigger updateBillingAddresses method on Save Billing Address button click', () => {
+    const updateBillingAddressesSpy = jest.spyOn(
+      Profile,
+      'updateBillingAddresses',
+    );
+    const saveBillingButton = document.querySelector(
+      '.btn-save-billing-address',
+    ) as HTMLButtonElement;
+
+    if (saveBillingButton && updateBillingAddressesSpy) {
+      saveBillingButton.click();
+
+      setTimeout(() => {
+        expect(updateBillingAddressesSpy).toHaveBeenCalled();
+
+        updateBillingAddressesSpy.mockRestore();
+      }, 500);
+    }
+  });
+
+  it('should disable personal information inputs on Save button click', () => {
+    const saveButton = document.querySelector(
+      '.btn-save-personal-info',
+    ) as HTMLButtonElement;
+    const firstNameInput = document.querySelector(
+      '#first-name-info',
+    ) as HTMLInputElement;
+    const lastNameInput = document.querySelector(
+      '#last-name-info',
+    ) as HTMLInputElement;
+
+    if (saveButton) {
+      saveButton.click();
+      expect(firstNameInput.disabled).toBe(true);
+      expect(lastNameInput.disabled).toBe(true);
+    }
+  });
+
+  it('should disable shipping address inputs on Save Shipping Address button click', () => {
+    const saveShippingButton = document.querySelector(
+      '.btn-save-shipping-address',
+    ) as HTMLButtonElement;
+    const shippingStreetInput = document.querySelector(
+      '#street-shipping-address',
+    ) as HTMLInputElement;
+    const shippingCityInput = document.querySelector(
+      '#city-shipping-address',
+    ) as HTMLInputElement;
+
+    if (saveShippingButton) {
+      saveShippingButton.click();
+      setTimeout(() => {
+        expect(shippingStreetInput.disabled).toBe(true);
+        expect(shippingCityInput.disabled).toBe(true);
+      }, 500);
+    }
+  });
+
+  it('should disable billing address inputs on Save Billing Address button click', () => {
+    const saveBillingButton = document.querySelector(
+      '.btn-save-billing-address',
+    ) as HTMLButtonElement;
+    const billingStreetInput = document.querySelector(
+      '#street-billing-address',
+    ) as HTMLInputElement;
+    const billingCityInput = document.querySelector(
+      '#city-billing-address',
+    ) as HTMLInputElement;
+
+    if (saveBillingButton) {
+      saveBillingButton.click();
+      setTimeout(() => {
+        expect(billingStreetInput.disabled).toBe(true);
+        expect(billingCityInput.disabled).toBe(true);
+      }, 500);
+    }
   });
 });

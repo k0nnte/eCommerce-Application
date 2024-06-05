@@ -49,3 +49,66 @@ describe('Signup Button Click Validation', () => {
     }
   });
 });
+
+describe('RegistrationForm Tests', () => {
+  let formContainer: HTMLDivElement;
+  let signUpButton: HTMLButtonElement;
+  let mockProcessCustomerRegistration: jest.Mock;
+
+  beforeEach(() => {
+    formContainer = document.createElement('div');
+    formContainer.classList.add('registration__form');
+    document.body.appendChild(formContainer);
+    RegistrationForm.renderRegistrationForm(formContainer);
+    signUpButton = formContainer.querySelector(
+      '.btn-submit',
+    ) as HTMLButtonElement;
+
+    mockProcessCustomerRegistration = jest.fn();
+    RegistrationForm.processCustomerRegistration =
+      mockProcessCustomerRegistration;
+  });
+
+  afterEach(() => {
+    document.body.removeChild(formContainer);
+    mockProcessCustomerRegistration.mockRestore();
+  });
+
+  it('should validate email format', () => {
+    const emailInput = formContainer.querySelector(
+      'input[type="email"]',
+    ) as HTMLInputElement | null;
+
+    if (emailInput) {
+      emailInput.value = 'invalidemail';
+
+      signUpButton.click();
+
+      expect(emailInput.classList.contains('error')).toBeTruthy();
+    }
+  });
+
+  it('should clear errors and inputs on form reset', () => {
+    const textInput = formContainer.querySelector(
+      'input[type="text"]',
+    ) as HTMLInputElement | null;
+
+    if (textInput) {
+      textInput.value = 'John';
+      textInput.classList.add('error');
+
+      const mockClearErrorsAndInputs = jest.spyOn(
+        RegistrationForm,
+        'clearErrorsAndInputs',
+      );
+
+      RegistrationForm.clearErrorsAndInputs();
+
+      setTimeout(() => {
+        expect(textInput.classList.contains('error')).toBeFalsy();
+        expect(textInput.value).toBe('');
+        expect(mockClearErrorsAndInputs).toHaveBeenCalled();
+      }, 0);
+    }
+  });
+});
