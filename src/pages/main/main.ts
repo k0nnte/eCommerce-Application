@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie';
 import createComponent from '../../components/components';
+import img from '../../../public/files/main-image.png';
 import './main.scss';
 
 import Profile from '../profile/profile';
@@ -91,8 +92,18 @@ export default class Main {
       window.dispatchEvent(new PopStateEvent('popstate'));
     });
 
+    const imageContainer = createComponent('div', ['image-container'], {});
+    const image = createComponent('img', ['main-image'], {});
+    image.setAttribute('src', img);
+    image.setAttribute(
+      'alt',
+      'Minimalistically designed living room in light colors',
+    );
+
+    imageContainer.append(image);
+
     this.wrap_main.append(this.main);
-    this.main.appendChild(this.nav);
+    this.main.append(this.nav, imageContainer);
 
     this.nav.append(
       this.homeLink,

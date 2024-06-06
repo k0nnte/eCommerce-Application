@@ -10,6 +10,7 @@
   display: flex;
   flex-direction: column;
   gap: 30px;
+  position: absolute;
 }
 
 .main {
@@ -25,6 +26,7 @@
     flex-direction: column;
     gap: 20px;
   }
+  flex-direction: column;
 }
 
 .main-items {
@@ -32,6 +34,7 @@
   flex-direction: row;
   align-items: flex-end;
   gap: 20px;
+  margin-bottom: 20px;
 }
 
 .main-links {
@@ -50,4 +53,11 @@
     transform: scale(1.1);
     color: #fb2e86;
   }
+}
+
+.main-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
 }
