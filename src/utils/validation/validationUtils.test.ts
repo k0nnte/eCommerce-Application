@@ -29,42 +29,28 @@ describe('ValidationUtils', () => {
     );
   });
 
-  test('validateName should set error class for invalid name', () => {
-    nameInput.value = '123';
-    ValidationUtils.validateName(nameInput);
-
-    expect(nameInput.classList.contains('error')).toBe(true);
-  });
-
-  test('validateEmail should set error class for invalid email format', () => {
-    emailInput.value = 'invalidemail';
-    ValidationUtils.validateEmail(emailInput);
-
-    expect(emailInput.classList.contains('error')).toBe(true);
-  });
-
-  test('validatePassword should set error class for invalid password', () => {
+  it('validatePassword should set error class for invalid password', () => {
     passwordInput.value = 'password';
     ValidationUtils.validatePassword(passwordInput);
 
     expect(passwordInput.classList.contains('error')).toBe(true);
   });
 
-  test('validateRequiredField should set error class for empty field', () => {
+  it('validateRequiredField should set error class for empty field', () => {
     streetShippingInput.value = '';
     ValidationUtils.validateRequiredField(streetShippingInput);
 
     expect(streetShippingInput.classList.contains('error')).toBe(true);
   });
 
-  test('validateDateOfBirth should set error class for invalid date of birth', () => {
+  it('validateDateOfBirth should set error class for invalid date of birth', () => {
     birthDateInput.value = '10/10/2030';
     ValidationUtils.validateDateOfBirth(birthDateInput);
 
     expect(birthDateInput.classList.contains('error')).toBe(true);
   });
 
-  test('showError should display error message after the input field', () => {
+  it('showError should display error message after the input field', () => {
     const errorMessage = 'This field is required';
     ValidationUtils.showError(nameInput, errorMessage);
 
@@ -72,12 +58,98 @@ describe('ValidationUtils', () => {
     expect(errorSpan.innerText).toBe(errorMessage);
   });
 
-  test('hideError should remove the error message element', () => {
+  it('hideError should remove the error message element', () => {
     const testInput = document.createElement('input');
     const errorMessage = 'This field is required';
     ValidationUtils.showError(testInput, errorMessage);
     ValidationUtils.hideError(testInput);
     const errorSpan = testInput.nextElementSibling;
     expect(errorSpan).toBeNull();
+  });
+
+  it('validateDateOfBirth should mark field as correct for a valid date of birth', () => {
+    birthDateInput.value = '1990-01-01';
+    ValidationUtils.validateDateOfBirth(birthDateInput);
+
+    expect(birthDateInput.classList.contains('correct')).toBe(true);
+  });
+
+  it('validatePassword should mark field as correct for a valid password', () => {
+    passwordInput.value = 'StrongPassword123';
+    ValidationUtils.validatePassword(passwordInput);
+
+    expect(passwordInput.classList.contains('correct')).toBe(true);
+  });
+});
+
+describe('validateName', () => {
+  let nameInput: HTMLInputElement;
+
+  beforeEach(() => {
+    nameInput = document.createElement('input');
+    nameInput.id = 'first-name-info';
+    document.body.appendChild(nameInput);
+  });
+
+  it('should return true for valid names without special characters', () => {
+    nameInput.value = 'John';
+    ValidationUtils.validateName(nameInput);
+
+    expect(nameInput.classList.contains('correct')).toBe(true);
+  });
+
+  it('should return false for names with special characters', () => {
+    nameInput.value = 'John@Doe';
+    ValidationUtils.validateName(nameInput);
+
+    expect(nameInput.classList.contains('error')).toBe(true);
+  });
+});
+
+describe('validateEmail', () => {
+  let emailInput: HTMLInputElement;
+
+  beforeEach(() => {
+    emailInput = document.createElement('input');
+    emailInput.id = 'email-info';
+    document.body.appendChild(emailInput);
+  });
+
+  it('should return true for a valid email', () => {
+    emailInput.value = 'john.doe@example.com';
+    ValidationUtils.validateEmail(emailInput);
+
+    expect(emailInput.classList.contains('correct')).toBe(true);
+  });
+
+  it('should return false for an invalid email format', () => {
+    emailInput.value = 'invalid_email_address';
+    ValidationUtils.validateEmail(emailInput);
+
+    expect(emailInput.classList.contains('error')).toBe(true);
+  });
+
+  it('should return true when email input is empty', () => {
+    emailInput.value = '';
+    ValidationUtils.validateEmail(emailInput);
+
+    expect(emailInput.classList.contains('correct')).toBe(false);
+  });
+});
+
+describe('checkAllFieldsValidity', () => {
+  it('should mark form as invalid if any field is empty', () => {
+    const inputOne = document.createElement('input');
+    const inputTwo = document.createElement('input');
+
+    inputOne.value = 'John';
+    inputTwo.value = '';
+
+    document.body.append(inputOne);
+    document.body.append(inputTwo);
+
+    ValidationUtils.checkAllFieldsValidity();
+
+    expect(ValidationUtils.isFormValid).toBe(false);
   });
 });

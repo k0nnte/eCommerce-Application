@@ -3,7 +3,11 @@
 import Cookies from 'js-cookie';
 import './profile.scss';
 import createComponent from '@/components/components';
-import { fetchCustomerData } from '@/components/servercomp/servercomp';
+import {
+  fetchCustomerData,
+  fetchShippingAddressId,
+  fetchBillingAddressId,
+} from '@/components/servercomp/servercomp';
 import showModal from '@/components/modal/modal';
 import { apiRoot } from '@/sdk/builder';
 import { MODAL_MESSAGE } from '../registration/constants/constants';
@@ -24,14 +28,14 @@ export default class Profile {
     const title = createComponent('h2', ['page__title'], {});
     title.textContent = 'User Profile';
     const formContainer = createComponent('form', ['profile__form'], {});
-    const generalInfoContainer = createComponent(
+    const personalInfoContainer = createComponent(
       'div',
-      ['general-info', 'profile-page'],
+      ['personal-info', 'profile-page'],
       {},
     );
-    const titleInfo = createComponent('p', ['general-info-title'], {});
-    titleInfo.innerText = 'General Information';
-    generalInfoContainer.prepend(titleInfo);
+    const titleInfo = createComponent('p', ['personal-info-title'], {});
+    titleInfo.innerText = 'Personal Information';
+    personalInfoContainer.prepend(titleInfo);
 
     const addressContainer = createComponent('div', ['addresses'], {});
     const titleShipping = createComponent('p', ['shipping-title'], {});
@@ -71,7 +75,7 @@ export default class Profile {
         } else if (fieldConfig.id.includes('billing')) {
           billingAddressContainer.append(inputField);
         } else {
-          generalInfoContainer.append(inputField);
+          personalInfoContainer.append(inputField);
         }
       }
     });
@@ -79,7 +83,7 @@ export default class Profile {
     const editButton = createComponent('button', ['btn', 'btn-edit'], {
       type: 'submit',
     });
-    editButton.textContent = 'Edit';
+    editButton.textContent = 'Edit Personal Information';
     const saveButton = createComponent(
       'button',
       ['btn', 'btn-save', 'btn-hidden'],
@@ -87,8 +91,53 @@ export default class Profile {
         type: 'submit',
       },
     );
-    saveButton.textContent = 'Save';
-    generalInfoContainer.append(editButton, saveButton);
+    saveButton.textContent = 'Save Changes';
+    personalInfoContainer.append(editButton, saveButton);
+
+    const editShippingAddressButton = createComponent(
+      'button',
+      ['btn', 'btn-edit-shipping-address'],
+      {
+        type: 'submit',
+      },
+    );
+    editShippingAddressButton.textContent = 'Edit Shipping Address';
+
+    const saveShippingAddressButton = createComponent(
+      'button',
+      ['btn', 'btn-save-shipping-address', 'btn-hidden'],
+      {
+        type: 'submit',
+      },
+    );
+    saveShippingAddressButton.textContent = 'Save Shipping Address';
+
+    const editBillingAddressButton = createComponent(
+      'button',
+      ['btn', 'btn-edit-billing-address'],
+      {
+        type: 'submit',
+      },
+    );
+    editBillingAddressButton.textContent = 'Edit Billing Address';
+
+    const saveBillingAddressButton = createComponent(
+      'button',
+      ['btn', 'btn-save-billing-address', 'btn-hidden'],
+      {
+        type: 'submit',
+      },
+    );
+    saveBillingAddressButton.textContent = 'Save Billing Address';
+
+    shippingAddressContainer.append(
+      editShippingAddressButton,
+      saveShippingAddressButton,
+    );
+    billingAddressContainer.append(
+      editBillingAddressButton,
+      saveBillingAddressButton,
+    );
 
     const mainLink = createComponent('a', ['link-main'], { href: '/' });
     mainLink.textContent = 'Back To Home';
@@ -108,14 +157,90 @@ export default class Profile {
       Profile.resetOnLogout();
     });
 
-    formContainer.append(generalInfoContainer, addressContainer);
+    formContainer.append(personalInfoContainer, addressContainer);
     wrapper.append(title, formContainer, mainLink);
     profile.append(wrapper);
+
+    const setShippingDefaultAddress = createComponent(
+      'label',
+      ['checkbox-label'],
+      {
+        for: 'isShippingAddressDefaultInput',
+      },
+    );
+    const checkboxInputShipping = createComponent(
+      'input',
+      ['input-default-shipping'],
+      {
+        id: 'isShippingAddressDefaultInput',
+        type: 'checkbox',
+        name: 'isShippingAddressDefault',
+      },
+    );
+    const labelTextShipping = document.createTextNode(
+      'Set Shipping Address as default',
+    );
+    setShippingDefaultAddress.append(checkboxInputShipping, labelTextShipping);
+
+    titleShipping.append(setShippingDefaultAddress);
+
+    const setBillingDefaultAddress = createComponent(
+      'label',
+      ['checkbox-label'],
+      {
+        for: 'isBillingAddressDefaultInput',
+      },
+    );
+    const checkboxInputBilling = createComponent(
+      'input',
+      ['input-default-billing'],
+      {
+        id: 'isBillingAddressDefaultInput',
+        type: 'checkbox',
+        name: 'isBillingAddressDefault',
+      },
+    );
+    const labelTextBilling = document.createTextNode(
+      'Set Billing Address as default',
+    );
+    setBillingDefaultAddress.append(checkboxInputBilling, labelTextBilling);
+
+    titleBilling.append(setBillingDefaultAddress);
 
     Profile.populateProfileForm();
   }
 
-  static async updateGeneralInfo(
+  static enablePersonalInfoInputs() {
+    const editButton = document.querySelector('.btn-edit');
+    const saveButton = document.querySelector('.btn-save');
+
+    if (editButton) {
+      editButton.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        const firstNameField = document.getElementById(
+          'first-name-info',
+        ) as HTMLInputElement;
+        const lastNameField = document.getElementById(
+          'last-name-info',
+        ) as HTMLInputElement;
+        const birthDateField = document.getElementById(
+          'birth-date-info',
+        ) as HTMLInputElement;
+        const email = document.getElementById('email-info') as HTMLInputElement;
+
+        firstNameField.disabled = false;
+        lastNameField.disabled = false;
+        birthDateField.disabled = false;
+        email.disabled = false;
+
+        editButton.classList.add('btn-hidden');
+        saveButton?.classList.remove('btn-hidden');
+      });
+    }
+  }
+
+  static async updatePersonalInfo(
     customerId: string,
     newFirstName: string,
     newLastName: string,
@@ -164,37 +289,7 @@ export default class Profile {
     }
   }
 
-  static enableInputs() {
-    const editButton = document.querySelector('.btn-edit');
-    const saveButton = document.querySelector('.btn-save');
-
-    if (editButton) {
-      editButton.addEventListener('click', (event) => {
-        event.preventDefault();
-
-        const firstNameField = document.getElementById(
-          'first-name-info',
-        ) as HTMLInputElement;
-        const lastNameField = document.getElementById(
-          'last-name-info',
-        ) as HTMLInputElement;
-        const birthDateField = document.getElementById(
-          'birth-date-info',
-        ) as HTMLInputElement;
-        const email = document.getElementById('email-info') as HTMLInputElement;
-
-        firstNameField.disabled = false;
-        lastNameField.disabled = false;
-        birthDateField.disabled = false;
-        email.disabled = false;
-
-        editButton.classList.add('btn-hidden');
-        saveButton?.classList.remove('btn-hidden');
-      });
-    }
-  }
-
-  static saveInputs(customerId: string) {
+  static savePersonalInfoInputs(customerId: string) {
     const editButton = document.querySelector('.btn-edit');
     const saveButton = document.querySelector('.btn-save');
 
@@ -230,7 +325,7 @@ export default class Profile {
           ) as HTMLInputElement;
 
           if (
-            Profile.validateInputs(
+            Profile.validatePersonalInfoInputs(
               firstNameField,
               lastNameField,
               birthDateField,
@@ -243,7 +338,7 @@ export default class Profile {
             const newDateOfBirth = birthDateField.value;
 
             try {
-              await Profile.updateGeneralInfo(
+              await Profile.updatePersonalInfo(
                 customerId,
                 newFirstName,
                 newLastName,
@@ -276,7 +371,7 @@ export default class Profile {
     }
   }
 
-  static validateInputs(
+  static validatePersonalInfoInputs(
     firstNameField: HTMLInputElement,
     lastNameField: HTMLInputElement,
     birthDateField: HTMLInputElement,
@@ -286,6 +381,389 @@ export default class Profile {
     ValidationUtils.validateName(lastNameField);
     ValidationUtils.validateDateOfBirth(birthDateField);
     ValidationUtils.validateEmail(emailField);
+
+    Profile.checkFormValidity();
+
+    return ValidationUtils.isFormValid;
+  }
+
+  static enableShippingAddressInputs() {
+    const editAddressButton = document.querySelector(
+      '.btn-edit-shipping-address',
+    );
+    const saveAddressButton = document.querySelector(
+      '.btn-save-shipping-address',
+    );
+
+    if (editAddressButton) {
+      editAddressButton.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        const shippingStreetField = document.getElementById(
+          'street-shipping-address',
+        ) as HTMLInputElement;
+        const shippingCityField = document.getElementById(
+          'city-shipping-address',
+        ) as HTMLInputElement;
+        const shippingPostalCodeField = document.getElementById(
+          'postal-code-shipping-address',
+        ) as HTMLInputElement;
+        const shippingCountry = document.getElementById(
+          'country-shipping-address',
+        ) as HTMLSelectElement;
+        const checkBoxShipping = document.getElementById(
+          'isShippingAddressDefaultInput',
+        ) as HTMLSelectElement;
+
+        shippingStreetField.disabled = false;
+        shippingCityField.disabled = false;
+        shippingPostalCodeField.disabled = false;
+        shippingCountry.disabled = false;
+        checkBoxShipping.disabled = false;
+
+        editAddressButton.classList.add('btn-hidden');
+        saveAddressButton?.classList.remove('btn-hidden');
+      });
+    }
+  }
+
+  static async updateShippingAddresses(
+    customerId: string,
+    newShippingStreet: string,
+    newShippingCity: string,
+    newShippingPostalCode: string,
+    newShippingCountry: string,
+  ) {
+    try {
+      const addressInfo = await fetchShippingAddressId(customerId);
+      const { addressId } = addressInfo;
+      const { currentVersion } = addressInfo;
+
+      const response = await apiRoot
+        .customers()
+        .withId({ ID: customerId })
+        .post({
+          body: {
+            version: currentVersion,
+            actions: [
+              {
+                action: 'changeAddress',
+                addressId,
+                address: {
+                  streetName: newShippingStreet,
+                  city: newShippingCity,
+                  postalCode: newShippingPostalCode,
+                  country: newShippingCountry,
+                },
+              },
+              // ... other update actions if needed
+            ],
+          },
+        })
+        .execute();
+      showModal(MODAL_MESSAGE.SAVED);
+      return response.body;
+    } catch (error) {
+      if (error instanceof Error) {
+        showModal(`${error.message} ${MODAL_MESSAGE.NOT_SAVED}`);
+      } else {
+        showModal(MODAL_MESSAGE.UNKNOWN);
+      }
+      return null;
+    }
+  }
+
+  static saveShippingAddressInputs(customerId: string) {
+    const editAddressButton = document.querySelector(
+      '.btn-edit-shipping-address',
+    );
+    const saveAddressButton = document.querySelector(
+      '.btn-save-shipping-address',
+    );
+
+    if (saveAddressButton) {
+      saveAddressButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+
+        const formContainer = document.querySelector('.profile__form');
+        const allInputs = formContainer?.querySelectorAll('input, select');
+
+        let hasError = false;
+
+        if (allInputs) {
+          allInputs.forEach((input) => {
+            if (input.classList.contains('error')) {
+              hasError = true;
+            }
+          });
+        }
+
+        if (!hasError) {
+          const shippingStreetField = document.getElementById(
+            'street-shipping-address',
+          ) as HTMLInputElement;
+          const shippingCityField = document.getElementById(
+            'city-shipping-address',
+          ) as HTMLInputElement;
+          const shippingPostalCodeField = document.getElementById(
+            'postal-code-shipping-address',
+          ) as HTMLInputElement;
+          const shippingCountry = document.getElementById(
+            'country-shipping-address',
+          ) as HTMLSelectElement;
+          const checkBoxShipping = document.getElementById(
+            'isShippingAddressDefaultInput',
+          ) as HTMLSelectElement;
+
+          if (
+            Profile.validateShippingAddressInputs(
+              shippingStreetField,
+              shippingCityField,
+              shippingPostalCodeField,
+              shippingCountry,
+            )
+          ) {
+            const newShippingStreet = shippingStreetField.value;
+            const newShippingCity = shippingCityField.value;
+            const newShippingPostalCode = shippingPostalCodeField.value;
+            const newShippingCountry = shippingCountry.value;
+
+            try {
+              await Profile.updateShippingAddresses(
+                customerId,
+                newShippingStreet,
+                newShippingCity,
+                newShippingPostalCode,
+                newShippingCountry,
+              );
+
+              shippingStreetField.disabled = true;
+              shippingCityField.disabled = true;
+              shippingPostalCodeField.disabled = true;
+              shippingCountry.disabled = true;
+              checkBoxShipping.disabled = true;
+
+              shippingStreetField.classList.remove('correct');
+              shippingCityField.classList.remove('correct');
+              shippingPostalCodeField.classList.remove('correct');
+              shippingCountry.classList.remove('correct');
+
+              editAddressButton?.classList.remove('btn-hidden');
+              saveAddressButton.classList.add('btn-hidden');
+            } catch (error) {
+              if (error instanceof Error) {
+                showModal(error.message);
+              }
+            }
+          }
+        } else {
+          showModal(MODAL_MESSAGE.ERROR);
+        }
+      });
+    }
+  }
+
+  static validateShippingAddressInputs(
+    shippingStreetField: HTMLInputElement,
+    shippingCityField: HTMLInputElement,
+    shippingPostalCodeField: HTMLInputElement,
+    shippingCountry: HTMLSelectElement,
+  ) {
+    ValidationUtils.validateRequiredField(shippingStreetField);
+    ValidationUtils.validateName(shippingCityField);
+    ValidationUtils.validateShippingPostalCode(shippingPostalCodeField);
+    ValidationUtils.validateCountry(shippingCountry);
+
+    Profile.checkFormValidity();
+
+    return ValidationUtils.isFormValid;
+  }
+
+  static enableBillingAddressInputs() {
+    const editBillingAddressButton = document.querySelector(
+      '.btn-edit-billing-address',
+    );
+    const saveBillingAddressButton = document.querySelector(
+      '.btn-save-billing-address',
+    );
+
+    if (editBillingAddressButton) {
+      editBillingAddressButton.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        const billingStreetField = document.getElementById(
+          'street-billing-address',
+        ) as HTMLInputElement;
+        const billingCityField = document.getElementById(
+          'city-billing-address',
+        ) as HTMLInputElement;
+        const billingPostalCodeField = document.getElementById(
+          'postal-code-billing-address',
+        ) as HTMLInputElement;
+        const billingCountry = document.getElementById(
+          'country-billing-address',
+        ) as HTMLSelectElement;
+        const checkBoxBilling = document.getElementById(
+          'isBillingAddressDefaultInput',
+        ) as HTMLSelectElement;
+
+        billingStreetField.disabled = false;
+        billingCityField.disabled = false;
+        billingPostalCodeField.disabled = false;
+        billingCountry.disabled = false;
+        checkBoxBilling.disabled = false;
+
+        editBillingAddressButton.classList.add('btn-hidden');
+        saveBillingAddressButton?.classList.remove('btn-hidden');
+      });
+    }
+  }
+
+  static async updateBillingAddresses(
+    customerId: string,
+    newBillingStreet: string,
+    newBillingCity: string,
+    newBillingPostalCode: string,
+    newBillingCountry: string,
+  ) {
+    try {
+      const addressInfo = await fetchBillingAddressId(customerId);
+      const { addressId } = addressInfo;
+      const { currentVersion } = addressInfo;
+
+      const response = await apiRoot
+        .customers()
+        .withId({ ID: customerId })
+        .post({
+          body: {
+            version: currentVersion,
+            actions: [
+              {
+                action: 'changeAddress',
+                addressId,
+                address: {
+                  streetName: newBillingStreet,
+                  city: newBillingCity,
+                  postalCode: newBillingPostalCode,
+                  country: newBillingCountry,
+                },
+              },
+            ],
+          },
+        })
+        .execute();
+      showModal(MODAL_MESSAGE.SAVED);
+      return response.body;
+    } catch (error) {
+      if (error instanceof Error) {
+        showModal(`${error.message} ${MODAL_MESSAGE.NOT_SAVED}`);
+      } else {
+        showModal(MODAL_MESSAGE.UNKNOWN);
+      }
+      return null;
+    }
+  }
+
+  static saveBillingAddressInputs(customerId: string) {
+    const editBillingAddressButton = document.querySelector(
+      '.btn-edit-billing-address',
+    );
+    const saveBillingAddressButton = document.querySelector(
+      '.btn-save-billing-address',
+    );
+
+    if (saveBillingAddressButton) {
+      saveBillingAddressButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+
+        const formContainer = document.querySelector('.profile__form');
+        const allInputs = formContainer?.querySelectorAll('input, select');
+
+        let hasError = false;
+
+        if (allInputs) {
+          allInputs.forEach((input) => {
+            if (input.classList.contains('error')) {
+              hasError = true;
+            }
+          });
+        }
+
+        if (!hasError) {
+          const billingStreetField = document.getElementById(
+            'street-billing-address',
+          ) as HTMLInputElement;
+          const billingCityField = document.getElementById(
+            'city-billing-address',
+          ) as HTMLInputElement;
+          const billingPostalCodeField = document.getElementById(
+            'postal-code-billing-address',
+          ) as HTMLInputElement;
+          const billingCountry = document.getElementById(
+            'country-billing-address',
+          ) as HTMLSelectElement;
+          const checkBoxBilling = document.getElementById(
+            'isBillingAddressDefaultInput',
+          ) as HTMLSelectElement;
+
+          if (
+            Profile.validateBillingAddressInputs(
+              billingStreetField,
+              billingCityField,
+              billingPostalCodeField,
+              billingCountry,
+            )
+          ) {
+            const newBillingStreet = billingStreetField.value;
+            const newBillingCity = billingCityField.value;
+            const newBillingPostalCode = billingPostalCodeField.value;
+            const newBillingCountry = billingCountry.value;
+
+            try {
+              await Profile.updateBillingAddresses(
+                customerId,
+                newBillingStreet,
+                newBillingCity,
+                newBillingPostalCode,
+                newBillingCountry,
+              );
+
+              billingStreetField.disabled = true;
+              billingCityField.disabled = true;
+              billingPostalCodeField.disabled = true;
+              billingCountry.disabled = true;
+              checkBoxBilling.disabled = true;
+
+              billingStreetField.classList.remove('correct');
+              billingCityField.classList.remove('correct');
+              billingPostalCodeField.classList.remove('correct');
+              billingCountry.classList.remove('correct');
+
+              editBillingAddressButton?.classList.remove('btn-hidden');
+              saveBillingAddressButton.classList.add('btn-hidden');
+            } catch (error) {
+              if (error instanceof Error) {
+                showModal(error.message);
+              }
+            }
+          }
+        } else {
+          showModal(MODAL_MESSAGE.ERROR);
+        }
+      });
+    }
+  }
+
+  static validateBillingAddressInputs(
+    billingStreetField: HTMLInputElement,
+    billingCityField: HTMLInputElement,
+    billingPostalCodeField: HTMLInputElement,
+    billingCountry: HTMLSelectElement,
+  ) {
+    ValidationUtils.validateRequiredField(billingStreetField);
+    ValidationUtils.validateName(billingCityField);
+    ValidationUtils.validateBillingPostalCode(billingPostalCodeField);
+    ValidationUtils.validateCountry(billingCountry);
 
     Profile.checkFormValidity();
 
@@ -332,6 +810,7 @@ export default class Profile {
               const streetFieldId = `street-${addressType}-address`;
               const cityFieldId = `city-${addressType}-address`;
               const postalCodeFieldId = `postal-code-${addressType}-address`;
+              const countryFieldId = `country-${addressType}-address`;
 
               const streetField = document.getElementById(streetFieldId);
               streetField?.setAttribute('value', address.streetName || '');
@@ -342,6 +821,14 @@ export default class Profile {
               const postalCodeField =
                 document.getElementById(postalCodeFieldId);
               postalCodeField?.setAttribute('value', address.postalCode || '');
+
+              const countryField = document.getElementById(
+                countryFieldId,
+              ) as HTMLSelectElement | null;
+
+              if (countryField) {
+                countryField.value = address.country || ''; // Set the country value
+              }
             });
 
             if (firstName && lastName && dateOfBirth && email) {
@@ -423,7 +910,7 @@ export default class Profile {
         inputType: 'text',
         placeholder: '',
         id: 'street-shipping-address',
-        validationFunction: Profile.dummyValidationFunction,
+        validationFunction: ValidationUtils.validateRequiredField,
       },
       {
         label: 'City',
@@ -431,13 +918,13 @@ export default class Profile {
         inputType: 'text',
         placeholder: '',
         id: 'city-shipping-address',
-        validationFunction: Profile.dummyValidationFunction,
+        validationFunction: ValidationUtils.validateName,
       },
       {
         label: 'Country',
         fieldType: 'select',
         id: 'country-shipping-address',
-        validationFunction: Profile.dummyValidationFunction,
+        validationFunction: ValidationUtils.validateCountry,
         options: [{ value: 'US', label: 'US' }],
       },
       {
@@ -446,7 +933,7 @@ export default class Profile {
         inputType: 'text',
         placeholder: '',
         id: 'postal-code-shipping-address',
-        validationFunction: Profile.dummyValidationFunction,
+        validationFunction: ValidationUtils.validateShippingPostalCode,
       },
       {
         label: 'Street',
@@ -454,7 +941,7 @@ export default class Profile {
         inputType: 'text',
         placeholder: '',
         id: 'street-billing-address',
-        validationFunction: Profile.dummyValidationFunction,
+        validationFunction: ValidationUtils.validateRequiredField,
       },
       {
         label: 'City',
@@ -462,13 +949,13 @@ export default class Profile {
         inputType: 'text',
         placeholder: '',
         id: 'city-billing-address',
-        validationFunction: Profile.dummyValidationFunction,
+        validationFunction: ValidationUtils.validateName,
       },
       {
         label: 'Country',
         fieldType: 'select',
         id: 'country-billing-address',
-        validationFunction: Profile.dummyValidationFunction,
+        validationFunction: ValidationUtils.validateCountry,
         options: [{ value: 'US', label: 'US' }],
       },
       {
@@ -477,16 +964,11 @@ export default class Profile {
         inputType: 'text',
         placeholder: '',
         id: 'postal-code-billing-address',
-        validationFunction: Profile.dummyValidationFunction,
+        validationFunction: ValidationUtils.validateShippingPostalCode,
       },
     ];
 
     return fieldConfigs;
-  }
-
-  // eslint-disable-next-line no-unused-vars
-  static dummyValidationFunction(_field: HTMLInputElement | HTMLSelectElement) {
-    // This function intentionally does nothing for development purposes
   }
 
   static createLabel(text: string, forId: string): HTMLElement {
@@ -538,8 +1020,19 @@ export default class Profile {
 
     const defaultOption = document.createElement('option');
     defaultOption.value = '';
-    defaultOption.text = 'US';
+    defaultOption.text = 'Select Country:';
     select.append(defaultOption);
+
+    fieldConfig.options?.forEach((option) => {
+      const optionElem = document.createElement('option');
+      optionElem.value = option.value;
+      optionElem.text = option.label;
+      select.append(optionElem);
+    });
+
+    select.addEventListener('change', () => {
+      fieldConfig.validationFunction(select);
+    });
 
     containerSelect.append(label);
     containerSelect.append(select);
@@ -564,7 +1057,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const customerLog = Cookies.get('log');
   if (customerLog) {
     const customerId = atob(customerLog);
-    Profile.enableInputs();
-    Profile.saveInputs(customerId);
+    Profile.enablePersonalInfoInputs();
+    Profile.savePersonalInfoInputs(customerId);
+    Profile.enableShippingAddressInputs();
+    Profile.saveShippingAddressInputs(customerId);
+    Profile.enableBillingAddressInputs();
+    Profile.saveBillingAddressInputs(customerId);
   }
 });

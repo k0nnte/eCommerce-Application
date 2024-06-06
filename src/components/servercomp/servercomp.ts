@@ -11,6 +11,7 @@ import {
   ProductProjectionPagedSearchResponse,
 } from '@commercetools/platform-sdk';
 import {
+  AddressInfo,
   CustomerSignUp,
   ErrorResponse,
   LoginResponse,
@@ -153,6 +154,36 @@ async function fetchCustomerData(customerId: string) {
     .get()
     .execute();
   return response.body;
+}
+
+async function fetchShippingAddressId(
+  customerId: string,
+): Promise<AddressInfo> {
+  const response = await apiRoot
+    .customers()
+    .withId({ ID: customerId })
+    .get()
+    .execute();
+  const currentVersion = response.body.version;
+  if (response.body.addresses && response.body.addresses.length > 0) {
+    const addressId = response.body.addresses[0].id;
+    return { addressId, currentVersion };
+  }
+  return { addressId: undefined, currentVersion };
+}
+
+async function fetchBillingAddressId(customerId: string): Promise<AddressInfo> {
+  const response = await apiRoot
+    .customers()
+    .withId({ ID: customerId })
+    .get()
+    .execute();
+  const currentVersion = response.body.version;
+  if (response.body.addresses && response.body.addresses.length > 0) {
+    const addressId = response.body.addresses[1].id;
+    return { addressId, currentVersion };
+  }
+  return { addressId: undefined, currentVersion };
 }
 
 async function getAllProduct() {
@@ -314,4 +345,6 @@ export {
   getvalueCardProduct,
   sortByName,
   getgetProdByName,
+  fetchShippingAddressId,
+  fetchBillingAddressId,
 };
