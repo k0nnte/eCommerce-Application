@@ -15,6 +15,8 @@ export default class Header {
 
   regLink: null | HTMLElement;
 
+  catalogLink: null | HTMLElement;
+
   logoutLink: null | HTMLElement;
 
   profileLink: null | HTMLElement;
@@ -25,6 +27,7 @@ export default class Header {
     this.homeLink = null;
     this.loginLink = null;
     this.regLink = null;
+    this.catalogLink = null;
     this.profileLink = null;
     this.logoutLink = null;
     this.render();
@@ -41,6 +44,19 @@ export default class Header {
       centerElement?.classList.remove('centercard');
       event.preventDefault();
       window.history.pushState({}, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+
+    this.catalogLink = createComponent('a', ['nav-link', 'catalog-link'], {});
+    this.catalogLink.textContent = 'Catalog';
+    this.catalogLink.setAttribute('href', '');
+    this.catalogLink.innerHTML +=
+      '<img width="22" height="22" src="https://img.icons8.com/ios/50/FFFFFF/spiral-bound-booklet.png" alt="spiral-bound-booklet"/>';
+    this.catalogLink.addEventListener('click', (event: MouseEvent) => {
+      const centerElement = document.querySelector('.centercard');
+      centerElement?.classList.remove('centercard');
+      event.preventDefault();
+      window.history.pushState({}, '', '/catalog');
       window.dispatchEvent(new PopStateEvent('popstate'));
     });
 
@@ -97,7 +113,12 @@ export default class Header {
     });
 
     this.header.append(this.homeLink, this.nav);
-    this.nav.append(this.profileLink, this.loginLink, this.regLink);
+    this.nav.append(
+      this.catalogLink,
+      this.profileLink,
+      this.loginLink,
+      this.regLink,
+    );
   }
 
   public getHeader() {

@@ -161,6 +161,52 @@ export default class Profile {
     wrapper.append(title, formContainer, mainLink);
     profile.append(wrapper);
 
+    const setShippingDefaultAddress = createComponent(
+      'label',
+      ['checkbox-label'],
+      {
+        for: 'isShippingAddressDefaultInput',
+      },
+    );
+    const checkboxInputShipping = createComponent(
+      'input',
+      ['input-default-shipping'],
+      {
+        id: 'isShippingAddressDefaultInput',
+        type: 'checkbox',
+        name: 'isShippingAddressDefault',
+      },
+    );
+    const labelTextShipping = document.createTextNode(
+      'Set Shipping Address as default',
+    );
+    setShippingDefaultAddress.append(checkboxInputShipping, labelTextShipping);
+
+    titleShipping.append(setShippingDefaultAddress);
+
+    const setBillingDefaultAddress = createComponent(
+      'label',
+      ['checkbox-label'],
+      {
+        for: 'isBillingAddressDefaultInput',
+      },
+    );
+    const checkboxInputBilling = createComponent(
+      'input',
+      ['input-default-billing'],
+      {
+        id: 'isBillingAddressDefaultInput',
+        type: 'checkbox',
+        name: 'isBillingAddressDefault',
+      },
+    );
+    const labelTextBilling = document.createTextNode(
+      'Set Billing Address as default',
+    );
+    setBillingDefaultAddress.append(checkboxInputBilling, labelTextBilling);
+
+    titleBilling.append(setBillingDefaultAddress);
+
     Profile.populateProfileForm();
   }
 
@@ -365,11 +411,15 @@ export default class Profile {
         const shippingCountry = document.getElementById(
           'country-shipping-address',
         ) as HTMLSelectElement;
+        const checkBoxShipping = document.getElementById(
+          'isShippingAddressDefaultInput',
+        ) as HTMLSelectElement;
 
         shippingStreetField.disabled = false;
         shippingCityField.disabled = false;
         shippingPostalCodeField.disabled = false;
         shippingCountry.disabled = false;
+        checkBoxShipping.disabled = false;
 
         editAddressButton.classList.add('btn-hidden');
         saveAddressButton?.classList.remove('btn-hidden');
@@ -461,6 +511,9 @@ export default class Profile {
           const shippingCountry = document.getElementById(
             'country-shipping-address',
           ) as HTMLSelectElement;
+          const checkBoxShipping = document.getElementById(
+            'isShippingAddressDefaultInput',
+          ) as HTMLSelectElement;
 
           if (
             Profile.validateShippingAddressInputs(
@@ -488,6 +541,7 @@ export default class Profile {
               shippingCityField.disabled = true;
               shippingPostalCodeField.disabled = true;
               shippingCountry.disabled = true;
+              checkBoxShipping.disabled = true;
 
               shippingStreetField.classList.remove('correct');
               shippingCityField.classList.remove('correct');
@@ -549,11 +603,15 @@ export default class Profile {
         const billingCountry = document.getElementById(
           'country-billing-address',
         ) as HTMLSelectElement;
+        const checkBoxBilling = document.getElementById(
+          'isBillingAddressDefaultInput',
+        ) as HTMLSelectElement;
 
         billingStreetField.disabled = false;
         billingCityField.disabled = false;
         billingPostalCodeField.disabled = false;
         billingCountry.disabled = false;
+        checkBoxBilling.disabled = false;
 
         editBillingAddressButton.classList.add('btn-hidden');
         saveBillingAddressButton?.classList.remove('btn-hidden');
@@ -644,6 +702,9 @@ export default class Profile {
           const billingCountry = document.getElementById(
             'country-billing-address',
           ) as HTMLSelectElement;
+          const checkBoxBilling = document.getElementById(
+            'isBillingAddressDefaultInput',
+          ) as HTMLSelectElement;
 
           if (
             Profile.validateBillingAddressInputs(
@@ -671,6 +732,7 @@ export default class Profile {
               billingCityField.disabled = true;
               billingPostalCodeField.disabled = true;
               billingCountry.disabled = true;
+              checkBoxBilling.disabled = true;
 
               billingStreetField.classList.remove('correct');
               billingCityField.classList.remove('correct');

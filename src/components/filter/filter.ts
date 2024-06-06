@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+// /* eslint-disable no-console */
 import createComponent from '../components';
 import createModal from '../modal/modal';
 import {
