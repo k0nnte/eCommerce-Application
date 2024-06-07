@@ -1,12 +1,15 @@
+import './app.scss';
 import Router from '@/router/router';
 import createComponent from '@/components/components';
 import Header from '@/components/header/header';
 import Main from '@/pages/main/main';
 import ErrorPage from '@/pages/errors/error';
-import Login from '@/pages/Login/login';
+import Login from '@/pages/login/login';
 import RegistrationForm from '@/pages/registration/registration';
-import './app.scss';
+import Profile from '@/pages/profile/profile';
 import { customerOn } from '@/components/servercomp/servercomp';
+import { router } from '@/router/routerType';
+import Catalog from '@/pages/catalog/catalog';
 
 const CLASS = {
   wrapper: ['main_wrap'],
@@ -32,28 +35,36 @@ export default class App {
 
   register: HTMLElement;
 
+  profile: HTMLElement;
+
   center: HTMLElement;
 
   headermain: Header;
 
+  catalog: HTMLElement;
+
   constructor() {
+    this.catalog = new Catalog().getCatalog();
     this.headermain = new Header();
     this.header = this.headermain.getHeader();
     this.main = new Main().getMain();
     this.center = createComponent('main', CLASS.center, {});
     this.login = new Login(this.headermain);
     this.register = new RegistrationForm(this.headermain).getWrap();
+    this.profile = new Profile().getWrap();
     this.err = new ErrorPage().getWrap();
     this.wrapper = createComponent('div', CLASS.wrapper, {});
     this.routing = new Router(this.createRoutes(), this.center);
   }
 
-  createRoutes() {
+  createRoutes(): router {
     return {
       '/': this.main,
       '/login': Login.createLoginForm(),
       '/err': this.err,
       '/register': this.register,
+      '/profile': this.profile,
+      '/catalog': this.catalog,
     };
   }
 

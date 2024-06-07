@@ -1,0 +1,67 @@
+@import '../../app/variables.scss';
+
+.profile__wrapper {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  padding: 1rem 0;
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 70rem;
+  margin: auto;
+  padding: 2rem 0;
+  box-shadow: $box-shadow;
+  text-align: center;
+}
+
+.profile__form {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+}
+
+.link-main {
+  display: flex;
+  gap: 1rem;
+  font-size: 1.7rem;
+  color: $color-text-grey;
+  margin-bottom: 4rem;
+  text-decoration: none;
+  text-decoration: underline;
+  margin-top: 4rem;
+
+  &:hover {
+    color: $color-primary;
+  }
+  &:active {
+    transform: scale(0.98);
+    color: darken($color-primary, 10%);
+  }
+}
+
+.input-label.profile-page {
+  &:after {
+    color: $color-text-dark;
+    content: ':';
+  }
+}
+
+.checkbox-label {
+  margin-top: 2rem;
+}
+
+.btn-hidden {
+  display: none;
+}

@@ -1,0 +1,35 @@
+@import '../../app/app.scss';
+
+.wrapper_search {
+  display: flex;
+  gap: 25px;
+  justify-content: flex-end;
+  margin: 0 auto;
+  @media screen and (max-width: 700px) {
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+  }
+}
+
+.search_btn {
+  min-height: 3rem;
+  width: 116px;
+}
+
+.select,
+.input_search {
+  width: 116px;
+  height: 30px;
+  border: $border;
+  outline: none;
+  padding: 5px;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+
+  &:hover,
+  &:active {
+    border: 1px solid $color-text-grey;
+    transform: scale(1.01);
+  }
+}

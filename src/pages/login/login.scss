@@ -13,11 +13,10 @@ body {
   margin: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 .center {
-  min-height: 100vh;
+  min-height: calc(100vh - 75px);
   display: flex;
   justify-content: center;
   align-items: center;

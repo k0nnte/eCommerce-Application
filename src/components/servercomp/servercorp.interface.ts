@@ -28,7 +28,7 @@ export interface Customer {
 
 export interface CustomerSignUp {
   email: string;
-  password: string | undefined;
+  password: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string;
@@ -86,4 +86,9 @@ export interface LoginResponse {
   istrue: boolean;
   response?: SuccessResponse;
   error?: ErrorResponse;
+}
+
+export interface AddressInfo {
+  addressId: string | undefined;
+  currentVersion: number;
 }

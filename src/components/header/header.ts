@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import Profile from '@/pages/profile/profile';
 import createComponent from '../components';
 import './header.scss';
 import { customerOn } from '../servercomp/servercomp';
@@ -14,7 +15,11 @@ export default class Header {
 
   regLink: null | HTMLElement;
 
+  catalogLink: null | HTMLElement;
+
   logoutLink: null | HTMLElement;
+
+  profileLink: null | HTMLElement;
 
   constructor() {
     this.header = createComponent('header', ['header'], {});
@@ -22,6 +27,8 @@ export default class Header {
     this.homeLink = null;
     this.loginLink = null;
     this.regLink = null;
+    this.catalogLink = null;
+    this.profileLink = null;
     this.logoutLink = null;
     this.render();
   }
@@ -33,8 +40,23 @@ export default class Header {
     this.homeLink.innerHTML +=
       '<img width="24" height="24" src="https://img.icons8.com/sf-regular/48/FFFFFF/home-page.png" alt="home-page"/>';
     this.homeLink.addEventListener('click', (event: MouseEvent) => {
+      const centerElement = document.querySelector('.centercard');
+      centerElement?.classList.remove('centercard');
       event.preventDefault();
       window.history.pushState({}, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+
+    this.catalogLink = createComponent('a', ['nav-link', 'catalog-link'], {});
+    this.catalogLink.textContent = 'Catalog';
+    this.catalogLink.setAttribute('href', '');
+    this.catalogLink.innerHTML +=
+      '<img width="22" height="22" src="https://img.icons8.com/ios/50/FFFFFF/spiral-bound-booklet.png" alt="spiral-bound-booklet"/>';
+    this.catalogLink.addEventListener('click', (event: MouseEvent) => {
+      const centerElement = document.querySelector('.centercard');
+      centerElement?.classList.remove('centercard');
+      event.preventDefault();
+      window.history.pushState({}, '', '/catalog');
       window.dispatchEvent(new PopStateEvent('popstate'));
     });
 
@@ -55,6 +77,8 @@ export default class Header {
     this.regLink.innerHTML +=
       '<img width="22" height="22" src="https://img.icons8.com/sf-black/64/FFFFFF/add-user-male.png" alt="add-user-male"/>';
     this.regLink.addEventListener('click', (event: MouseEvent) => {
+      const centerElement = document.querySelector('.centercard');
+      centerElement?.classList.remove('centercard');
       event.preventDefault();
       window.history.pushState({}, '', '/register');
       window.dispatchEvent(new PopStateEvent('popstate'));
@@ -66,6 +90,8 @@ export default class Header {
     this.logoutLink.innerHTML +=
       '<img width="22" height="22" src="https://img.icons8.com/sf-black/64/FFFFFF/exit.png" alt="exit"/>';
     this.logoutLink.addEventListener('click', (event: MouseEvent) => {
+      const centerElement = document.querySelector('.centercard');
+      centerElement?.classList.remove('centercard');
       event.preventDefault();
       window.history.pushState({}, '', '/');
       window.dispatchEvent(new PopStateEvent('popstate'));
@@ -74,8 +100,25 @@ export default class Header {
       customerOn(this);
     });
 
+    this.profileLink = createComponent('a', ['nav-link', 'profile-link'], {});
+    this.profileLink.textContent = 'Profile';
+    this.profileLink.setAttribute('href', '/');
+    this.profileLink.innerHTML +=
+      '<img width="22" height="22" src="https://img.icons8.com/sf-black/64/FFFFFF/user-male.png" alt="user-profile"/>';
+    this.profileLink.addEventListener('click', (event: MouseEvent) => {
+      event.preventDefault();
+      window.history.pushState({}, '', '/profile');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+      Profile.populateProfileForm();
+    });
+
     this.header.append(this.homeLink, this.nav);
-    this.nav.append(this.loginLink, this.regLink);
+    this.nav.append(
+      this.catalogLink,
+      this.profileLink,
+      this.loginLink,
+      this.regLink,
+    );
   }
 
   public getHeader() {

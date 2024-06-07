@@ -1,10 +1,11 @@
-/* eslint-disable no-console */
+// /* eslint-disable no-console */
+// /* eslint-disable no-unused-vars */
 import './registration.scss';
 import 'font-awesome/css/font-awesome.min.css';
 import {
   createCustomer,
   customerOn,
-  gettoken,
+  getToken,
 } from '@/components/servercomp/servercomp';
 import Cookies from 'js-cookie';
 import { BaseAddress } from '@commercetools/platform-sdk';
@@ -12,8 +13,9 @@ import Header from '@/components/header/header';
 import { CustomerSignUp } from '@/components/servercomp/servercorp.interface';
 import createComponent from '../../components/components';
 import { FieldConfig } from './types/interfaces';
-import { CLASS_NAME, ERROR, MODAL_MESSAGE } from './constants/constants';
-import createErrorPopup from '../../components/erorpop/erorpop';
+import { CLASS_NAME, MODAL_MESSAGE } from './constants/constants';
+import showModal from '../../components/modal/modal';
+import ValidationUtils from '../../utils/validation/validationUtils';
 
 export default class RegistrationForm {
   static isFormValid = false;
@@ -27,21 +29,21 @@ export default class RegistrationForm {
   constructor(header: Header) {
     this.registrationForm = document.createElement('div');
     this.registrationForm.classList.add('registration__wrapper');
-    RegistrationForm.renderForm(this.registrationForm);
+    RegistrationForm.renderRegistrationForm(this.registrationForm);
     this.header = header;
     RegistrationForm.Sheader = this.header;
   }
 
-  static renderForm(registrationForm: HTMLElement) {
+  static renderRegistrationForm(registrationForm: HTMLElement) {
     const wrapper = createComponent('div', ['registration'], {});
-    const title = createComponent('h2', ['registration__title'], {});
+    const title = createComponent('h2', ['page__title'], {});
     title.textContent = 'Registration';
     const formContainer = createComponent('form', ['registration__form'], {});
-    const generalInfoContainer = createComponent('div', ['general-info'], {});
+    const personalInfoContainer = createComponent('div', ['personal-info'], {});
     const addressContainer = createComponent('div', ['addresses'], {});
-    const titleInfo = createComponent('p', ['general-info-title'], {});
-    titleInfo.innerText = 'General Information';
-    generalInfoContainer.prepend(titleInfo);
+    const titleInfo = createComponent('p', ['personal-info-title'], {});
+    titleInfo.innerText = 'Personal Information';
+    personalInfoContainer.prepend(titleInfo);
     const titleShipping = createComponent('p', ['shipping-title'], {});
     titleShipping.innerText = 'Shipping Address';
     const titleBilling = createComponent('p', ['billing-title'], {});
@@ -159,9 +161,9 @@ export default class RegistrationForm {
           billingAddressContainer.append(selectField);
         }
       } else if (inputField) {
-        generalInfoContainer.append(inputField);
+        personalInfoContainer.append(inputField);
       } else if (selectField) {
-        generalInfoContainer.append(selectField);
+        personalInfoContainer.append(selectField);
       }
 
       if (fieldConfig.inputType === 'password') {
@@ -276,14 +278,14 @@ export default class RegistrationForm {
 
     signUpButton.addEventListener('click', (event) => {
       event.preventDefault();
-      RegistrationForm.checkAllFieldsValidity();
+      ValidationUtils.checkAllFieldsValidity();
       RegistrationForm.checkFormValidity();
 
       if (RegistrationForm.isFormValid) {
         window.history.pushState({}, '', '/');
         window.dispatchEvent(new PopStateEvent('popstate'));
       } else {
-        createErrorPopup(MODAL_MESSAGE.ERROR);
+        showModal(MODAL_MESSAGE.ERROR);
       }
     });
 
@@ -300,51 +302,9 @@ export default class RegistrationForm {
       });
     }
 
-    formContainer.append(generalInfoContainer, addressContainer, signUpButton);
+    formContainer.append(personalInfoContainer, addressContainer, signUpButton);
     wrapper.append(title, formContainer, loginLink);
     registrationForm.append(wrapper);
-  }
-
-  static getShippingAddressData() {
-    const shippingFields = {
-      streetName: (
-        document.getElementById('street-shipping-address') as HTMLInputElement
-      ).value,
-      city: (
-        document.getElementById('city-shipping-address') as HTMLInputElement
-      ).value,
-      country: (
-        document.getElementById('country-shipping-address') as HTMLSelectElement
-      ).value,
-      postalCode: (
-        document.getElementById(
-          'postal-code-shipping-address',
-        ) as HTMLInputElement
-      ).value,
-    };
-
-    return shippingFields;
-  }
-
-  static getBillingAddressData() {
-    const billingFields = {
-      streetName: (
-        document.getElementById('street-billing-address') as HTMLInputElement
-      ).value,
-      city: (
-        document.getElementById('city-billing-address') as HTMLInputElement
-      ).value,
-      country: (
-        document.getElementById('country-billing-address') as HTMLSelectElement
-      ).value,
-      postalCode: (
-        document.getElementById(
-          'postal-code-billing-address',
-        ) as HTMLInputElement
-      ).value,
-    };
-
-    return billingFields;
   }
 
   static async processCustomerRegistration() {
@@ -385,17 +345,18 @@ export default class RegistrationForm {
     if (RegistrationForm.isFormValid) {
       const response = createCustomer(body);
       response
-        .then((data) => {
-          Cookies.set('log', btoa(data.body.customer.id));
-          createErrorPopup(MODAL_MESSAGE.CORRECT);
-          customerOn(this.Sheader);
-          const token = gettoken(body.email, body.password!);
-          token.then((tok) => {
-            Cookies.set('token', btoa(tok.access_token));
+        .then((signInResult) => {
+          const customerId = signInResult.customer.id;
+          Cookies.set('log', btoa(customerId));
+          getToken(body.email, body.password).then((tokenData) => {
+            Cookies.set('token', btoa(tokenData.access_token));
+            customerOn(this.Sheader);
+            showModal(MODAL_MESSAGE.REGISTERED);
           });
+          return customerId;
         })
         .catch((error) => {
-          createErrorPopup(error.body.message);
+          showModal(error.body.message);
         });
     }
   }
@@ -408,7 +369,7 @@ export default class RegistrationForm {
         inputType: 'text',
         placeholder: 'Enter your first name',
         id: 'first-name-info',
-        validationFunction: RegistrationForm.validateName,
+        validationFunction: ValidationUtils.validateName,
       },
       {
         label: 'Last name',
@@ -416,7 +377,7 @@ export default class RegistrationForm {
         inputType: 'text',
         placeholder: 'Enter your last name',
         id: 'last-name-info',
-        validationFunction: RegistrationForm.validateName,
+        validationFunction: ValidationUtils.validateName,
       },
       {
         label: 'Date of Birth',
@@ -424,7 +385,7 @@ export default class RegistrationForm {
         inputType: 'date',
         placeholder: '',
         id: 'birth-date-info',
-        validationFunction: RegistrationForm.validateDateOfBirth,
+        validationFunction: ValidationUtils.validateDateOfBirth,
       },
       {
         label: 'E-mail',
@@ -432,7 +393,7 @@ export default class RegistrationForm {
         inputType: 'text',
         placeholder: 'Enter your e-mail address',
         id: 'email-info',
-        validationFunction: RegistrationForm.validateEmail,
+        validationFunction: ValidationUtils.validateEmail,
       },
       {
         label: 'Password',
@@ -440,7 +401,7 @@ export default class RegistrationForm {
         inputType: 'password',
         placeholder: 'Enter your password',
         id: 'password-info',
-        validationFunction: RegistrationForm.validatePassword,
+        validationFunction: ValidationUtils.validatePassword,
       },
       {
         label: 'Street',
@@ -448,7 +409,7 @@ export default class RegistrationForm {
         inputType: 'text',
         placeholder: 'Enter your street',
         id: 'street-shipping-address',
-        validationFunction: RegistrationForm.validateRequiredField,
+        validationFunction: ValidationUtils.validateRequiredField,
       },
       {
         label: 'City',
@@ -456,13 +417,13 @@ export default class RegistrationForm {
         inputType: 'text',
         placeholder: 'Enter your city',
         id: 'city-shipping-address',
-        validationFunction: RegistrationForm.validateName,
+        validationFunction: ValidationUtils.validateName,
       },
       {
         label: 'Country',
         fieldType: 'select',
         id: 'country-shipping-address',
-        validationFunction: RegistrationForm.validateCountry,
+        validationFunction: ValidationUtils.validateCountry,
         options: [{ value: 'US', label: 'US' }],
       },
       {
@@ -471,7 +432,7 @@ export default class RegistrationForm {
         inputType: 'text',
         placeholder: 'Enter your postal code',
         id: 'postal-code-shipping-address',
-        validationFunction: RegistrationForm.validateShippingPostalCode,
+        validationFunction: ValidationUtils.validateShippingPostalCode,
       },
       {
         label: 'Street',
@@ -479,7 +440,7 @@ export default class RegistrationForm {
         inputType: 'text',
         placeholder: 'Enter your street',
         id: 'street-billing-address',
-        validationFunction: RegistrationForm.validateRequiredField,
+        validationFunction: ValidationUtils.validateRequiredField,
       },
       {
         label: 'City',
@@ -487,13 +448,13 @@ export default class RegistrationForm {
         inputType: 'text',
         placeholder: 'Enter your city',
         id: 'city-billing-address',
-        validationFunction: RegistrationForm.validateName,
+        validationFunction: ValidationUtils.validateName,
       },
       {
         label: 'Country',
         fieldType: 'select',
         id: 'country-billing-address',
-        validationFunction: RegistrationForm.validateCountry,
+        validationFunction: ValidationUtils.validateCountry,
         options: [{ value: 'US', label: 'US' }],
       },
       {
@@ -502,7 +463,7 @@ export default class RegistrationForm {
         inputType: 'text',
         placeholder: 'Enter your postal code',
         id: 'postal-code-billing-address',
-        validationFunction: RegistrationForm.validateBillingPostalCode,
+        validationFunction: ValidationUtils.validateBillingPostalCode,
       },
     ];
 
@@ -536,327 +497,32 @@ export default class RegistrationForm {
     }
   }
 
-  static checkAllFieldsValidity() {
-    let allFieldsValid = true;
+  static clearErrorsAndInputs() {
+    const formElement = document.querySelector('.registration__form');
 
-    const inputFields = document.querySelectorAll('input, select');
-
-    inputFields.forEach((element) => {
-      const field = element as HTMLInputElement | HTMLSelectElement;
-
-      if (!field.type || field.type !== 'checkbox') {
-        if (field.value.trim() === '' || !field.classList.contains('correct')) {
-          allFieldsValid = false;
-
-          const errorMessage = ERROR.ERROR;
-          RegistrationForm.showError(field, errorMessage);
-        } else {
-          RegistrationForm.hideError(field);
-        }
-      }
-
-      if (field.type === 'checkbox') {
-        return;
-      }
-
-      field.addEventListener('input', () => {
-        const inputField = field as HTMLInputElement | HTMLSelectElement;
-
-        if (inputField.value.trim() === '') {
-          const errorMessage = ERROR.ERROR;
-          RegistrationForm.showError(inputField, errorMessage);
-        } else {
-          RegistrationForm.hideError(field);
-          if (
-            inputField.id === 'last-name-info' ||
-            inputField.id === 'first-name-info' ||
-            inputField.id === 'city-shipping-address' ||
-            inputField.id === 'city-billing-address'
-          ) {
-            RegistrationForm.validateName(inputField as HTMLInputElement);
-          }
-          if (inputField.id === 'birth-date-info') {
-            RegistrationForm.validateDateOfBirth(
-              inputField as HTMLInputElement,
-            );
-          }
-          if (inputField.id === 'email-info') {
-            RegistrationForm.validateEmail(inputField as HTMLInputElement);
-          }
-          if (inputField.id === 'password-info') {
-            RegistrationForm.validatePassword(inputField as HTMLInputElement);
-          }
-          if (
-            inputField.id === 'street-shipping-address' ||
-            inputField.id === 'street-billing-address'
-          ) {
-            RegistrationForm.validateRequiredField(
-              inputField as HTMLInputElement,
-            );
-          }
-          if (
-            inputField.id === 'country-shipping-address' ||
-            inputField.id === 'country-billing-address'
-          ) {
-            RegistrationForm.validateCountry(inputField as HTMLSelectElement);
-          }
-          if (inputField.id === 'postal-code-shipping-address') {
-            RegistrationForm.validateShippingPostalCode(
-              inputField as HTMLInputElement,
-            );
-          }
-          if (inputField.id === 'postal-code-billing-address') {
-            RegistrationForm.validateBillingPostalCode(
-              inputField as HTMLInputElement,
-            );
-          }
-        }
+    formElement
+      ?.querySelectorAll(`.${CLASS_NAME.ERROR_MESSAGE}`)
+      .forEach((error) => {
+        error.remove();
       });
 
-      if (allFieldsValid) {
-        RegistrationForm.isFormValid = true;
-      } else {
-        RegistrationForm.isFormValid = false;
-      }
-    });
-  }
+    formElement?.querySelectorAll('input, select').forEach((field) => {
+      const inputField = field as HTMLInputElement | HTMLSelectElement;
 
-  static showError(
-    nameInput: HTMLInputElement | HTMLSelectElement,
-    message: string,
-  ) {
-    const errorMessage = nameInput.nextElementSibling as HTMLElement;
-
-    if (
-      !errorMessage ||
-      !errorMessage.classList.contains(CLASS_NAME.ERROR_MESSAGE)
-    ) {
-      const newErrorMessage = createComponent(
-        'span',
-        [CLASS_NAME.ERROR_MESSAGE],
-        {},
-      );
-      newErrorMessage.innerText = message;
-      nameInput.insertAdjacentElement('afterend', newErrorMessage);
-    }
-  }
-
-  static hideError(nameInput: HTMLInputElement | HTMLSelectElement) {
-    const errorMessage = nameInput.nextElementSibling as HTMLElement;
-
-    if (
-      errorMessage &&
-      errorMessage.classList.contains(CLASS_NAME.ERROR_MESSAGE)
-    ) {
-      errorMessage.remove();
-    }
-  }
-
-  static validateName(nameInput: HTMLInputElement | HTMLSelectElement) {
-    const nameValue = nameInput.value.trim();
-    const isValidName = /^[a-zA-Z]+$/.test(nameValue);
-
-    nameInput.classList.toggle('error', !isValidName);
-    nameInput.classList.toggle('correct', isValidName);
-
-    if (!isValidName) {
-      RegistrationForm.showError(nameInput, ERROR.NAME);
-    } else {
-      RegistrationForm.hideError(nameInput);
-    }
-  }
-
-  static validateDateOfBirth(dateInput: HTMLInputElement) {
-    const minAge = 13;
-    const maxAge = 130;
-    const dateOfBirth = new Date(dateInput.value);
-    const currentDate = new Date();
-
-    const minAgeDate = new Date(
-      currentDate.getFullYear() - minAge,
-      currentDate.getMonth(),
-      currentDate.getDate(),
-    );
-    const maxAgeDate = new Date(
-      currentDate.getFullYear() - maxAge,
-      currentDate.getMonth(),
-      currentDate.getDate(),
-    );
-
-    const isValidDate =
-      !Number.isNaN(dateOfBirth.getTime()) &&
-      dateOfBirth <= currentDate &&
-      dateOfBirth >= maxAgeDate &&
-      dateOfBirth < minAgeDate;
-
-    dateInput.classList.toggle('error', !isValidDate);
-    dateInput.classList.toggle('correct', isValidDate);
-
-    if (!isValidDate) {
-      RegistrationForm.showError(dateInput, ERROR.DATE_OF_BIRTH);
-    } else {
-      RegistrationForm.hideError(dateInput);
-    }
-  }
-
-  static validateEmail(emailInput: HTMLInputElement) {
-    const emailValue = emailInput.value.trim();
-    const isValidEmail =
-      !emailValue || !RegistrationForm.isValidEmailFormat(emailValue);
-
-    emailInput.classList.toggle('error', isValidEmail);
-    emailInput.classList.toggle('correct', !isValidEmail);
-
-    if (isValidEmail) {
-      RegistrationForm.showError(emailInput, ERROR.EMAIL);
-    } else {
-      RegistrationForm.hideError(emailInput);
-    }
-  }
-
-  static isValidEmailFormat(email: string): boolean {
-    const emailRegex = /^\S+@\S+\.\S{2,}$/;
-    return emailRegex.test(email);
-  }
-
-  static validatePassword(passwordInput: HTMLInputElement) {
-    const passwordValue = passwordInput.value.trim();
-    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-
-    const isValidPassword = passwordRegex.test(passwordValue);
-
-    passwordInput.classList.toggle('error', !isValidPassword);
-    passwordInput.classList.toggle('correct', isValidPassword);
-
-    if (!isValidPassword) {
-      RegistrationForm.showError(passwordInput, ERROR.PASSWORD);
-    } else {
-      RegistrationForm.hideError(passwordInput);
-    }
-  }
-
-  static validateCountry(field: HTMLSelectElement | HTMLInputElement) {
-    const selectCountry = field as HTMLSelectElement;
-
-    const updateValidationClasses = () => {
-      const isValidSelection = selectCountry.value !== '';
-      selectCountry.classList.toggle('error', !isValidSelection);
-      selectCountry.classList.toggle('correct', isValidSelection);
-
-      if (!isValidSelection) {
-        RegistrationForm.showError(selectCountry, ERROR.COUNTRY);
-      } else {
-        RegistrationForm.hideError(selectCountry);
-      }
-    };
-
-    updateValidationClasses();
-
-    selectCountry.addEventListener('change', updateValidationClasses);
-  }
-
-  static validateShippingPostalCode(postalCodeInput: HTMLInputElement) {
-    const countrySelect = document.getElementById(
-      'country-shipping-address',
-    ) as HTMLSelectElement;
-
-    const updateValidationClasses = () => {
-      const selectedCountry = countrySelect.value;
-      const isUSACountrySelected = selectedCountry === 'US';
-      const isValidPostalCode = /^\d{5}(-\d{4})?$/.test(
-        postalCodeInput.value.trim(),
-      );
-
-      if (!isUSACountrySelected) {
-        postalCodeInput.classList.add('error');
-        postalCodeInput.classList.remove('correct');
-        RegistrationForm.showError(postalCodeInput, ERROR.COUNTRY);
-      } else {
-        postalCodeInput.classList.toggle('error', !isValidPostalCode);
-        postalCodeInput.classList.toggle('correct', isValidPostalCode);
-
-        if (!isValidPostalCode) {
-          RegistrationForm.showError(postalCodeInput, ERROR.POSTAL_CODE);
+      if (inputField.type !== 'submit') {
+        if (inputField.type === 'checkbox') {
+          (inputField as HTMLInputElement).checked = false;
         } else {
-          RegistrationForm.hideError(postalCodeInput);
+          inputField.value = '';
         }
       }
-    };
 
-    updateValidationClasses();
-
-    countrySelect.addEventListener('change', () => {
-      if (postalCodeInput.value.trim() !== '') {
-        RegistrationForm.hideError(postalCodeInput);
-        updateValidationClasses();
+      if ('disabled' in inputField && inputField.disabled) {
+        inputField.disabled = false;
       }
+
+      inputField.classList.remove('error', 'correct');
     });
-
-    postalCodeInput.addEventListener('input', () => {
-      if (postalCodeInput.value.trim() !== '') {
-        RegistrationForm.hideError(postalCodeInput);
-        updateValidationClasses();
-      }
-    });
-  }
-
-  static validateBillingPostalCode(postalCodeInput: HTMLInputElement) {
-    const countrySelect = document.getElementById(
-      'country-billing-address',
-    ) as HTMLSelectElement;
-
-    const updateValidationClasses = () => {
-      const selectedCountry = countrySelect.value;
-      const isUSACountrySelected = selectedCountry === 'US';
-      const isValidPostalCode = /^\d{5}(-\d{4})?$/.test(
-        postalCodeInput.value.trim(),
-      );
-
-      if (!isUSACountrySelected) {
-        postalCodeInput.classList.add('error');
-        postalCodeInput.classList.remove('correct');
-        RegistrationForm.showError(postalCodeInput, ERROR.COUNTRY);
-      } else {
-        postalCodeInput.classList.toggle('error', !isValidPostalCode);
-        postalCodeInput.classList.toggle('correct', isValidPostalCode);
-
-        if (!isValidPostalCode) {
-          RegistrationForm.showError(postalCodeInput, ERROR.POSTAL_CODE);
-        } else {
-          RegistrationForm.hideError(postalCodeInput);
-        }
-      }
-    };
-
-    updateValidationClasses();
-
-    countrySelect.addEventListener('change', () => {
-      if (postalCodeInput.value.trim() !== '') {
-        RegistrationForm.hideError(postalCodeInput);
-        updateValidationClasses();
-      }
-    });
-
-    postalCodeInput.addEventListener('input', () => {
-      if (postalCodeInput.value.trim() !== '') {
-        RegistrationForm.hideError(postalCodeInput);
-        updateValidationClasses();
-      }
-    });
-  }
-
-  static validateRequiredField(input: HTMLInputElement | HTMLSelectElement) {
-    const value = input.value.trim();
-    const isValid = value !== '';
-
-    input.classList.toggle('error', !isValid);
-    input.classList.toggle('correct', isValid);
-
-    if (!isValid) {
-      RegistrationForm.showError(input, ERROR.EMPTY);
-    } else {
-      RegistrationForm.hideError(input);
-    }
   }
 
   static createLabel(text: string, forId: string): HTMLElement {
@@ -933,32 +599,46 @@ export default class RegistrationForm {
     return containerSelect;
   }
 
-  static clearErrorsAndInputs() {
-    const formElement = document.querySelector('.registration__form');
+  static getShippingAddressData() {
+    const shippingFields = {
+      streetName: (
+        document.getElementById('street-shipping-address') as HTMLInputElement
+      ).value,
+      city: (
+        document.getElementById('city-shipping-address') as HTMLInputElement
+      ).value,
+      country: (
+        document.getElementById('country-shipping-address') as HTMLSelectElement
+      ).value,
+      postalCode: (
+        document.getElementById(
+          'postal-code-shipping-address',
+        ) as HTMLInputElement
+      ).value,
+    };
 
-    formElement
-      ?.querySelectorAll(`.${CLASS_NAME.ERROR_MESSAGE}`)
-      .forEach((error) => {
-        error.remove();
-      });
+    return shippingFields;
+  }
 
-    formElement?.querySelectorAll('input, select').forEach((field) => {
-      const inputField = field as HTMLInputElement | HTMLSelectElement;
+  static getBillingAddressData() {
+    const billingFields = {
+      streetName: (
+        document.getElementById('street-billing-address') as HTMLInputElement
+      ).value,
+      city: (
+        document.getElementById('city-billing-address') as HTMLInputElement
+      ).value,
+      country: (
+        document.getElementById('country-billing-address') as HTMLSelectElement
+      ).value,
+      postalCode: (
+        document.getElementById(
+          'postal-code-billing-address',
+        ) as HTMLInputElement
+      ).value,
+    };
 
-      if (inputField.type !== 'submit') {
-        if (inputField.type === 'checkbox') {
-          (inputField as HTMLInputElement).checked = false;
-        } else {
-          inputField.value = '';
-        }
-      }
-
-      if ('disabled' in inputField && inputField.disabled) {
-        inputField.disabled = false;
-      }
-
-      inputField.classList.remove('error', 'correct');
-    });
+    return billingFields;
   }
 
   getWrap(): HTMLElement {
