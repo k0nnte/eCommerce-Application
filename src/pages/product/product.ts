@@ -6,6 +6,7 @@ import 'swiper/scss';
 import 'swiper/scss/navigation';
 import 'swiper/scss/pagination';
 import './product.scss';
+import Basket from '../../../public/files/grocery-store.png';
 
 const CLASS = {
   wrapper: ['page-prod'],
@@ -16,6 +17,8 @@ const CLASS = {
   discountPrice: ['price-prod', 'discount-price'],
   price: ['price-prod', 'start-price'],
   description: ['description-prod'],
+  btnBasket: ['BtnBasketProduct'],
+  imgBasket: ['imgBasket'],
 };
 
 export default class Product {
@@ -37,6 +40,10 @@ export default class Product {
 
   currentModal: HTMLElement | null = null;
 
+  btnBasket: HTMLElement;
+
+  imgBasket: HTMLElement;
+
   constructor(
     key: string,
     title: string = '',
@@ -52,6 +59,11 @@ export default class Product {
     this.price = createComponent('div', CLASS.price, {});
     this.description = createComponent('p', CLASS.description, {});
     this.swiperContainer = createComponent('div', ['swiper-container'], {});
+    this.btnBasket = createComponent('button', CLASS.btnBasket, {});
+    this.imgBasket = createComponent('img', CLASS.imgBasket, {
+      src: Basket,
+      alt: 'Basket',
+    });
 
     this.createProductPage(title, discountPrice, price, description);
     this.renderProduct(key);
@@ -68,8 +80,16 @@ export default class Product {
     this.price.innerText = `$${price}`;
     this.description.innerText = description;
     this.pageProd.append(this.swiperContainer, this.infoContainer);
-    this.infoContainer.append(this.title, this.priceBox, this.description);
+    this.btnBasket.innerText = 'Add to Basket';
+    this.btnBasket.append(this.imgBasket);
+    this.infoContainer.append(
+      this.title,
+      this.priceBox,
+      this.description,
+      this.btnBasket,
+    );
     this.priceBox.append(this.discountPrice, this.price);
+    this.addListnerBtn();
   }
 
   async renderProduct(key: string) {
@@ -282,5 +302,12 @@ export default class Product {
     if (centerElement) {
       centerElement.appendChild(this.pageProd);
     }
+  }
+
+  addListnerBtn() {
+    this.btnBasket.addEventListener('click', () => {
+      // eslint-disable-next-line no-console
+      console.log('hi');
+    });
   }
 }
