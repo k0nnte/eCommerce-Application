@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import createComponent from '../components';
 import './cardProduct.scss';
+import { addProductBasket, isLog } from '../servercomp/servercomp';
 
 const CLASS = {
   wrapper: ['wrapper_card'],
@@ -8,6 +9,7 @@ const CLASS = {
   title: ['title_card'],
   description: ['description_card'],
   price: ['price'],
+  btn: ['addBtn'],
 };
 
 export default class Card {
@@ -24,6 +26,8 @@ export default class Card {
   discount: HTMLElement;
 
   key: string;
+
+  addBtn: HTMLElement;
 
   constructor(
     urlImg: string,
@@ -43,6 +47,7 @@ export default class Card {
     this.description = createComponent('p', CLASS.description, {});
     this.price = createComponent('p', CLASS.price, {});
     this.discount = createComponent('p', CLASS.price, {});
+    this.addBtn = createComponent('button', CLASS.btn, {});
     this.render(title, description, price, discount);
     this.addListner();
   }
@@ -68,6 +73,8 @@ export default class Card {
       this.discount.innerText = discount as string;
       this.wrapper_Card.append(this.discount);
     }
+    this.addBtn.innerText = 'Add to basket';
+    this.wrapper_Card.append(this.addBtn);
   }
 
   getCard() {
@@ -75,9 +82,14 @@ export default class Card {
   }
 
   addListner() {
-    this.wrapper_Card.addEventListener('click', () => {
-      window.history.pushState({}, '', `/${this.key}`);
-      window.dispatchEvent(new PopStateEvent('popstate'));
+    this.wrapper_Card.addEventListener('click', (event) => {
+      if (event.target === this.addBtn) {
+        const id = isLog();
+        addProductBasket(id.value, this.key, id.anon);
+      } else {
+        window.history.pushState({}, '', `/${this.key}`);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }
     });
   }
 }

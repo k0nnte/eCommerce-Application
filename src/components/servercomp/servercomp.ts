@@ -331,40 +331,59 @@ async function getgetProdByName(name: string) {
   return response;
 }
 
-async function getBasket(id: string) {
+async function getBasket(id: string | undefined, anon: boolean) {
   try {
-    const response = await apiRoot
-      .carts()
-      .withCustomerId({ customerId: id })
-      .get()
-      .execute();
-    // console.log(response);
+    if (!anon) {
+      const response = await apiRoot
+        .carts()
+        .withCustomerId({ customerId: id! })
+        .get()
+        .execute();
+      return response;
+    }
+
+    const response = await apiRoot.carts().withId({ ID: id! }).get().execute();
     return response;
   } catch (err) {
+    if (!anon) {
+      const response = await apiRoot
+        .carts()
+        .post({
+          body: {
+            currency: 'USD',
+            customerId: id,
+            country: 'US',
+          },
+        })
+        .execute();
+      return response;
+    }
     const response = await apiRoot
       .carts()
       .post({
         body: {
           currency: 'USD',
-          customerId: id,
           country: 'US',
         },
       })
       .execute();
-    // console.log(response);
+
+    sessionStorage.setItem('anonBasket', btoa(response.body.id));
     return response;
   }
 }
 
-async function addProductBasket(idCost: string, key: string) {
-  const basket = await getBasket(idCost);
+async function addProductBasket(
+  idCost: string | undefined,
+  key: string,
+  anon: boolean,
+) {
+  const basket = await getBasket(idCost, anon);
+
   const product = await getProd(key);
   const { id } = basket.body;
   const { version } = basket.body;
   const productId = product.id;
-
-  // const variantId = product.version;
-  // console.log(variantId);
 
   const response = await apiRoot
     .carts()
@@ -381,7 +400,29 @@ async function addProductBasket(idCost: string, key: string) {
       },
     })
     .execute();
-  console.log(response);
+
+  return response;
+}
+
+function isLog() {
+  const log = Cookies.get('log');
+  if (log) {
+    return {
+      value: atob(log),
+      anon: false,
+    };
+  }
+  const anonBasket = sessionStorage.getItem('anonBasket');
+  if (anonBasket) {
+    return {
+      value: atob(anonBasket),
+      anon: true,
+    };
+  }
+  return {
+    value: undefined,
+    anon: true,
+  };
 }
 
 export {
@@ -404,4 +445,5 @@ export {
   fetchBillingAddressId,
   getBasket,
   addProductBasket,
+  isLog,
 };

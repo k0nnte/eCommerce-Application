@@ -1,13 +1,17 @@
 /* eslint-disable no-console */
 import createComponent from '@/components/components';
-import { addProductBasket, getProd } from '@/components/servercomp/servercomp';
+import {
+  addProductBasket,
+  getProd,
+  isLog,
+} from '@/components/servercomp/servercomp';
 import Swiper from 'swiper';
 import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/scss';
 import 'swiper/scss/navigation';
 import 'swiper/scss/pagination';
 import './product.scss';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 import Basket from '../../../public/files/grocery-store.png';
 
 const CLASS = {
@@ -311,8 +315,9 @@ export default class Product {
 
   addListnerBtn() {
     this.btnBasket.addEventListener('click', () => {
-      const id = atob(Cookies.get('log')!);
-      addProductBasket(id, this.key);
+      const id = isLog();
+
+      addProductBasket(id.value, this.key, id.anon);
     });
   }
 }
