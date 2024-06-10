@@ -85,7 +85,10 @@ export default class Card {
     this.wrapper_Card.addEventListener('click', (event) => {
       if (event.target === this.addBtn) {
         const id = isLog();
-        addProductBasket(id.value, this.key, id.anon);
+        id.then((data) => {
+          addProductBasket(data.value, this.key, data.anon, data.token);
+        });
+        // addProductBasket(id.value, this.key, id.anon);
       } else {
         window.history.pushState({}, '', `/${this.key}`);
         window.dispatchEvent(new PopStateEvent('popstate'));

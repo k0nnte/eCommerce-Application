@@ -331,7 +331,7 @@ async function getgetProdByName(name: string) {
   return response;
 }
 
-async function getBasket(id: string | undefined, anon: boolean) {
+async function getBasket(id: string | undefined, anon: boolean, token: string) {
   try {
     if (!anon) {
       const response = await apiRoot
@@ -354,6 +354,9 @@ async function getBasket(id: string | undefined, anon: boolean) {
             customerId: id,
             country: 'US',
           },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         })
         .execute();
       return response;
@@ -364,6 +367,9 @@ async function getBasket(id: string | undefined, anon: boolean) {
         body: {
           currency: 'USD',
           country: 'US',
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
       })
       .execute();
@@ -377,8 +383,9 @@ async function addProductBasket(
   idCost: string | undefined,
   key: string,
   anon: boolean,
+  token: string,
 ) {
-  const basket = await getBasket(idCost, anon);
+  const basket = await getBasket(idCost, anon, token);
 
   const product = await getProd(key);
   const { id } = basket.body;
@@ -398,30 +405,60 @@ async function addProductBasket(
           },
         ],
       },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
     .execute();
 
   return response;
 }
 
-function isLog() {
+async function getTokenAnon() {
+  const URL = `${Env.CTP_AUTH_URL}/oauth/${Env.CTP_PROJECT_KEY}/anonymous/token`;
+  const auth = btoa(`${Env.CTP_CLIENT_ID}:${Env.CTP_CLIENT_SECRET}`);
+
+  const body = `grant_type=client_credentials&scope=${Env.CTP_SCOPES}`;
+
+  const response = await fetch(URL, {
+    method: `POST`,
+    headers: {
+      Authorization: `Basic ${auth}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body,
+  });
+  const data = await response.json();
+
+  return data;
+}
+
+async function isLog() {
   const log = Cookies.get('log');
   if (log) {
+    const token = Cookies.get('token');
+
     return {
       value: atob(log),
       anon: false,
+      token: atob(token!),
     };
   }
   const anonBasket = sessionStorage.getItem('anonBasket');
   if (anonBasket) {
+    const token = sessionStorage.getItem('anonToken');
     return {
       value: atob(anonBasket),
       anon: true,
+      token: atob(token!),
     };
   }
+  const token = await getTokenAnon();
+  sessionStorage.setItem('anonToken', btoa(token.access_token));
   return {
     value: undefined,
     anon: true,
+    token: token.access_token,
   };
 }
 
@@ -446,4 +483,5 @@ export {
   getBasket,
   addProductBasket,
   isLog,
+  getTokenAnon,
 };

@@ -3,6 +3,7 @@ import createComponent from '@/components/components';
 import {
   addProductBasket,
   getProd,
+  // getTokenAnon,
   isLog,
 } from '@/components/servercomp/servercomp';
 import Swiper from 'swiper';
@@ -316,8 +317,11 @@ export default class Product {
   addListnerBtn() {
     this.btnBasket.addEventListener('click', () => {
       const id = isLog();
+      id.then((data) => {
+        addProductBasket(data.value, this.key, data.anon, data.token);
+      });
 
-      addProductBasket(id.value, this.key, id.anon);
+      // addProductBasket(id.value, this.key, id.anon, id.token);
     });
   }
 }
