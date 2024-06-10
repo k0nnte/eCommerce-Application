@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
 import { apiRoot } from '@/sdk/builder';
 import Cookies from 'js-cookie';
@@ -312,6 +313,8 @@ async function sortPriceHigh(price: number) {
 
 async function getProd(key: string) {
   const response = await apiRoot.products().withKey({ key }).get().execute();
+  console.log(response);
+
   return response.body;
 }
 
@@ -326,7 +329,24 @@ async function getgetProdByName(name: string) {
       },
     })
     .execute();
+
   return response;
+}
+
+async function getBasket(id: string) {
+  try {
+    return apiRoot.carts().withCustomerId({ customerId: id }).get().execute();
+  } catch (err) {
+    return apiRoot
+      .carts()
+      .post({
+        body: {
+          currency: 'USD',
+          customerId: id,
+        },
+      })
+      .execute();
+  }
 }
 
 export {
@@ -347,4 +367,5 @@ export {
   getgetProdByName,
   fetchShippingAddressId,
   fetchBillingAddressId,
+  getBasket,
 };
