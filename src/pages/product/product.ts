@@ -1,5 +1,6 @@
+/* eslint-disable no-console */
 import createComponent from '@/components/components';
-import { getBasket, getProd } from '@/components/servercomp/servercomp';
+import { addProductBasket, getProd } from '@/components/servercomp/servercomp';
 import Swiper from 'swiper';
 import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/scss';
@@ -45,6 +46,8 @@ export default class Product {
 
   imgBasket: HTMLElement;
 
+  key: string;
+
   constructor(
     key: string,
     title: string = '',
@@ -65,6 +68,7 @@ export default class Product {
       src: Basket,
       alt: 'Basket',
     });
+    this.key = key;
 
     this.createProductPage(title, discountPrice, price, description);
     this.renderProduct(key);
@@ -308,8 +312,7 @@ export default class Product {
   addListnerBtn() {
     this.btnBasket.addEventListener('click', () => {
       const id = atob(Cookies.get('log')!);
-
-      getBasket(id);
+      addProductBasket(id, this.key);
     });
   }
 }

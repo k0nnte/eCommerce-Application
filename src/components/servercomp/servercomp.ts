@@ -313,8 +313,6 @@ async function sortPriceHigh(price: number) {
 
 async function getProd(key: string) {
   const response = await apiRoot.products().withKey({ key }).get().execute();
-  console.log(response);
-
   return response.body;
 }
 
@@ -335,18 +333,55 @@ async function getgetProdByName(name: string) {
 
 async function getBasket(id: string) {
   try {
-    return apiRoot.carts().withCustomerId({ customerId: id }).get().execute();
+    const response = await apiRoot
+      .carts()
+      .withCustomerId({ customerId: id })
+      .get()
+      .execute();
+    // console.log(response);
+    return response;
   } catch (err) {
-    return apiRoot
+    const response = await apiRoot
       .carts()
       .post({
         body: {
           currency: 'USD',
           customerId: id,
+          country: 'US',
         },
       })
       .execute();
+    // console.log(response);
+    return response;
   }
+}
+
+async function addProductBasket(idCost: string, key: string) {
+  const basket = await getBasket(idCost);
+  const product = await getProd(key);
+  const { id } = basket.body;
+  const { version } = basket.body;
+  const productId = product.id;
+
+  // const variantId = product.version;
+  // console.log(variantId);
+
+  const response = await apiRoot
+    .carts()
+    .withId({ ID: id })
+    .post({
+      body: {
+        version,
+        actions: [
+          {
+            action: 'addLineItem',
+            productId,
+          },
+        ],
+      },
+    })
+    .execute();
+  console.log(response);
 }
 
 export {
@@ -368,4 +403,5 @@ export {
   fetchShippingAddressId,
   fetchBillingAddressId,
   getBasket,
+  addProductBasket,
 };
