@@ -4,6 +4,7 @@ import IharPhoto from '../../../public/files/Ihar.png';
 import LiudmilaPhoto from '../../../public/files/Liudmila.png';
 import ValeriaPhoto from '../../../public/files/Valeria.png';
 import GitIcon from '../../../public/files/github_icon.png';
+import './about.scss';
 
 const CLASS = {
   wrapper: ['about-page'],
@@ -14,6 +15,7 @@ const CLASS = {
   member: ['team-member'],
   photo_wrap: ['photo-wrap'],
   photo: ['photo-member'],
+  title_wrap: ['title-wrap'],
   git_icon: ['git-icon'],
   name_wrap: ['name-wrap'],
   name_link: ['name-link'],
@@ -84,6 +86,8 @@ export default class About {
 
       const nameWrap = createComponent('div', CLASS.name_wrap, {});
 
+      const titleWrap = createComponent('div', CLASS.title_wrap, {});
+
       const nameLink = createComponent('a', CLASS.name_link, {
         href: member.github,
       });
@@ -97,15 +101,17 @@ export default class About {
 
       const nameText = createComponent('h2', CLASS.name, {});
       nameText.textContent = member.name;
-      nameLink.append(gitIcon, nameText);
+      nameLink.append(nameText, gitIcon);
 
       const roleText = createComponent('h3', CLASS.role, {});
       roleText.textContent = member.role;
 
+      titleWrap.append(nameLink, roleText);
+
       const bioText = createComponent('p', CLASS.bio, {});
       bioText.textContent = member.bio;
 
-      teamMember.append(photoWrap, nameLink, roleText, bioText);
+      teamMember.append(photoWrap, titleWrap, bioText);
 
       teamSection.appendChild(teamMember);
 

@@ -1,0 +1,111 @@
+@import '../../app/variables.scss';
+
+
+/* PAGE */
+
+.about-page {
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+}
+
+/* INTRO */
+
+.intro-section{
+    max-height: 300px;
+    display: flex;
+    gap: 50px;
+    background-color: $background-light;
+}
+
+.intro-image {
+    height: 100%
+}
+
+.intro-text {
+    margin: 20px;
+    line-height: 37px;
+    font-family: $font-family-secondary;
+    font-size: 2.5rem;
+    font-style: italic;
+    color: $color-text-dark;
+
+    &::first-letter {
+        color: $color-primary;
+        font-size: 5rem;
+        font-weight: 600;
+    }
+}
+
+/* TEAM */
+
+.team-section {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.team-member {
+    max-width: 25%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    border: $border;
+    border-radius: 10px;
+    box-shadow: $box-shadow;
+}
+
+.photo-member {
+    width: 100px;
+    border: $border;
+    border-radius: 50%;
+    box-shadow: $box-shadow;
+    transition: transform 0.3s ease;
+
+    &:hover {
+        transform: scale(1.1);
+        cursor: pointer;
+    }
+}
+
+.title-wrap {
+    width: 70%;
+    padding-left: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.name-link {
+    display: flex;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.name-member {
+    font: $font-family-primary;
+    font-size: 2.5rem;
+}
+
+.git-icon {
+    height: 30px;
+    transition: transform 0.3s ease;
+
+    &:hover {
+        transform: rotate(0.5turn);
+    }
+}
+
+.role-member{
+ font: $font-family-primary;
+ font-size: 2.3rem;
+ color: $color-primary;
+}
+
+.bio-member {
+    font: $font-family-secondary;
+    font-size: 1.5rem;
+}
