@@ -4,6 +4,7 @@ import IharPhoto from '../../../public/files/Ihar.png';
 import LiudmilaPhoto from '../../../public/files/Liudmila.png';
 import ValeriaPhoto from '../../../public/files/Valeria.png';
 import GitIcon from '../../../public/files/github_icon.png';
+import FicusIcon from '../../../public/files/ficusIcon.png';
 import './about.scss';
 
 const CLASS = {
@@ -21,30 +22,67 @@ const CLASS = {
   name_link: ['name-link'],
   name: ['name-member'],
   role: ['role-member'],
+  bio_header: ['bio-header'],
   bio: ['bio-member'],
+  works_wrap: ['works-wrap'],
+  works_header: ['works-header'],
+  works_list: ['works-list'],
+  work_item: ['work-item'],
+  work_icon: ['work-icon'],
+  work_text: ['work-text'],
+  divider: ['divider'],
 };
 
-const teamMembers = [
-  {
-    name: 'Ihar Bystrou',
-    role: 'Team Lead',
-    bio: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
-    photo: IharPhoto,
-    github: 'https://github.com/k0nnte',
-  },
+interface Work {
+  title: string;
+}
+
+interface TeamMember {
+  name: string;
+  role: string;
+  bio: string;
+  photo: string;
+  github: string;
+  works: Work[];
+}
+
+const teamMembers: TeamMember[] = [
   {
     name: 'Liudmila Rodzina',
-    role: 'Team Member',
-    bio: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
+    role: 'Frontend Developer',
+    bio: 'Entered the IT field unexpectedly in 2022 after working in a cruise company and receiving education in hospitality. Starting with Python, transitioned to JavaScript and decided to test skills in the Front-end course at RS School. Prseveres and continues to master new technologies and deepen knowledge in web development.',
     photo: LiudmilaPhoto,
     github: 'https://github.com/liudmilarodzina',
+    works: [
+      { title: 'Registration Page' },
+      { title: 'Profile Page' },
+      { title: 'Cart Page ...' },
+    ],
   },
   {
+    name: 'Ihar Bystrou',
+    role: 'Team Lead, Frontend Developer',
+    bio: 'Completed two courses at BSUIR. During studies, became interested in programming and learned C++. Discovered RS courses and JavaScript language. Passionate about expanding knowledge of technologies to confidently apply them in future developments.',
+    photo: IharPhoto,
+    github: 'https://github.com/k0nnte',
+    works: [
+      { title: 'Routing, Navigation' },
+      { title: 'Catalog Page' },
+      { title: 'Filtering, Sorting, Searching ...' },
+    ],
+  },
+
+  {
     name: 'Valeria Stavriadi',
-    role: 'Team Member',
-    bio: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
+    role: 'Frontend Developer',
+    bio: 'Worked as an accountant for a long time, nurturing a dream of a career in IT. Transitioned to frontend development after completing the "Web Developer" retraining course at ITMO. Discovered RS School, where currently studying and steadily advancing towards the goal.',
     photo: ValeriaPhoto,
     github: 'https://github.com/valeriastav',
+    works: [
+      { title: 'Login Page' },
+      { title: 'Product Page' },
+      { title: 'About Us Page ...' },
+    ],
   },
 ];
 
@@ -64,12 +102,31 @@ export default class About {
       alt: 'IntroFicus',
     });
     const introText = createComponent('p', CLASS.intro_text, {});
-    introText.textContent =
-      'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a,';
+    introText.innerHTML = `We are the web development team 'LIV', brought together by RS School in May 2024. Over the past two months, we've created this e-commerce application, working cohesively and effectively. By leveraging our strengths, we clearly defined roles, communicated actively through Discord, and tracked tasks on the GitHub project board. Regular meetings helped us address issues and monitor progress. We are proud of our application and grateful to RS School for the support and opportunity to realize this project.`;
 
     introSection.append(introImage, introText);
 
     this.aboutPage.appendChild(introSection);
+  }
+
+  static addWorksList(works: Work[]) {
+    const worksList = createComponent('ul', CLASS.works_list, {});
+
+    works.forEach((work) => {
+      const workItem = createComponent('li', CLASS.work_item, {});
+
+      const workIcon = createComponent('img', CLASS.work_icon, {
+        src: FicusIcon,
+        alt: 'Ficus Icon',
+      });
+
+      const workText = createComponent('span', CLASS.work_text, {});
+      workText.textContent = work.title;
+
+      workItem.append(workIcon, workText);
+      worksList.appendChild(workItem);
+    });
+    return worksList;
   }
 
   addTeamMembers() {
@@ -106,13 +163,35 @@ export default class About {
       const roleText = createComponent('h3', CLASS.role, {});
       roleText.textContent = member.role;
 
-      titleWrap.append(nameLink, roleText);
-
       const bioText = createComponent('p', CLASS.bio, {});
       bioText.textContent = member.bio;
+      bioText.classList.add('hidden');
 
-      teamMember.append(photoWrap, titleWrap, bioText);
+      const bioHeader = createComponent('h4', CLASS.bio_header, {});
+      bioHeader.textContent = 'Short Bio';
+      bioHeader.innerHTML += ' &#9658;';
 
+      bioHeader.addEventListener('click', () => {
+        bioText.classList.toggle('hidden');
+        bioHeader.innerHTML = bioText.classList.contains('hidden')
+          ? 'Short Bio &#9658;'
+          : 'Short Bio &#9660;';
+      });
+
+      const divider = createComponent('div', CLASS.divider, {});
+
+      const worksWrap = createComponent('div', CLASS.works_wrap, {});
+      const worksHeader = createComponent('h2', CLASS.works_header, {});
+      worksHeader.textContent = 'Contributions to the project';
+      const worksList = About.addWorksList(member.works);
+
+      titleWrap.append(nameLink, roleText, bioHeader);
+
+      // titleWrap.appendChild(bioText);
+
+      worksWrap.append(worksHeader, worksList);
+
+      teamMember.append(photoWrap, titleWrap, bioText, divider, worksWrap);
       teamSection.appendChild(teamMember);
 
       this.aboutPage.appendChild(teamSection);
