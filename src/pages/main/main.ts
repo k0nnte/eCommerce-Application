@@ -22,6 +22,8 @@ export default class Main {
 
   catalogLink: HTMLElement;
 
+  cartLink: HTMLElement;
+
   constructor() {
     this.wrap_main = createComponent('div', ['wrap_main'], {});
     this.main = createComponent('main', ['main'], {});
@@ -29,8 +31,9 @@ export default class Main {
     this.homeLink = createComponent('a', ['main-links', 'home-link'], {});
     this.loginLink = createComponent('a', ['main-links', 'login-link'], {});
     this.regLink = createComponent('a', ['main-links', 'reg-link'], {});
-    this.catalogLink = createComponent('a', ['main-links'], {});
+    this.catalogLink = createComponent('a', ['main-links', 'catalog-link'], {});
     this.profileLink = createComponent('a', ['main-links', 'profile-link'], {});
+    this.cartLink = createComponent('a', ['main-links', 'cart-link'], {});
 
     this.render();
   }
@@ -92,6 +95,14 @@ export default class Main {
       window.dispatchEvent(new PopStateEvent('popstate'));
     });
 
+    this.cartLink.textContent = `Cart`;
+    this.cartLink.setAttribute(`href`, '');
+    this.cartLink.addEventListener('click', (event: MouseEvent) => {
+      event.preventDefault();
+      window.history.pushState({}, '', '/cart');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+
     const imageContainer = createComponent('div', ['image-container'], {});
     const image = createComponent('img', ['main-image'], {});
     image.setAttribute('src', img);
@@ -111,6 +122,7 @@ export default class Main {
       this.regLink,
       this.profileLink,
       this.catalogLink,
+      this.cartLink,
     );
   }
 

@@ -1,49 +1,49 @@
-@import '../../app/variables.scss';
+@import './../../app/app.scss';
 
-.profile__wrapper {
-  position: sticky;
-  top: 0;
-  width: 100%;
-  max-height: calc(100vh - 2rem);
-  overflow-y: auto;
-  padding: 1rem 0;
-}
-
-.profile {
+.wrapper_cart {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  max-width: 70rem;
-  margin: auto;
-  padding: 2rem 0;
-  box-shadow: $box-shadow;
-  text-align: center;
+  margin: 0 auto;
+  height: auto;
 }
 
-.profile__form {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-  width: 100%;
-}
-
-.link-main {
-  position: relative;
+.cart-title {
   font-family: $font-family-secondary;
-  color: $color-text-grey;
+  color: $color-text-dark;
+  font-size: 2.6rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 2.4rem 0;
+}
+
+.empty-cart-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 2rem;
+  gap: 1rem;
+}
+
+.empty-cart-text,
+.empty-cart-link {
+  font-family: $font-family-secondary;
+  color: $color-text-dark;
   text-align: center;
   padding: 0.5rem 0;
-  font-size: 1.8rem;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 1.6rem;
+}
 
-  margin: 4rem;
+.empty-cart-link {
+  position: relative;
+  font-weight: 600;
+  font-size: 1.8rem;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  cursor: pointer;
 
   &:hover {
     transform: scale(0.98);
@@ -64,7 +64,7 @@
     height: 1px;
     background-color: $color-primary;
     transform: scaleX(0);
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease;
   }
 
   &:hover::before {
@@ -72,17 +72,11 @@
   }
 }
 
-.input-label.profile-page {
-  &:after {
-    color: $color-text-dark;
-    content: ':';
-  }
+.empty-cart-img {
+  width: 30rem;
+  height: 30rem;
 }
 
-.checkbox-label {
-  margin-top: 2rem;
-}
-
-.btn-hidden {
-  display: none;
+.btn-catalog {
+  min-width: 30rem;
 }
