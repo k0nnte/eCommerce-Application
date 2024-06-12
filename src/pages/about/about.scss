@@ -25,6 +25,7 @@
 
 .intro-text {
     margin: 20px;
+    padding: 15px 100px 15px 0;
     line-height: 37px;
     font-family: $font-family-secondary;
     font-size: 2.5rem;
@@ -43,16 +44,17 @@
 .team-section {
     display: flex;
     justify-content: space-around;
+    flex-wrap: wrap;
     gap: 20px;
 }
 
 .team-member {
-    max-width: 25%;
+    width: 30%;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 10px;
-    padding: 15px;
+    padding: 20px;
     border: $border;
     border-radius: 10px;
     box-shadow: $box-shadow;
@@ -101,11 +103,67 @@
 
 .role-member{
  font: $font-family-primary;
- font-size: 2.3rem;
+ font-size: 1.9rem;
  color: $color-primary;
+}
+
+.bio-header {
+    font: $font-family-primary;
+    font-size: 1.5rem;
+    cursor: pointer;
 }
 
 .bio-member {
     font: $font-family-secondary;
     font-size: 1.5rem;
 }
+
+.hidden {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    background-color: white;
+    padding: 10px;
+  }
+
+  .works-wrap {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .works-header{
+    margin-bottom: 10px;
+    font: $font-family-secondary;
+    font-size: 1.7rem;
+    color: $color-secondary;
+  }
+
+  .works-list {
+    list-style-type: none;
+    padding: 0;
+    color: $color-text-dark;
+  }
+
+  .work-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 5px 0;
+  }
+
+  .work-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .work-text {
+    font: $font-family-secondary;
+    font-size: 1.5rem;
+  }
+
+  .divider {
+    width: 100%;
+    border: 0;
+    border-top: 1px solid $color-primary;
+    margin: 10px 0;
+  }
