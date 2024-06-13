@@ -156,6 +156,8 @@ async function fetchCustomerData(customerId: string) {
   return response.body;
 }
 
+// async function getCartByCustomerID(){}
+
 async function fetchShippingAddressId(
   customerId: string,
 ): Promise<AddressInfo> {
