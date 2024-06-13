@@ -50,7 +50,7 @@ const teamMembers: TeamMember[] = [
   {
     name: 'Liudmila Rodzina',
     role: 'Frontend Developer',
-    bio: 'Entered the IT field unexpectedly in 2022 after working in a cruise company and receiving education in hospitality. Starting with Python, transitioned to JavaScript and decided to test skills in the Front-end course at RS School. Prseveres and continues to master new technologies and deepen knowledge in web development.',
+    bio: 'Entered the IT field unexpectedly in 2022 after working in a cruise company and receiving education in hospitality. Starting with Python, transitioned to JavaScript and decided to test skills in the Front-end course at RS School. Perseveres and continues to master new technologies and deepen knowledge in web development.',
     photo: LiudmilaPhoto,
     github: 'https://github.com/liudmilarodzina',
     works: [
