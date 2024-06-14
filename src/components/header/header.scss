@@ -16,6 +16,7 @@
 
 .nav-items {
   display: flex;
+  align-items: flex-end;
   gap: 20px;
 }
 
@@ -34,5 +35,26 @@
 @media (max-width: 768px) {
   .header {
     padding: 0 5%;
+  }
+}
+
+@media (max-width: 550px) {
+  .home-link {
+    margin-right: 10px;
+  }
+
+  .nav-items {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 475px) {
+  .nav-link {
+    font-size: 3.2vw;
+
+    img {
+      width: 20px;
+      height: 20px;
+    }
   }
 }

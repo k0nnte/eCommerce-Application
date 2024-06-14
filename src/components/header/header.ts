@@ -1,8 +1,8 @@
 import Cookies from 'js-cookie';
 import Profile from '@/pages/profile/profile';
 import createComponent from '../components';
-import './header.scss';
 import { customerOn } from '../servercomp/servercomp';
+import './header.scss';
 
 export default class Header {
   header: HTMLElement;
@@ -10,6 +10,8 @@ export default class Header {
   nav: HTMLElement;
 
   homeLink: null | HTMLElement;
+
+  aboutLink: null | HTMLElement;
 
   loginLink: null | HTMLElement;
 
@@ -30,6 +32,7 @@ export default class Header {
     this.catalogLink = null;
     this.profileLink = null;
     this.logoutLink = null;
+    this.aboutLink = null;
     this.render();
   }
 
@@ -51,7 +54,7 @@ export default class Header {
     this.catalogLink.textContent = 'Catalog';
     this.catalogLink.setAttribute('href', '');
     this.catalogLink.innerHTML +=
-      '<img width="22" height="22" src="https://img.icons8.com/ios/50/FFFFFF/spiral-bound-booklet.png" alt="spiral-bound-booklet"/>';
+      '<img width="24" height="24" src="https://img.icons8.com/sf-regular/96/FFFFFF/spiral-bound-booklet.png" alt="spiral-bound-booklet"/>';
     this.catalogLink.addEventListener('click', (event: MouseEvent) => {
       const centerElement = document.querySelector('.centercard');
       centerElement?.classList.remove('centercard');
@@ -112,12 +115,26 @@ export default class Header {
       Profile.populateProfileForm();
     });
 
+    this.aboutLink = createComponent('a', ['nav-link', 'about-link'], {});
+    this.aboutLink.textContent = 'AboutUs';
+    this.aboutLink.innerHTML +=
+      '<img width="22" height="22" src="https://img.icons8.com/sf-regular/96/FFFFFF/potted-plant.png" alt="about-page"/>';
+    this.aboutLink.setAttribute('href', '');
+    this.aboutLink.addEventListener('click', (event: MouseEvent) => {
+      const centerElement = document.querySelector('.centercard');
+      centerElement?.classList.remove('centercard');
+      event.preventDefault();
+      window.history.pushState({}, '', '/about');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+
     this.header.append(this.homeLink, this.nav);
     this.nav.append(
       this.catalogLink,
       this.profileLink,
       this.loginLink,
       this.regLink,
+      this.aboutLink,
     );
   }
 

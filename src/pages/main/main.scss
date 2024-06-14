@@ -63,3 +63,19 @@
   display: block;
   margin: 0 auto;
 }
+
+@media (max-width: 550px) {
+  .main {
+    margin-top: 20px;
+    padding: 0;
+    gap: 0;
+  }
+
+  .main-items {
+    gap: 10px;
+  }
+
+  .main-links {
+    font-size: 13px;
+  }
+}
