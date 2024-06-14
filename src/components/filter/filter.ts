@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 // /* eslint-disable no-console */
+import { ClientResponse } from '@commercetools/importapi-sdk/dist/declarations/src/generated/shared/utils/common-types';
 import createComponent from '../components';
 import createModal from '../modal/modal';
 import {
@@ -10,6 +12,8 @@ import {
   sortPriceSmall,
 } from '../servercomp/servercomp';
 import './filter.scss';
+// eslint-disable-next-line import/order
+import { ProductProjectionPagedSearchResponse } from '@commercetools/platform-sdk';
 
 const CLASS = {
   warper: ['wrapper_search'],
@@ -19,6 +23,15 @@ const CLASS = {
   options: ['options'],
   wrasses: ['wrap_select'],
 };
+
+type Callback = (
+  value: number,
+  index: number,
+) => Promise<ClientResponse<ProductProjectionPagedSearchResponse>>;
+
+type CallbackNoValue = (
+  index: number,
+) => Promise<ClientResponse<ProductProjectionPagedSearchResponse>>;
 
 const optionst = ['price is less', 'price is higher', 'by name'];
 
@@ -45,9 +58,12 @@ export default class Filter {
 
   header: HTMLElement;
 
+  index: number;
+
   constructor(head: HTMLElement, header: HTMLElement) {
     this.header = header;
     this.head = head;
+    this.index = 0;
     this.wrapper = createComponent('div', CLASS.warper, {});
     this.search = createComponent('input', CLASS.input, {});
     this.categories = createComponent('select', CLASS.select, {});
@@ -140,9 +156,10 @@ export default class Filter {
           (this.price as HTMLInputElement).reportValidity();
         } else {
           (this.price as HTMLInputElement).setCustomValidity('');
-          const response = sortPriceSmall(Number(price));
+          const response = sortPriceSmall(Number(price), 0);
           response.then((data) => {
-            addCard(data, this.head);
+            addCard(data, this.head, true);
+            this.addListnerScroll(sortPriceSmall, Number(price));
           });
         }
       } else if (this.selectOption === 'price is higher') {
@@ -154,29 +171,94 @@ export default class Filter {
           (this.price as HTMLInputElement).reportValidity();
         } else {
           (this.price as HTMLInputElement).setCustomValidity('');
-          const response = sortPriceHigh(Number(price));
+          const response = sortPriceHigh(Number(price), 0);
           response.then((data) => {
-            addCard(data, this.head);
+            addCard(data, this.head, true);
+            this.addListnerScroll(sortPriceHigh, Number(price));
           });
         }
       } else {
-        const response = sortByName();
+        const response = sortByName(0);
         response.then((data) => {
-          addCard(data, this.head);
+          addCard(data, this.head, true);
+          this.addListrerNoValue(sortByName);
         });
       }
     });
     this.btnReset.addEventListener('click', () => {
-      const response = getAllProduct();
+      const response = getAllProduct(0);
       (this.header as HTMLInputElement).value = ``;
       (this.price as HTMLInputElement).value = ``;
       response.then((data) => {
-        addCard(data, this.head);
+        addCard(data, this.head, true);
+        this.addListnerScrollReset();
       });
     });
   }
 
   getFilter() {
     return this.wrapper;
+  }
+
+  addListnerScrollReset() {
+    window.onscroll = null;
+    let index = 0;
+    window.onscroll = () => {
+      const { scrollHeight, clientHeight, scrollTop } =
+        document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight) {
+        index += 10;
+        const response = getAllProduct(index);
+        response.then((data) => {
+          if (data.results.length === 0) {
+            window.onscroll = null;
+          } else {
+            addCard(data, this.head, false);
+          }
+        });
+      }
+    };
+  }
+
+  addListnerScroll(callback: Callback, value: number) {
+    window.onscroll = null;
+    let index = 0;
+    window.onscroll = () => {
+      const { scrollHeight, clientHeight, scrollTop } =
+        document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight) {
+        index += 10;
+
+        const response = callback(value, index);
+        response.then((data) => {
+          if (data.body.results.length === 0) {
+            window.onscroll = null;
+          } else {
+            addCard(data, this.head, false);
+          }
+        });
+      }
+    };
+  }
+
+  addListrerNoValue(callback: CallbackNoValue) {
+    window.onscroll = null;
+    let index = 0;
+    window.onscroll = () => {
+      const { scrollHeight, clientHeight, scrollTop } =
+        document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight) {
+        index += 10;
+
+        const response = callback(index);
+        response.then((data) => {
+          if (data.body.results.length === 0) {
+            window.onscroll = null;
+          } else {
+            addCard(data, this.head, false);
+          }
+        });
+      }
+    };
   }
 }

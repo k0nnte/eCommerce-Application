@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import createComponent from '@/components/components';
 import Filter from '@/components/filter/filter';
 import createModal from '@/components/modal/modal';
@@ -37,6 +38,7 @@ export default class Catalog {
     this.search = new Filter(this.wrapper_Catalog, this.searchName).getFilter();
     this.renderSeatch();
     this.renderCatalog();
+    this.addListnerScroll();
   }
 
   renderSeatch() {
@@ -50,9 +52,9 @@ export default class Catalog {
   }
 
   renderCatalog() {
-    const response = getAllProduct();
+    const response = getAllProduct(0);
     response.then((data) => {
-      addCard(data, this.wrapper_Catalog);
+      addCard(data, this.wrapper_Catalog, true);
     });
     this.wrap_main.append(this.wrapper_Catalog);
   }
@@ -68,11 +70,31 @@ export default class Catalog {
       const response = getgetProdByName(value);
       response
         .then((data) => {
-          addCard(data, this.wrapper_Catalog);
+          addCard(data, this.wrapper_Catalog, true);
         })
         .catch((err) => {
           createModal(err.body.message);
         });
     });
+  }
+
+  addListnerScroll() {
+    window.onscroll = null;
+    let index = 0;
+    window.onscroll = () => {
+      const { scrollHeight, clientHeight, scrollTop } =
+        document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight) {
+        index += 10;
+        const response = getAllProduct(index);
+        response.then((data) => {
+          if (data.results.length === 0) {
+            window.onscroll = null;
+          } else {
+            addCard(data, this.wrapper_Catalog, false);
+          }
+        });
+      }
+    };
   }
 }
