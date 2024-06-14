@@ -11,6 +11,7 @@ import { customerOn } from '@/components/servercomp/servercomp';
 import { router } from '@/router/routerType';
 import Catalog from '@/pages/catalog/catalog';
 import Cart from '@/pages/cart/cart';
+import About from '@/pages/about/about';
 
 const CLASS = {
   wrapper: ['main_wrap'],
@@ -46,6 +47,8 @@ export default class App {
 
   cart: HTMLElement;
 
+  about: HTMLElement;
+
   constructor() {
     this.catalog = new Catalog().getCatalog();
     this.headermain = new Header();
@@ -55,8 +58,9 @@ export default class App {
     this.login = new Login(this.headermain);
     this.register = new RegistrationForm(this.headermain).getWrap();
     this.profile = new Profile().getWrap();
-    this.cart = new Cart().getWrap();
     this.err = new ErrorPage().getWrap();
+    this.cart = new Cart().getWrap();
+    this.about = new About().getWrap();
     this.wrapper = createComponent('div', CLASS.wrapper, {});
     this.routing = new Router(this.createRoutes(), this.center);
   }
@@ -70,6 +74,7 @@ export default class App {
       '/profile': this.profile,
       '/catalog': this.catalog,
       '/cart': this.cart,
+      '/about': this.about,
     };
   }
 
