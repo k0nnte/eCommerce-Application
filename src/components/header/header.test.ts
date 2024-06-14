@@ -76,6 +76,23 @@ describe('Header component', () => {
     expect(window.location.pathname).toBe('/register');
   });
 
+  it('Clicking on About link should update the window location to /about', () => {
+    const aboutLink = header
+      .getHeader()
+      .querySelector('.about-link') as HTMLElement;
+    expect(aboutLink).not.toBeNull();
+
+    const clickEvent = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      view: window,
+    });
+
+    jest.spyOn(window.history, 'pushState');
+    aboutLink.dispatchEvent(clickEvent);
+    expect(window.history.pushState).toHaveBeenCalledWith({}, '', '/about');
+  });
+
   afterAll(() => {
     mainWrap.remove();
   });
