@@ -2,6 +2,9 @@
 import createComponent from '../components';
 import './cardProduct.scss';
 import { addProductBasket, isLog } from '../servercomp/servercomp';
+import load from '../../../public/files/load.gif';
+
+const text = 'Add to basket';
 
 const CLASS = {
   wrapper: ['wrapper_card'],
@@ -10,6 +13,7 @@ const CLASS = {
   description: ['description_card'],
   price: ['price'],
   btn: ['addBtn'],
+  gif: ['gif'],
 };
 
 export default class Card {
@@ -29,6 +33,8 @@ export default class Card {
 
   addBtn: HTMLElement;
 
+  load: HTMLElement;
+
   constructor(
     urlImg: string,
     title: string,
@@ -43,11 +49,16 @@ export default class Card {
       src: urlImg,
       alt: 'catalogImg',
     }) as HTMLImageElement;
+    this.load = createComponent('img', CLASS.gif, {
+      scr: load,
+      alt: 'loading',
+    });
     this.title = createComponent('h2', CLASS.title, {});
     this.description = createComponent('p', CLASS.description, {});
     this.price = createComponent('p', CLASS.price, {});
     this.discount = createComponent('p', CLASS.price, {});
     this.addBtn = createComponent('button', CLASS.btn, {});
+
     this.render(title, description, price, discount);
     this.addListner();
   }
@@ -73,7 +84,7 @@ export default class Card {
       this.discount.innerText = discount as string;
       this.wrapper_Card.append(this.discount);
     }
-    this.addBtn.innerText = 'Add to basket';
+    this.addBtn.innerText = text;
     this.wrapper_Card.append(this.addBtn);
   }
 
@@ -85,10 +96,15 @@ export default class Card {
     this.wrapper_Card.addEventListener('click', (event) => {
       if (event.target === this.addBtn) {
         const id = isLog();
+        this.addBtn.innerText = '';
+        this.addBtn.append(this.load);
         id.then((data) => {
-          addProductBasket(data.value, this.key, data.anon, data.token);
+          addProductBasket(data.value, this.key, data.anon, data.token).then(
+            () => {
+              this.addBtn.innerText = text;
+            },
+          );
         });
-        // addProductBasket(id.value, this.key, id.anon);
       } else {
         window.history.pushState({}, '', `/${this.key}`);
         window.dispatchEvent(new PopStateEvent('popstate'));

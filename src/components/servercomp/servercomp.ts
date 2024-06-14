@@ -3,6 +3,7 @@
 import { apiRoot } from '@/sdk/builder';
 import Cookies from 'js-cookie';
 import { Env } from '@/sdk/envar';
+import showModal from '@/components/modal/modal';
 
 import {
   ClientResponse,
@@ -331,6 +332,7 @@ async function getgetProdByName(name: string) {
   return response;
 }
 
+// eslint-disable-next-line consistent-return
 async function getBasket(id: string | undefined, anon: boolean, token: string) {
   try {
     if (!anon) {
@@ -345,13 +347,32 @@ async function getBasket(id: string | undefined, anon: boolean, token: string) {
     const response = await apiRoot.carts().withId({ ID: id! }).get().execute();
     return response;
   } catch (err) {
-    if (!anon) {
+    if (err instanceof Error) {
+      if (err.name === 'NetworkError') {
+        showModal(`${err.name}`);
+        return undefined;
+      }
+      if (!anon) {
+        const response = await apiRoot
+          .carts()
+          .post({
+            body: {
+              currency: 'USD',
+              customerId: id,
+              country: 'US',
+            },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .execute();
+        return response;
+      }
       const response = await apiRoot
         .carts()
         .post({
           body: {
             currency: 'USD',
-            customerId: id,
             country: 'US',
           },
           headers: {
@@ -359,26 +380,14 @@ async function getBasket(id: string | undefined, anon: boolean, token: string) {
           },
         })
         .execute();
+
+      sessionStorage.setItem('anonBasket', btoa(response.body.id));
       return response;
     }
-    const response = await apiRoot
-      .carts()
-      .post({
-        body: {
-          currency: 'USD',
-          country: 'US',
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .execute();
-
-    sessionStorage.setItem('anonBasket', btoa(response.body.id));
-    return response;
   }
 }
 
+// eslint-disable-next-line consistent-return
 async function addProductBasket(
   idCost: string | undefined,
   key: string,
@@ -386,32 +395,33 @@ async function addProductBasket(
   token: string,
 ) {
   const basket = await getBasket(idCost, anon, token);
+  if (basket) {
+    const product = await getProd(key);
+    const { id } = basket.body;
+    const { version } = basket.body;
+    const productId = product.id;
 
-  const product = await getProd(key);
-  const { id } = basket.body;
-  const { version } = basket.body;
-  const productId = product.id;
+    const response = await apiRoot
+      .carts()
+      .withId({ ID: id })
+      .post({
+        body: {
+          version,
+          actions: [
+            {
+              action: 'addLineItem',
+              productId,
+            },
+          ],
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .execute();
 
-  const response = await apiRoot
-    .carts()
-    .withId({ ID: id })
-    .post({
-      body: {
-        version,
-        actions: [
-          {
-            action: 'addLineItem',
-            productId,
-          },
-        ],
-      },
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .execute();
-
-  return response;
+    return response;
+  }
 }
 
 async function getTokenAnon() {

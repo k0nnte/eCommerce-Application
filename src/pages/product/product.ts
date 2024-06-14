@@ -3,7 +3,6 @@ import createComponent from '@/components/components';
 import {
   addProductBasket,
   getProd,
-  // getTokenAnon,
   isLog,
 } from '@/components/servercomp/servercomp';
 import Swiper from 'swiper';
@@ -12,8 +11,10 @@ import 'swiper/scss';
 import 'swiper/scss/navigation';
 import 'swiper/scss/pagination';
 import './product.scss';
-// import Cookies from 'js-cookie';
 import Basket from '../../../public/files/grocery-store.png';
+import load from '../../../public/files/load.gif';
+
+const text = 'Add to Basket';
 
 const CLASS = {
   wrapper: ['page-prod'],
@@ -26,6 +27,7 @@ const CLASS = {
   description: ['description-prod'],
   btnBasket: ['BtnBasketProduct'],
   imgBasket: ['imgBasket'],
+  gif: ['gif'],
 };
 
 export default class Product {
@@ -53,6 +55,8 @@ export default class Product {
 
   key: string;
 
+  load: HTMLElement;
+
   constructor(
     key: string,
     title: string = '',
@@ -73,6 +77,10 @@ export default class Product {
       src: Basket,
       alt: 'Basket',
     });
+    this.load = createComponent('img', CLASS.gif, {
+      src: load,
+      alt: 'loading',
+    });
     this.key = key;
 
     this.createProductPage(title, discountPrice, price, description);
@@ -90,7 +98,7 @@ export default class Product {
     this.price.innerText = `$${price}`;
     this.description.innerText = description;
     this.pageProd.append(this.swiperContainer, this.infoContainer);
-    this.btnBasket.innerText = 'Add to Basket';
+    this.btnBasket.innerText = text;
     this.btnBasket.append(this.imgBasket);
     this.infoContainer.append(
       this.title,
@@ -317,11 +325,21 @@ export default class Product {
   addListnerBtn() {
     this.btnBasket.addEventListener('click', () => {
       const id = isLog();
+      this.btnBasket.removeChild(this.imgBasket);
+      this.btnBasket.innerText = '';
+      this.btnBasket.append(this.load);
       id.then((data) => {
-        addProductBasket(data.value, this.key, data.anon, data.token);
-      });
+        addProductBasket(data.value, this.key, data.anon, data.token)
+          .then(() => {
+            this.btnBasket.removeChild(this.load);
 
-      // addProductBasket(id.value, this.key, id.anon, id.token);
+            this.btnBasket.innerText = text;
+            this.btnBasket.append(this.imgBasket);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      });
     });
   }
 }
