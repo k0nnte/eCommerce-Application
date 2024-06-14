@@ -20,8 +20,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #f6f5ff;
-  font-family: 'Josefin Sans', sans-serif;
+  background-color: $background-light;
+  font-family: $font-family-secondary;
   @media screen and (max-width: 768px) {
     flex-direction: column;
     gap: 20px;
@@ -32,6 +32,8 @@
 .main-items {
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
   align-items: flex-end;
   gap: 20px;
   margin-bottom: 20px;
@@ -39,19 +41,19 @@
 
 .main-links {
   text-decoration: none;
-  color: #0d0e43;
-  font-family: 'Josefin Sans', sans-serif;
+  color: $color-text-dark;
+  font-family: $font-family-secondary;
   font-weight: 600;
   font-size: 16px;
-  transition: all 0.3s ease;
+  transition: $transition;
 
   &:first-child {
-    color: #fb2e86;
+    color: $color-primary;
   }
 
   &:hover {
-    transform: scale(1.1);
-    color: #fb2e86;
+    transform: scale(1.05);
+    color: $color-primary;
   }
 }
 
@@ -60,4 +62,20 @@
   height: auto;
   display: block;
   margin: 0 auto;
+}
+
+@media (max-width: 550px) {
+  .main {
+    margin-top: 20px;
+    padding: 0;
+    gap: 0;
+  }
+
+  .main-items {
+    gap: 10px;
+  }
+
+  .main-links {
+    font-size: 13px;
+  }
 }
