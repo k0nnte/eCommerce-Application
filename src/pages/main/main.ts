@@ -33,8 +33,8 @@ export default class Main {
     this.homeLink = createComponent('a', ['main-links', 'home-link'], {});
     this.loginLink = createComponent('a', ['main-links', 'login-link'], {});
     this.regLink = createComponent('a', ['main-links', 'reg-link'], {});
-    this.catalogLink = createComponent('a', ['main-links', 'catalog-link'], {});
     this.profileLink = createComponent('a', ['main-links', 'profile-link'], {});
+    this.catalogLink = createComponent('a', ['main-links', 'catalog-link'], {});
     this.cartLink = createComponent('a', ['main-links', 'cart-link'], {});
     this.aboutLink = createComponent('a', ['main-links', 'about-link'], {});
 

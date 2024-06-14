@@ -1,4 +1,6 @@
+import Cookies from 'js-cookie';
 import Main from './main';
+import Profile from '../profile/profile';
 
 jest.mock('../../../public/files/Vector.png', () => 'mock-vector-image-path');
 
@@ -25,6 +27,18 @@ describe('Main component', () => {
 
     const regLink = mainElement.querySelector('.reg-link');
     expect(regLink?.textContent).toBe('Register');
+
+    const profileLink = mainElement.querySelector('.profile-link');
+    expect(profileLink?.textContent).toBe('Profile');
+
+    const catalogLink = mainElement.querySelector('.catalog-link');
+    expect(catalogLink?.textContent).toBe('Catalog');
+
+    const cartLink = mainElement.querySelector('.cart-link');
+    expect(cartLink?.textContent).toBe('Cart');
+
+    const aboutLink = mainElement.querySelector('.about-link');
+    expect(aboutLink?.textContent).toBe('About Us');
   });
 
   it('Main component should be defined', () => {
@@ -42,10 +56,18 @@ describe('Main component', () => {
     const homeLink = mainElement.querySelector('.home-link');
     const loginLink = mainElement.querySelector('.login-link');
     const regLink = mainElement.querySelector('.reg-link');
+    const profileLink = mainElement.querySelector('.profile-link');
+    const catalogLink = mainElement.querySelector('.catalog-link');
+    const cartLink = mainElement.querySelector('.cart-link');
+    const aboutLink = mainElement.querySelector('.about-link');
 
     expect(homeLink?.textContent).toBe('Home');
     expect(loginLink?.textContent).toBe('Login');
     expect(regLink?.textContent).toBe('Register');
+    expect(profileLink?.textContent).toBe('Profile');
+    expect(catalogLink?.textContent).toBe('Catalog');
+    expect(cartLink?.textContent).toBe('Cart');
+    expect(aboutLink?.textContent).toBe('About Us');
   });
 
   it('Clicking on Home link should update the window location to /', () => {
@@ -88,6 +110,53 @@ describe('Main component', () => {
     profileLink.dispatchEvent(event);
 
     expect(window.location.pathname).toBe('/login');
+  });
+
+  it('Clicking on Profile link with cookies should update the window location to /profile', () => {
+    Profile.populateProfileForm = jest.fn();
+    Cookies.get = jest
+      .fn()
+      .mockImplementation((key): 'some-auth-token' | undefined => {
+        if (key === 'log') {
+          return 'some-auth-token';
+        }
+        return undefined;
+      });
+    const profileLink = mainElement.querySelector(
+      '.profile-link',
+    ) as HTMLElement;
+    const event = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+    });
+    profileLink.dispatchEvent(event);
+
+    expect(Profile.populateProfileForm).toHaveBeenCalled();
+
+    expect(window.location.pathname).toBe('/profile');
+  });
+
+  it('Clicking on Catalog link should update the window location to /catalog', () => {
+    const catalogLink = mainElement.querySelector(
+      '.catalog-link',
+    ) as HTMLElement;
+    catalogLink.click();
+
+    expect(window.location.pathname).toBe('/catalog');
+  });
+
+  it('Clicking on Cart link should update the window location to /cart', () => {
+    const cartLink = mainElement.querySelector('.cart-link') as HTMLElement;
+    cartLink.click();
+
+    expect(window.location.pathname).toBe('/cart');
+  });
+
+  it('Clicking on About Us link should update the window location to /about', () => {
+    const aboutLink = mainElement.querySelector('.about-link') as HTMLElement;
+    aboutLink.click();
+
+    expect(window.location.pathname).toBe('/about');
   });
 
   it('Main component should render the main image with correct attributes', () => {
