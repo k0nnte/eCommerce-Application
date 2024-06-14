@@ -1,12 +1,20 @@
+/* eslint-disable no-console */
 import createComponent from '@/components/components';
-import { getProd } from '@/components/servercomp/servercomp';
+import {
+  addProductCart,
+  getProd,
+  isLog,
+} from '@/components/servercomp/servercomp';
 import Swiper from 'swiper';
 import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/scss';
 import 'swiper/scss/navigation';
 import 'swiper/scss/pagination';
 import './product.scss';
-import Basket from '../../../public/files/grocery-store.png';
+import Cart from '../../../public/files/grocery-store.png';
+import load from '../../../public/files/load.gif';
+
+const text = 'Add to Cart';
 
 const CLASS = {
   wrapper: ['page-prod'],
@@ -17,8 +25,9 @@ const CLASS = {
   discountPrice: ['price-prod', 'discount-price'],
   price: ['price-prod', 'start-price'],
   description: ['description-prod'],
-  btnBasket: ['BtnBasketProduct'],
-  imgBasket: ['imgBasket'],
+  btnCart: ['BtnCartProduct'],
+  imgCart: ['imgCart'],
+  gif: ['gif'],
 };
 
 export default class Product {
@@ -40,9 +49,13 @@ export default class Product {
 
   currentModal: HTMLElement | null = null;
 
-  btnBasket: HTMLElement;
+  btnCart: HTMLElement;
 
-  imgBasket: HTMLElement;
+  imgCart: HTMLElement;
+
+  key: string;
+
+  load: HTMLElement;
 
   constructor(
     key: string,
@@ -59,11 +72,16 @@ export default class Product {
     this.price = createComponent('div', CLASS.price, {});
     this.description = createComponent('p', CLASS.description, {});
     this.swiperContainer = createComponent('div', ['swiper-container'], {});
-    this.btnBasket = createComponent('button', CLASS.btnBasket, {});
-    this.imgBasket = createComponent('img', CLASS.imgBasket, {
-      src: Basket,
-      alt: 'Basket',
+    this.btnCart = createComponent('button', CLASS.btnCart, {});
+    this.imgCart = createComponent('img', CLASS.imgCart, {
+      src: Cart,
+      alt: 'Cart',
     });
+    this.load = createComponent('img', CLASS.gif, {
+      src: load,
+      alt: 'loading',
+    });
+    this.key = key;
 
     this.createProductPage(title, discountPrice, price, description);
     this.renderProduct(key);
@@ -80,13 +98,13 @@ export default class Product {
     this.price.innerText = `$${price}`;
     this.description.innerText = description;
     this.pageProd.append(this.swiperContainer, this.infoContainer);
-    this.btnBasket.innerText = 'Add to Basket';
-    this.btnBasket.append(this.imgBasket);
+    this.btnCart.innerText = text;
+    this.btnCart.append(this.imgCart);
     this.infoContainer.append(
       this.title,
       this.priceBox,
       this.description,
-      this.btnBasket,
+      this.btnCart,
     );
     this.priceBox.append(this.discountPrice, this.price);
     this.addListnerBtn();
@@ -305,9 +323,23 @@ export default class Product {
   }
 
   addListnerBtn() {
-    this.btnBasket.addEventListener('click', () => {
-      // eslint-disable-next-line no-console
-      console.log('hi');
+    this.btnCart.addEventListener('click', () => {
+      const id = isLog();
+      this.btnCart.removeChild(this.imgCart);
+      this.btnCart.innerText = '';
+      this.btnCart.append(this.load);
+      id.then((data) => {
+        addProductCart(data.value, this.key, data.anon, data.token)
+          .then(() => {
+            this.btnCart.removeChild(this.load);
+
+            this.btnCart.innerText = text;
+            this.btnCart.append(this.imgCart);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      });
     });
   }
 }

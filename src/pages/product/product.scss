@@ -309,15 +309,26 @@
 }
 
 
-.BtnBasketProduct{
+.BtnCartProduct{
     width: 30%;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 15px;
+    font-size: 12px;
+   
+   
+    @media screen and (max-width: 770px){
+      align-self: center;
+      width: 80%;
+    }
     
 }
 
-.imgBasket{
+.imgCart{
   width: 15%;
+}
+
+.gif{
+  width: 30%;
 }
