@@ -89,6 +89,9 @@ export default class Login extends HTMLElement {
             });
 
             customerOn(Login.SHeader);
+
+            email.value = '';
+            password.value = '';
           } else {
             showModal(`${data.error!.message}`);
           }

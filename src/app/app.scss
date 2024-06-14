@@ -21,6 +21,7 @@ button {
   background-color: $color-primary;
   color: $color-text-light;
   cursor: pointer;
+  box-shadow: $box-shadow;
   transition:
     transform 0.1s,
     background-color 0.1s;
