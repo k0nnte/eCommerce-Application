@@ -335,7 +335,7 @@ async function getgetProdByName(name: string) {
 }
 
 // eslint-disable-next-line consistent-return
-async function getBasket(id: string | undefined, anon: boolean, token: string) {
+async function getCart(id: string | undefined, anon: boolean, token: string) {
   try {
     if (!anon) {
       const response = await apiRoot
@@ -383,24 +383,24 @@ async function getBasket(id: string | undefined, anon: boolean, token: string) {
         })
         .execute();
 
-      sessionStorage.setItem('anonBasket', btoa(response.body.id));
+      sessionStorage.setItem('anonCart', btoa(response.body.id));
       return response;
     }
   }
 }
 
 // eslint-disable-next-line consistent-return
-async function addProductBasket(
+async function addProductCart(
   idCost: string | undefined,
   key: string,
   anon: boolean,
   token: string,
 ) {
-  const basket = await getBasket(idCost, anon, token);
-  if (basket) {
+  const Cart = await getCart(idCost, anon, token);
+  if (Cart) {
     const product = await getProd(key);
-    const { id } = basket.body;
-    const { version } = basket.body;
+    const { id } = Cart.body;
+    const { version } = Cart.body;
     const productId = product.id;
 
     const response = await apiRoot
@@ -456,11 +456,11 @@ async function isLog() {
       token: atob(token!),
     };
   }
-  const anonBasket = sessionStorage.getItem('anonBasket');
-  if (anonBasket) {
+  const anonCart = sessionStorage.getItem('anonCart');
+  if (anonCart) {
     const token = sessionStorage.getItem('anonToken');
     return {
-      value: atob(anonBasket),
+      value: atob(anonCart),
       anon: true,
       token: atob(token!),
     };
@@ -492,8 +492,8 @@ export {
   getgetProdByName,
   fetchShippingAddressId,
   fetchBillingAddressId,
-  getBasket,
-  addProductBasket,
+  getCart,
+  addProductCart,
   isLog,
   getTokenAnon,
 };

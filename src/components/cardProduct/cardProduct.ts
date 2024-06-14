@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
 import createComponent from '../components';
 import './cardProduct.scss';
-import { addProductBasket, isLog } from '../servercomp/servercomp';
+import { addProductCart, isLog } from '../servercomp/servercomp';
 import load from '../../../public/files/load.gif';
 
-const text = 'Add to basket';
+const text = 'Add to Cart';
 
 const CLASS = {
   wrapper: ['wrapper_card'],
@@ -99,7 +99,7 @@ export default class Card {
         this.addBtn.innerText = '';
         this.addBtn.append(this.load);
         id.then((data) => {
-          addProductBasket(data.value, this.key, data.anon, data.token).then(
+          addProductCart(data.value, this.key, data.anon, data.token).then(
             () => {
               this.addBtn.innerText = text;
             },
