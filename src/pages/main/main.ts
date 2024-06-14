@@ -8,6 +8,8 @@ import Profile from '../profile/profile';
 export default class Main {
   main: HTMLElement;
 
+  wrap_main: HTMLElement;
+
   nav: HTMLElement;
 
   homeLink: HTMLElement;
@@ -18,11 +20,11 @@ export default class Main {
 
   profileLink: HTMLElement;
 
-  wrap_main: HTMLElement;
-
   catalogLink: HTMLElement;
 
   cartLink: HTMLElement;
+
+  aboutLink: HTMLElement;
 
   constructor() {
     this.wrap_main = createComponent('div', ['wrap_main'], {});
@@ -34,6 +36,7 @@ export default class Main {
     this.catalogLink = createComponent('a', ['main-links', 'catalog-link'], {});
     this.profileLink = createComponent('a', ['main-links', 'profile-link'], {});
     this.cartLink = createComponent('a', ['main-links', 'cart-link'], {});
+    this.aboutLink = createComponent('a', ['main-links', 'about-link'], {});
 
     this.render();
   }
@@ -103,6 +106,14 @@ export default class Main {
       window.dispatchEvent(new PopStateEvent('popstate'));
     });
 
+    this.aboutLink.textContent = `About Us`;
+    this.aboutLink.setAttribute(`href`, '');
+    this.aboutLink.addEventListener('click', (event: MouseEvent) => {
+      event.preventDefault();
+      window.history.pushState({}, '', '/about');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+
     const imageContainer = createComponent('div', ['image-container'], {});
     const image = createComponent('img', ['main-image'], {});
     image.setAttribute('src', img);
@@ -123,6 +134,7 @@ export default class Main {
       this.profileLink,
       this.catalogLink,
       this.cartLink,
+      this.aboutLink,
     );
   }
 
