@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+@import '../../app/app.scss';
 
 * {
   box-sizing: border-box;
@@ -13,10 +13,11 @@ body {
   margin: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .center {
-  min-height: calc(100vh - 75px);
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -27,23 +28,21 @@ body {
   max-width: 544px;
   margin: auto;
   padding: 50px 55px;
-  box-shadow: 0px 0px 25px 10px #f8f8fb;
+  box-shadow: $box-shadow;
   text-align: center;
-  font-family: Lato, sans-serif;
+  font-family: $font-family-primary;
 }
 
 .form-title {
   margin-bottom: 7px;
-  font-family:
-    Josefin Sans,
-    sans-serif;
+  font-family: $font-family-secondary;
 }
 
 .form-subtitle {
   margin-top: 0;
   margin-bottom: 37px;
   font-size: 17px;
-  color: #9096b2;
+  color: $color-text-grey;
 }
 
 .input-container {
@@ -56,29 +55,33 @@ body {
     width: 100%;
     height: 52px;
     padding: 10px;
-    border: 1px solid #c2c5e1;
+    border: $border;
     border-radius: 3px;
-    font-family: Lato, sans-serif;
+    font-family: $font-family-primary;
     font-size: 16px;
+
     &:focus {
       outline: none;
-      border: 1px solid #c2c5e1;
+      border: $border;
       &.input-invalid {
-        border: 1px solid red;
+        border: 1px solid $color-error;
       }
 
       &.input-valid {
-        border: 1px solid green;
+        border: 1px solid $color-correct;
       }
+    }
+    &::placeholder {
+      color: $color-text-grey;
     }
   }
 
   .input-invalid {
-    border: 1px solid red;
+    border: 1px solid $color-error;
   }
 
   .input-valid {
-    border: 1px solid green;
+    border: 1px solid $color-correct;
   }
 
   .error-message {
@@ -86,7 +89,7 @@ body {
     position: absolute;
     top: 105%;
     font-size: 14px;
-    color: red;
+    color: $color-error;
     word-wrap: break-word;
     text-align: left;
     line-height: 1;
@@ -99,14 +102,15 @@ body {
     transform: translateY(-50%);
     border: none;
     background: none;
+    box-shadow: none;
     cursor: pointer;
 
     &:focus {
       outline: none;
     }
     &.fa {
-      font-size: 1.7em;
-      color: #c2c5e1;
+      font-size: 1.2em;
+      color: $color-text-grey;
     }
   }
 }
@@ -115,33 +119,16 @@ body {
   width: 100%;
   height: 47px;
   margin-bottom: 30px;
-  border-radius: 3px;
-  background: #fb2e86;
-  color: #fff;
-  font-family: Lato, sans-serif;
-  font-size: 17px;
-  font-weight: 700;
-  text-align: center;
-  cursor: pointer;
-  transition:
-    transform 0.1s,
-    background-color 0.1s;
-  border: none;
-
-  &:active {
-    transform: scale(0.99);
-    background-color: darken(#fb2e86, 5%);
-  }
 }
 
 .account-text,
 .create-account-link {
   font-size: 17px;
-  color: #9096b2;
+  color: $color-text-grey;
   text-decoration: none;
-  transition: transform 0.2s;
+  transition: $transition;
   a:hover {
-    color: #fb2e86;
+    color: $color-primary;
   }
 }
 

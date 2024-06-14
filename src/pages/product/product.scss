@@ -1,9 +1,11 @@
+@import '../../app/app.scss';
+
 ::-webkit-scrollbar {
   width: 0;
 }
 
 ::-webkit-scrollbar-track {
-  background: #fff;
+  background: $color-text-light;
 }
 
 .page-prod {
@@ -16,13 +18,11 @@
   min-height: 500px;
   margin: 20px;
   padding: 20px;
-  border: 2px solid #ccc;
-  border-radius: 2px;
-  box-shadow: 0px 0px 25px 10px #f6f4fd;
-  background: #fff;
-  font-family:
-    Josefin Sans,
-    sans-serif;
+  border: $border;
+  border-radius: 3px;
+  box-shadow: $box-shadow;
+  background: $color-text-light;
+  font-family: $font-family-secondary;
 }
 
 .swiper-container {
@@ -34,8 +34,8 @@
 
 .swiper-button-prev,
 .swiper-button-next {
-  background-color: #fff;
-  border: 1px solid #a9acc6;
+  background-color: $color-text-light;
+  border: $border;
   color: #a9acc6;
   border-radius: 50%;
   width: 40px;
@@ -45,11 +45,11 @@
   justify-content: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  transition: 0.3s;
+  transition: $transition;
 
   &:hover {
-    border: 1px solid #fb2e86;
-    color: #fb2e86;
+    border: 1px solid $color-primary;
+    color: $color-primary;
   }
 }
 
@@ -81,7 +81,7 @@
 }
 
 .swiper-pagination-bullet-active {
-  background: #fb2e86;
+  background: $color-primary;
 }
 
 .swiper {
@@ -92,7 +92,7 @@
 .swiper-slide {
   text-align: center;
   font-size: 18px;
-  background: #fff;
+  background: $color-text-light;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -120,7 +120,7 @@
 }
 
 .title-prod {
-  color: #0d134e;
+  color: $color-text-dark;
   font-size: 36px;
   font-weight: 600;
   line-height: -1px;
@@ -133,7 +133,7 @@
 }
 
 .price-prod {
-  color: #151875;
+  color: $color-text-dark;
   font-size: 16px;
   font-weight: 400;
   line-height: 29px;
@@ -142,13 +142,13 @@
 }
 
 .start-price {
-  color: #fb2e86;
+  color: $color-primary;
   text-decoration: line-through;
 }
 
 .description-prod {
   padding-right: 20px;
-  color: #a9acc6;
+  color: $color-text-grey;
   font-size: 16px;
   font-weight: 600;
   line-height: 29px;
@@ -240,9 +240,10 @@
   display: flex;
   justify-content: center;
   padding: 25px;
-  border: 2px solid #ccc;
-  background: #fff;
+  border: $border;
+  background: $color-text-light;
   overflow: hidden;
+  border-radius: 3px;
 
   @media (max-width: 768px) {
     max-width: 90%;
@@ -253,11 +254,11 @@
   object-fit: cover;
   max-width: 90vw;
   max-height: 85vh;
-  transition: transform 0.3s ease;
+  transition: $transition;
 
   &:hover {
     cursor: zoom-in;
-    transform: scale(1.2);
+    transform: scale(1.05);
   }
 }
 
@@ -288,14 +289,14 @@
   top: 5px;
   right: 15px;
   font-size: 48px;
-  color: #ccc;
+  color: #a9acc6;
   z-index: 101;
-  transition: 0.3s;
+  transition: $transition;
 }
 
 .close-button:hover,
 .close-button:focus {
-  color: #fb2e86;
+  color: $color-primary;
   text-decoration: none;
   cursor: pointer;
 }
@@ -304,31 +305,29 @@
   .close-button {
     top: 10px;
     right: 25px;
-    color: #0d134e;
+    color: $color-text-dark;
   }
 }
 
-
-.BtnCartProduct{
-    width: 30%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    font-size: 12px;
-   
-   
-    @media screen and (max-width: 770px){
-      align-self: center;
-      width: 80%;
-    }
-    
-}
-
-.imgCart{
-  width: 15%;
-}
-
-.gif{
+.btn-cart-product {
   width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  min-width: 300px;
+
+  @media screen and (max-width: 770px) {
+    align-self: center;
+    width: 80%;
+  }
+}
+
+.img-cart {
+  width: 24px;
+}
+
+.gif {
+  padding: 10px;
+  width: 50px;
 }
