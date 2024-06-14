@@ -1,7 +1,9 @@
+/* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
 import { apiRoot } from '@/sdk/builder';
 import Cookies from 'js-cookie';
 import { Env } from '@/sdk/envar';
+import showModal from '@/components/modal/modal';
 
 import {
   ClientResponse,
@@ -328,7 +330,148 @@ async function getgetProdByName(name: string) {
       },
     })
     .execute();
+
   return response;
+}
+
+// eslint-disable-next-line consistent-return
+async function getCart(id: string | undefined, anon: boolean, token: string) {
+  try {
+    if (!anon) {
+      const response = await apiRoot
+        .carts()
+        .withCustomerId({ customerId: id! })
+        .get()
+        .execute();
+      return response;
+    }
+
+    const response = await apiRoot.carts().withId({ ID: id! }).get().execute();
+    return response;
+  } catch (err) {
+    if (err instanceof Error) {
+      if (err.name === 'NetworkError') {
+        showModal(`${err.name}`);
+        return undefined;
+      }
+      if (!anon) {
+        const response = await apiRoot
+          .carts()
+          .post({
+            body: {
+              currency: 'USD',
+              customerId: id,
+              country: 'US',
+            },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .execute();
+        return response;
+      }
+      const response = await apiRoot
+        .carts()
+        .post({
+          body: {
+            currency: 'USD',
+            country: 'US',
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .execute();
+
+      sessionStorage.setItem('anonCart', btoa(response.body.id));
+      return response;
+    }
+  }
+}
+
+// eslint-disable-next-line consistent-return
+async function addProductCart(
+  idCost: string | undefined,
+  key: string,
+  anon: boolean,
+  token: string,
+) {
+  const Cart = await getCart(idCost, anon, token);
+  if (Cart) {
+    const product = await getProd(key);
+    const { id } = Cart.body;
+    const { version } = Cart.body;
+    const productId = product.id;
+
+    const response = await apiRoot
+      .carts()
+      .withId({ ID: id })
+      .post({
+        body: {
+          version,
+          actions: [
+            {
+              action: 'addLineItem',
+              productId,
+            },
+          ],
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .execute();
+
+    return response;
+  }
+}
+
+async function getTokenAnon() {
+  const URL = `${Env.CTP_AUTH_URL}/oauth/${Env.CTP_PROJECT_KEY}/anonymous/token`;
+  const auth = btoa(`${Env.CTP_CLIENT_ID}:${Env.CTP_CLIENT_SECRET}`);
+
+  const body = `grant_type=client_credentials&scope=${Env.CTP_SCOPES}`;
+
+  const response = await fetch(URL, {
+    method: `POST`,
+    headers: {
+      Authorization: `Basic ${auth}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body,
+  });
+  const data = await response.json();
+
+  return data;
+}
+
+async function isLog() {
+  const log = Cookies.get('log');
+  if (log) {
+    const token = Cookies.get('token');
+
+    return {
+      value: atob(log),
+      anon: false,
+      token: atob(token!),
+    };
+  }
+  const anonCart = sessionStorage.getItem('anonCart');
+  if (anonCart) {
+    const token = sessionStorage.getItem('anonToken');
+    return {
+      value: atob(anonCart),
+      anon: true,
+      token: atob(token!),
+    };
+  }
+  const token = await getTokenAnon();
+  sessionStorage.setItem('anonToken', btoa(token.access_token));
+  return {
+    value: undefined,
+    anon: true,
+    token: token.access_token,
+  };
 }
 
 export {
@@ -349,4 +492,8 @@ export {
   getgetProdByName,
   fetchShippingAddressId,
   fetchBillingAddressId,
+  getCart,
+  addProductCart,
+  isLog,
+  getTokenAnon,
 };
