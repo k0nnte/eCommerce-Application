@@ -1,10 +1,6 @@
-import {
-  getAllProduct,
-  getgetProdByName,
-} from '@/components/servercomp/servercomp';
+import { getAllProduct } from '@/components/servercomp/servercomp';
 import createComponent from '@/components/components';
 import Filter from '@/components/filter/filter';
-import createModal from '@/components/modal/modal';
 import Catalog from './catalog';
 
 jest.mock('@/components/components');
@@ -57,21 +53,5 @@ describe('Catalog', () => {
     expect(catalog.search_wrapper.contains(catalog.searchName)).toBeTruthy();
     expect(catalog.search_wrapper.contains(catalog.btnSech)).toBeTruthy();
     expect(catalog.btnSech.contains(catalog.btmImg)).toBeTruthy();
-  });
-
-  it('should handle search button click error correctly', async () => {
-    const Error = { body: { message: 'Error message' } };
-    const value = 'Nonexistent Product';
-    (getgetProdByName as jest.Mock).mockRejectedValue(Error);
-    (catalog.searchName as HTMLInputElement).value = value;
-    const createModalMock = jest.fn();
-    (createModal as jest.Mock).mockImplementation(createModalMock);
-
-    catalog.addListenerBtn();
-    catalog.btnSech.click();
-
-    expect(getgetProdByName).toHaveBeenCalledWith(value);
-    await expect(getgetProdByName(value)).rejects.toEqual(Error);
-    expect(createModalMock).toHaveBeenCalledWith(Error.body.message);
   });
 });

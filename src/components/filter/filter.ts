@@ -14,6 +14,7 @@ import {
 import './filter.scss';
 // eslint-disable-next-line import/order
 import { ProductProjectionPagedSearchResponse } from '@commercetools/platform-sdk';
+import load from '../../../public/files/load.gif';
 
 const CLASS = {
   warper: ['wrapper_search'],
@@ -60,15 +61,24 @@ export default class Filter {
 
   index: number;
 
-  constructor(head: HTMLElement, header: HTMLElement) {
+  parent: HTMLElement;
+
+  load: HTMLElement;
+
+  constructor(head: HTMLElement, header: HTMLElement, parent: HTMLElement) {
     this.header = header;
     this.head = head;
+    this.parent = parent;
     this.index = 0;
     this.wrapper = createComponent('div', CLASS.warper, {});
     this.search = createComponent('input', CLASS.input, {});
     this.categories = createComponent('select', CLASS.select, {});
     this.price = createComponent('input', CLASS.input, {
       type: 'number',
+    });
+    this.load = createComponent('img', ['gifLoad'], {
+      src: load,
+      alt: 'loading',
     });
     this.select = createComponent('select', CLASS.select, {});
     this.selectWrap = createComponent('div', CLASS.wrasses, {});
@@ -157,10 +167,14 @@ export default class Filter {
         } else {
           (this.price as HTMLInputElement).setCustomValidity('');
           const response = sortPriceSmall(Number(price), 0);
-          response.then((data) => {
-            addCard(data, this.head, true);
-            this.addListnerScroll(sortPriceSmall, Number(price));
-          });
+          response
+            .then((data) => {
+              addCard(data, this.head, true);
+              this.addListnerScroll(sortPriceSmall, Number(price));
+            })
+            .catch((err) => {
+              createModal(err.name);
+            });
         }
       } else if (this.selectOption === 'price is higher') {
         const price = (this.price as HTMLInputElement).value;
@@ -172,27 +186,39 @@ export default class Filter {
         } else {
           (this.price as HTMLInputElement).setCustomValidity('');
           const response = sortPriceHigh(Number(price), 0);
-          response.then((data) => {
-            addCard(data, this.head, true);
-            this.addListnerScroll(sortPriceHigh, Number(price));
-          });
+          response
+            .then((data) => {
+              addCard(data!, this.head, true);
+              this.addListnerScroll(sortPriceHigh, Number(price));
+            })
+            .catch((err) => {
+              createModal(err.name);
+            });
         }
       } else {
         const response = sortByName(0);
-        response.then((data) => {
-          addCard(data, this.head, true);
-          this.addListrerNoValue(sortByName);
-        });
+        response
+          .then((data) => {
+            addCard(data, this.head, true);
+            this.addListrerNoValue(sortByName);
+          })
+          .catch((err) => {
+            createModal(err.name);
+          });
       }
     });
     this.btnReset.addEventListener('click', () => {
       const response = getAllProduct(0);
       (this.header as HTMLInputElement).value = ``;
       (this.price as HTMLInputElement).value = ``;
-      response.then((data) => {
-        addCard(data, this.head, true);
-        this.addListnerScrollReset();
-      });
+      response
+        .then((data) => {
+          addCard(data, this.head, true);
+          this.addListnerScrollReset();
+        })
+        .catch((err) => {
+          createModal(err.name);
+        });
     });
   }
 
@@ -203,18 +229,24 @@ export default class Filter {
   addListnerScrollReset() {
     window.onscroll = null;
     let index = 0;
+    let isLoading = false;
     window.onscroll = () => {
+      if (isLoading) return;
+      this.parent.append(this.load);
       const { scrollHeight, clientHeight, scrollTop } =
         document.documentElement;
       if (scrollTop + clientHeight >= scrollHeight) {
+        isLoading = true;
         index += 10;
         const response = getAllProduct(index);
         response.then((data) => {
+          this.parent.removeChild(this.load);
           if (data.results.length === 0) {
             window.onscroll = null;
           } else {
             addCard(data, this.head, false);
           }
+          isLoading = false;
         });
       }
     };
@@ -223,19 +255,24 @@ export default class Filter {
   addListnerScroll(callback: Callback, value: number) {
     window.onscroll = null;
     let index = 0;
+    let isLoading = false;
     window.onscroll = () => {
+      if (isLoading) return;
       const { scrollHeight, clientHeight, scrollTop } =
         document.documentElement;
       if (scrollTop + clientHeight >= scrollHeight) {
+        isLoading = true;
         index += 10;
-
+        this.parent.append(this.load);
         const response = callback(value, index);
         response.then((data) => {
+          this.parent.removeChild(this.load);
           if (data.body.results.length === 0) {
             window.onscroll = null;
           } else {
             addCard(data, this.head, false);
           }
+          isLoading = false;
         });
       }
     };
@@ -244,19 +281,25 @@ export default class Filter {
   addListrerNoValue(callback: CallbackNoValue) {
     window.onscroll = null;
     let index = 0;
+    let isLoading = false;
     window.onscroll = () => {
+      if (isLoading) return;
+      this.parent.append(this.load);
       const { scrollHeight, clientHeight, scrollTop } =
         document.documentElement;
       if (scrollTop + clientHeight >= scrollHeight) {
+        isLoading = true;
         index += 10;
 
         const response = callback(index);
         response.then((data) => {
+          this.parent.removeChild(this.load);
           if (data.body.results.length === 0) {
             window.onscroll = null;
           } else {
             addCard(data, this.head, false);
           }
+          isLoading = false;
         });
       }
     };

@@ -25,6 +25,7 @@ export default function createModal(textIn: string): HTMLElement {
   modal.classList.add('visible');
 
   btn.addEventListener('click', () => {
+    document.body.classList.remove('block');
     modal.classList.remove('visible');
     modal.classList.add('hidden');
     wrapper.classList.remove('visible');
