@@ -118,7 +118,7 @@ export default class Header {
     this.aboutLink = createComponent('a', ['nav-link', 'about-link'], {});
     this.aboutLink.textContent = 'AboutUs';
     this.aboutLink.innerHTML +=
-      '<img width="24" height="24" src="https://img.icons8.com/sf-regular/96/FFFFFF/potted-plant.png" alt="about-page"/>';
+      '<img width="22" height="22" src="https://img.icons8.com/sf-regular/96/FFFFFF/potted-plant.png" alt="about-page"/>';
     this.aboutLink.setAttribute('href', '');
     this.aboutLink.addEventListener('click', (event: MouseEvent) => {
       const centerElement = document.querySelector('.centercard');
