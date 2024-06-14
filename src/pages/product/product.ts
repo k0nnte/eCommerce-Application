@@ -11,7 +11,7 @@ import 'swiper/scss';
 import 'swiper/scss/navigation';
 import 'swiper/scss/pagination';
 import './product.scss';
-import Cart from '../../../public/files/grocery-store.png';
+import imgCart from '../../../public/files/cart.png';
 import load from '../../../public/files/load.gif';
 
 const text = 'Add to Cart';
@@ -25,8 +25,8 @@ const CLASS = {
   discountPrice: ['price-prod', 'discount-price'],
   price: ['price-prod', 'start-price'],
   description: ['description-prod'],
-  btnCart: ['BtnCartProduct'],
-  imgCart: ['imgCart'],
+  btnCart: ['btn-cart-product'],
+  imgCart: ['img-cart'],
   gif: ['gif'],
 };
 
@@ -74,7 +74,7 @@ export default class Product {
     this.swiperContainer = createComponent('div', ['swiper-container'], {});
     this.btnCart = createComponent('button', CLASS.btnCart, {});
     this.imgCart = createComponent('img', CLASS.imgCart, {
-      src: Cart,
+      src: imgCart,
       alt: 'Cart',
     });
     this.load = createComponent('img', CLASS.gif, {
@@ -107,7 +107,7 @@ export default class Product {
       this.btnCart,
     );
     this.priceBox.append(this.discountPrice, this.price);
-    this.addListnerBtn();
+    this.addListenerBtn();
   }
 
   async renderProduct(key: string) {
@@ -322,7 +322,7 @@ export default class Product {
     }
   }
 
-  addListnerBtn() {
+  addListenerBtn() {
     this.btnCart.addEventListener('click', () => {
       const id = isLog();
       this.btnCart.removeChild(this.imgCart);

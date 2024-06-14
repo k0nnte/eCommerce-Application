@@ -1,4 +1,4 @@
-@import '../../app/variables.scss';
+@import '../../app/app.scss';
 
 /* PAGE */
 
@@ -17,10 +17,13 @@
   display: flex;
   gap: 3vw;
   background-color: $background-light;
+  margin: 0 25px;
+  border-radius: 3px;
 }
 
 .intro-image {
   height: 100%;
+  border-radius: 3px;
 }
 
 .intro-text {
@@ -69,7 +72,7 @@
   border: $border;
   border-radius: 50%;
   box-shadow: $box-shadow;
-  transition: 0.3s ease;
+  transition: $transition;
 
   &:hover {
     transform: scale(1.1);
@@ -142,7 +145,7 @@
 .works-header {
   margin-bottom: 0.7vw;
   font-family: $font-family-secondary;
-  font-size: 1.7rem;
+  font-size: 17px;
   font-size: 1.1vw;
   color: $color-secondary;
 }
