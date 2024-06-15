@@ -22,7 +22,7 @@ import {
 import Header from '../header/header';
 import Card from '../cardProduct/cardProduct';
 
-const limit = 500;
+const limit = 10;
 
 async function loginCustomer(
   email: string,
@@ -52,13 +52,15 @@ async function loginCustomer(
   }
 }
 
-async function sortByName() {
+async function sortByName(index: number) {
   return apiRoot
     .productProjections()
     .search()
     .get({
       queryArgs: {
         sort: 'name.en-US asc',
+        limit,
+        offset: index,
       },
     })
     .execute();
@@ -190,13 +192,21 @@ async function fetchBillingAddressId(customerId: string): Promise<AddressInfo> {
   return { addressId: undefined, currentVersion };
 }
 
-async function getAllProduct() {
-  const response = await apiRoot.products().get().execute();
+async function getAllProduct(start: number) {
+  const response = await apiRoot
+    .products()
+    .get({
+      queryArgs: {
+        limit: 10,
+        offset: start,
+      },
+    })
+    .execute();
 
   return response.body;
 }
 
-async function sortPriceSmall(price: number) {
+async function sortPriceSmall(price: number, index: number) {
   return apiRoot
     .productProjections()
     .search()
@@ -205,6 +215,7 @@ async function sortPriceSmall(price: number) {
         filter: `variants.price.centAmount:range (0 to ${price * 100})`,
         sort: `price asc`,
         limit,
+        offset: index,
       },
     })
     .execute();
@@ -233,8 +244,12 @@ function addCard(
     | ProductPagedQueryResponse
     | ClientResponse<ProductProjectionPagedSearchResponse>,
   wrapper: HTMLElement,
+  isyes: boolean,
 ) {
-  wrapper.innerHTML = ``;
+  if (isyes) {
+    wrapper.innerHTML = ``;
+  }
+
   wrapper.classList.remove('oneCard');
   if ('results' in data) {
     for (let i = 0; i < data.results.length; i += 1) {
@@ -300,7 +315,7 @@ async function sortCategory(category: string) {
   return response;
 }
 
-async function sortPriceHigh(price: number) {
+async function sortPriceHigh(price: number, index: number) {
   return apiRoot
     .productProjections()
     .search()
@@ -309,6 +324,7 @@ async function sortPriceHigh(price: number) {
         filter: `variants.price.centAmount:range (${price * 100} to *)`,
         sort: `price asc`,
         limit,
+        offset: index,
       },
     })
     .execute();

@@ -105,12 +105,10 @@ export default class Card {
     this.wrapper_Card.addEventListener('click', (event) => {
       if (event.target === this.addBtn) {
         const id = isLog();
-        // this.addBtn.innerText = '';
-        // this.addBtn.append(this.load);
         id.then((data) => {
-          addProductCart(data.value, this.key, data.anon, data.token).then(
-            () => {
-              // this.addBtn.innerText = text;
+          addProductCart(data.value, this.key, data.anon, data.token).catch(
+            (err) => {
+              console.log(err);
             },
           );
         });

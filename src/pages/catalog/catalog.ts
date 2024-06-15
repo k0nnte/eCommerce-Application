@@ -1,6 +1,7 @@
+/* eslint-disable no-console */
 import createComponent from '@/components/components';
 import Filter from '@/components/filter/filter';
-import createModal from '@/components/modal/modal';
+import showModal from '@/components/modal/modal';
 import {
   addCard,
   getAllProduct,
@@ -8,6 +9,7 @@ import {
 } from '@/components/servercomp/servercomp';
 import vector from '../../../public/files/Vector.png';
 import './catalog.scss';
+import load from '../../../public/files/load.gif';
 
 export default class Catalog {
   wrap_main: HTMLElement;
@@ -26,17 +28,28 @@ export default class Catalog {
 
   wrapper_filter: HTMLElement;
 
+  load: HTMLElement;
+
   constructor() {
     this.wrap_main = createComponent('div', ['catalog'], {});
     this.wrapper_filter = createComponent('div', ['filter'], {});
     this.wrapper_Catalog = createComponent('div', ['wrapper_catalog'], {});
     this.searchName = createComponent('input', ['select_search'], {});
     this.search_wrapper = createComponent('div', ['wrapper_searchs'], {});
+    this.load = createComponent('img', ['gifLoad'], {
+      src: load,
+      alt: 'loading',
+    });
     this.btnSech = createComponent('button', ['btn_search'], {});
     this.btmImg = createComponent('img', [], {});
-    this.search = new Filter(this.wrapper_Catalog, this.searchName).getFilter();
+    this.search = new Filter(
+      this.wrapper_Catalog,
+      this.searchName,
+      this.wrap_main,
+    ).getFilter();
     this.renderSeatch();
     this.renderCatalog();
+    this.addListnerScroll();
   }
 
   renderSeatch() {
@@ -50,9 +63,9 @@ export default class Catalog {
   }
 
   renderCatalog() {
-    const response = getAllProduct();
+    const response = getAllProduct(0);
     response.then((data) => {
-      addCard(data, this.wrapper_Catalog);
+      addCard(data, this.wrapper_Catalog, true);
     });
     this.wrap_main.append(this.wrapper_Catalog);
   }
@@ -68,11 +81,43 @@ export default class Catalog {
       const response = getgetProdByName(value);
       response
         .then((data) => {
-          addCard(data, this.wrapper_Catalog);
+          addCard(data, this.wrapper_Catalog, true);
         })
         .catch((err) => {
-          createModal(err.body.message);
+          showModal(err.name);
         });
     });
+  }
+
+  addListnerScroll() {
+    window.onscroll = null;
+    let index = 0;
+    let isLoading = false;
+
+    window.onscroll = () => {
+      if (isLoading) return;
+
+      const { scrollHeight, clientHeight, scrollTop } =
+        document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight) {
+        isLoading = true;
+        this.wrap_main.append(this.load);
+        index += 10;
+
+        getAllProduct(index)
+          .then((data) => {
+            if (data.results.length === 0) {
+              window.onscroll = null;
+            } else {
+              addCard(data, this.wrapper_Catalog, false);
+            }
+            this.wrap_main.removeChild(this.load);
+            isLoading = false;
+          })
+          .catch(() => {
+            isLoading = true;
+          });
+      }
+    };
   }
 }
