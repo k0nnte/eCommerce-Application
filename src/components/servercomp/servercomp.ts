@@ -490,6 +490,16 @@ async function isLog() {
   };
 }
 
+async function cartAll() {
+  try {
+    const id = await isLog();
+    const cart = await getCart(id.value, id.anon, id.token);
+    return cart?.body.lineItems || [];
+  } catch (err) {
+    return [];
+  }
+}
+
 export {
   loginCustomer,
   customerOn,
@@ -512,4 +522,5 @@ export {
   addProductCart,
   isLog,
   getTokenAnon,
+  cartAll,
 };
