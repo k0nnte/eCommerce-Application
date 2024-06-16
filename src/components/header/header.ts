@@ -43,11 +43,16 @@ export default class Header {
   }
 
   async updateCartItemCount() {
-    const { value, anon, token } = await isLog();
-    const cartData = await getCart(value, anon, token);
-    if (cartData && this.cartItemCount) {
-      const itemCount = cartData.body.lineItems.length;
-      this.cartItemCount.textContent = itemCount.toString();
+    const logResult = await isLog();
+    if (logResult) {
+      if ('value' in logResult && 'anon' in logResult && 'token' in logResult) {
+        const { value, anon, token } = logResult;
+        const cartData = await getCart(value, anon, token);
+        if (cartData && this.cartItemCount) {
+          const itemCount = cartData.body.lineItems.length;
+          this.cartItemCount.textContent = itemCount.toString();
+        }
+      }
     }
   }
 
@@ -144,7 +149,6 @@ export default class Header {
     });
 
     this.cartLink = createComponent('a', ['nav-link', 'cart-link'], {});
-
     this.cartLink.innerHTML +=
       '<img width="22" height="22" src="https://img.icons8.com/sf-regular/96/FFFFFF/shopping-cart.png" alt="shopping-cart"/>';
     this.cartLink.setAttribute('href', '');
