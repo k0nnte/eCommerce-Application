@@ -488,6 +488,16 @@ async function isLog() {
   };
 }
 
+async function cartAll() {
+  try {
+    const id = await isLog();
+    const cart = await getCart(id.value, id.anon, id.token);
+    return cart?.body.lineItems || [];
+  } catch (err) {
+    return [];
+  }
+}
+
 async function getCartId(): Promise<string | null> {
   const { value, anon } = await isLog();
 
@@ -504,7 +514,6 @@ async function getCartId(): Promise<string | null> {
 
       if (cartResponse.body.results.length > 0) {
         const cartId = cartResponse.body.results[0].id;
-        console.log('Fetched Cart ID:', cartId);
         return cartId;
       }
       console.warn('No cart found for logged-in customer.');
@@ -543,5 +552,6 @@ export {
   addProductCart,
   isLog,
   getTokenAnon,
+  cartAll,
   getCartId,
 };

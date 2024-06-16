@@ -2,6 +2,7 @@
 import createComponent from '@/components/components';
 import {
   addProductCart,
+  cartAll,
   getProd,
   isLog,
 } from '@/components/servercomp/servercomp';
@@ -11,6 +12,7 @@ import 'swiper/scss';
 import 'swiper/scss/navigation';
 import 'swiper/scss/pagination';
 import './product.scss';
+import { LineItem } from '@commercetools/platform-sdk';
 import imgCart from '../../../public/files/cart.png';
 import load from '../../../public/files/load.gif';
 
@@ -57,6 +59,8 @@ export default class Product {
 
   load: HTMLElement;
 
+  cart: Promise<LineItem[]>;
+
   constructor(
     key: string,
     title: string = '',
@@ -82,6 +86,7 @@ export default class Product {
       alt: 'loading',
     });
     this.key = key;
+    this.cart = cartAll();
 
     this.createProductPage(title, discountPrice, price, description);
     this.renderProduct(key);
@@ -107,6 +112,14 @@ export default class Product {
       this.btnCart,
     );
     this.priceBox.append(this.discountPrice, this.price);
+    this.btnCart.classList.add('btnOff');
+    (this.btnCart as HTMLButtonElement).disabled = true;
+    this.cart.then((data) => {
+      if (!data.some((item) => item.productKey === this.key)) {
+        this.btnCart.classList.remove('btnOff');
+        (this.btnCart as HTMLButtonElement).disabled = false;
+      }
+    });
     this.addListenerBtn();
   }
 
@@ -335,6 +348,13 @@ export default class Product {
 
             this.btnCart.innerText = text;
             this.btnCart.append(this.imgCart);
+            this.btnCart.classList.add('btnOff');
+            (this.btnCart as HTMLButtonElement).disabled = true;
+
+            const event = new CustomEvent('buttonClicked', {
+              detail: { key: this.title.textContent },
+            });
+            document.dispatchEvent(event);
           })
           .catch((err) => {
             console.log(err);

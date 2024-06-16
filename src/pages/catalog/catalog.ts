@@ -68,6 +68,24 @@ export default class Catalog {
       addCard(data, this.wrapper_Catalog, true);
     });
     this.wrap_main.append(this.wrapper_Catalog);
+
+    document.addEventListener('buttonClicked', (event) => {
+      const custom = event as CustomEvent;
+      const { key } = custom.detail;
+      const { childNodes } = this.wrapper_Catalog;
+      for (let i = 0; i < childNodes.length; i += 1) {
+        const item = childNodes[i];
+        if (
+          item.childNodes[1] instanceof HTMLElement &&
+          item.childNodes[1].tagName.toLowerCase() === 'h2'
+        ) {
+          if (item.childNodes[1].textContent === key) {
+            (item.lastChild as HTMLButtonElement).classList.add('btnOff');
+            (item.lastChild as HTMLButtonElement).disabled = true;
+          }
+        }
+      }
+    });
   }
 
   getCatalog() {
