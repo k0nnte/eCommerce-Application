@@ -17,7 +17,7 @@ describe('loginCustomer function', () => {
 
 describe('fetchShippingAddressId function', () => {
   it('should return shipping address information for a valid customer ID', async () => {
-    const customerId = '88b16a1f-1a77-4d2b-838f-bfa317d77334';
+    const customerId = '14e07f5b-0004-4659-baed-dba8eed05224';
     const addressInfo = await fetchShippingAddressId(customerId);
     expect(addressInfo).toBeDefined();
   });
@@ -25,7 +25,7 @@ describe('fetchShippingAddressId function', () => {
 
 describe('fetchBillingAddressId function', () => {
   it('should return Billing address information for a valid customer ID', async () => {
-    const customerId = '88b16a1f-1a77-4d2b-838f-bfa317d77334';
+    const customerId = '14e07f5b-0004-4659-baed-dba8eed05224';
     const addressInfo = await fetchBillingAddressId(customerId);
     expect(addressInfo).toBeDefined();
   });

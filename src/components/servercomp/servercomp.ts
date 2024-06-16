@@ -160,8 +160,6 @@ async function fetchCustomerData(customerId: string) {
   return response.body;
 }
 
-// async function getCartByCustomerID(){}
-
 async function fetchShippingAddressId(
   customerId: string,
 ): Promise<AddressInfo> {
@@ -350,7 +348,6 @@ async function getgetProdByName(name: string) {
   return response;
 }
 
-// eslint-disable-next-line consistent-return
 async function getCart(id: string | undefined, anon: boolean, token: string) {
   try {
     if (!anon) {
@@ -403,9 +400,9 @@ async function getCart(id: string | undefined, anon: boolean, token: string) {
       return response;
     }
   }
+  return null;
 }
 
-// eslint-disable-next-line consistent-return
 async function addProductCart(
   idCost: string | undefined,
   key: string,
@@ -440,6 +437,7 @@ async function addProductCart(
 
     return response;
   }
+  return null;
 }
 
 async function getTokenAnon() {
@@ -490,6 +488,39 @@ async function isLog() {
   };
 }
 
+async function getCartId(): Promise<string | null> {
+  const { value, anon } = await isLog();
+
+  if (value && !anon) {
+    try {
+      const cartResponse = await apiRoot
+        .carts()
+        .get({
+          queryArgs: {
+            where: `customerId="${value}"`,
+          },
+        })
+        .execute();
+
+      if (cartResponse.body.results.length > 0) {
+        const cartId = cartResponse.body.results[0].id;
+        console.log('Fetched Cart ID:', cartId);
+        return cartId;
+      }
+      console.warn('No cart found for logged-in customer.');
+      return null;
+    } catch (error) {
+      console.error('Error fetching cart by customerId:', error);
+      return null;
+    }
+  } else if (value && anon) {
+    console.log('Anonymous Cart ID:', value);
+    return value;
+  }
+
+  return null;
+}
+
 export {
   loginCustomer,
   customerOn,
@@ -512,4 +543,5 @@ export {
   addProductCart,
   isLog,
   getTokenAnon,
+  getCartId,
 };
