@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie';
 import Profile from '@/pages/profile/profile';
 import createComponent from '../components';
-import { customerOn } from '../servercomp/servercomp';
+import { customerOn, getCart, isLog } from '../servercomp/servercomp';
 import './header.scss';
 
 export default class Header {
@@ -23,6 +23,10 @@ export default class Header {
 
   profileLink: null | HTMLElement;
 
+  cartLink: null | HTMLElement;
+
+  cartItemCount: null | HTMLElement;
+
   constructor() {
     this.header = createComponent('header', ['header'], {});
     this.nav = createComponent('nav', ['nav-items'], {});
@@ -33,7 +37,18 @@ export default class Header {
     this.profileLink = null;
     this.logoutLink = null;
     this.aboutLink = null;
+    this.cartLink = null;
+    this.cartItemCount = null;
     this.render();
+  }
+
+  async updateCartItemCount() {
+    const { value, anon, token } = await isLog();
+    const cartData = await getCart(value, anon, token);
+    if (cartData && this.cartItemCount) {
+      const itemCount = cartData.body.lineItems.length;
+      this.cartItemCount.textContent = itemCount.toString();
+    }
   }
 
   render() {
@@ -128,6 +143,22 @@ export default class Header {
       window.dispatchEvent(new PopStateEvent('popstate'));
     });
 
+    this.cartLink = createComponent('a', ['nav-link', 'cart-link'], {});
+
+    this.cartLink.innerHTML +=
+      '<img width="22" height="22" src="https://img.icons8.com/sf-regular/96/FFFFFF/shopping-cart.png" alt="shopping-cart"/>';
+    this.cartLink.setAttribute('href', '');
+    this.cartLink.addEventListener('click', (event: MouseEvent) => {
+      const centerElement = document.querySelector('.centercard');
+      centerElement?.classList.remove('centercard');
+      event.preventDefault();
+      window.history.pushState({}, '', '/cart');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+    this.cartItemCount = createComponent('span', ['cart-item-count'], {});
+    this.cartLink.append(this.cartItemCount);
+    this.updateCartItemCount();
+
     this.header.append(this.homeLink, this.nav);
     this.nav.append(
       this.catalogLink,
@@ -135,6 +166,7 @@ export default class Header {
       this.loginLink,
       this.regLink,
       this.aboutLink,
+      this.cartLink,
     );
   }
 
