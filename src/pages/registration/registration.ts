@@ -17,6 +17,8 @@ import { CLASS_NAME, MODAL_MESSAGE } from './constants/constants';
 import showModal from '../../components/modal/modal';
 import ValidationUtils from '../../utils/validation/validationUtils';
 
+const days = 10;
+
 export default class RegistrationForm {
   static isFormValid = false;
 
@@ -347,11 +349,15 @@ export default class RegistrationForm {
       response
         .then((signInResult) => {
           const customerId = signInResult.customer.id;
-          Cookies.set('log', btoa(customerId));
+          Cookies.set('log', btoa(customerId), { expires: days });
           getToken(body.email, body.password).then((tokenData) => {
-            Cookies.set('token', btoa(tokenData.access_token));
+            Cookies.set('token', btoa(tokenData.access_token), {
+              expires: days,
+            });
             customerOn(this.Sheader);
             showModal(MODAL_MESSAGE.REGISTERED);
+            const event = new CustomEvent('restartCatalog');
+            document.dispatchEvent(event);
           });
           return customerId;
         })

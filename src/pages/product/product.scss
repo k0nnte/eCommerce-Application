@@ -331,3 +331,12 @@
   padding: 10px;
   width: 50px;
 }
+
+.btnOff{
+  background-color: gray;
+  cursor: not-allowed;
+}
+
+.btnOff:hover{
+  background-color: red;
+}

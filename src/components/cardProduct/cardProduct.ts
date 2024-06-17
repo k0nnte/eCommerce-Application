@@ -1,9 +1,12 @@
 /* eslint-disable no-console */
 import createComponent from '../components';
 import './cardProduct.scss';
-import { addProductCart, isLog } from '../servercomp/servercomp';
+import { addProductCart, cartAll, isLog } from '../servercomp/servercomp';
 import imgCart from '../../../public/files/cart.png';
 import load from '../../../public/files/load.gif';
+// eslint-disable-next-line import/order
+import { LineItem } from '@commercetools/platform-sdk';
+import createModal from '../modal/modal';
 
 const text = 'Add to Cart';
 
@@ -39,6 +42,8 @@ export default class Card {
 
   load: HTMLElement;
 
+  cart: Promise<LineItem[]>;
+
   constructor(
     urlImg: string,
     title: string,
@@ -66,6 +71,7 @@ export default class Card {
       src: imgCart,
       alt: 'Cart',
     });
+    this.cart = cartAll();
 
     this.render(title, description, price, discount);
     this.addListener();
@@ -95,6 +101,14 @@ export default class Card {
     this.addBtn.innerText = text;
     this.addBtn.append(this.imgCart);
     this.wrapper_Card.append(this.addBtn);
+    this.addBtn.classList.add('btnOff');
+    (this.addBtn as HTMLButtonElement).disabled = true;
+    this.cart.then((data) => {
+      if (!data.some((item) => item.productKey === this.key)) {
+        this.addBtn.classList.remove('btnOff');
+        (this.addBtn as HTMLButtonElement).disabled = false;
+      }
+    });
   }
 
   getCard() {
@@ -106,11 +120,14 @@ export default class Card {
       if (event.target === this.addBtn) {
         const id = isLog();
         id.then((data) => {
-          addProductCart(data.value, this.key, data.anon, data.token).catch(
-            (err) => {
-              console.log(err);
-            },
-          );
+          addProductCart(data.value, this.key, data.anon, data.token)
+            .then(() => {
+              this.addBtn.classList.add('btnOff');
+              (this.addBtn as HTMLButtonElement).disabled = true;
+            })
+            .catch((err) => {
+              createModal(err.name);
+            });
         });
       } else {
         window.history.pushState({}, '', `/${this.key}`);

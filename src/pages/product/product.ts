@@ -2,8 +2,10 @@
 import createComponent from '@/components/components';
 import {
   addProductCart,
+  cartAll,
   getProd,
   isLog,
+  removeItem,
 } from '@/components/servercomp/servercomp';
 import Swiper from 'swiper';
 import { Navigation, Pagination } from 'swiper/modules';
@@ -11,6 +13,8 @@ import 'swiper/scss';
 import 'swiper/scss/navigation';
 import 'swiper/scss/pagination';
 import './product.scss';
+import { LineItem } from '@commercetools/platform-sdk';
+import createModal from '@/components/modal/modal';
 import Header from '@/components/header/header';
 import imgCart from '../../../public/files/cart.png';
 import load from '../../../public/files/load.gif';
@@ -58,6 +62,10 @@ export default class Product {
 
   load: HTMLElement;
 
+  cart: Promise<LineItem[]>;
+
+  isCard: boolean;
+
   constructor(
     key: string,
     title: string = '',
@@ -78,11 +86,13 @@ export default class Product {
       src: imgCart,
       alt: 'Cart',
     });
+    this.isCard = false;
     this.load = createComponent('img', CLASS.gif, {
       src: load,
       alt: 'loading',
     });
     this.key = key;
+    this.cart = cartAll();
 
     this.createProductPage(title, discountPrice, price, description);
     this.renderProduct(key);
@@ -108,6 +118,18 @@ export default class Product {
       this.btnCart,
     );
     this.priceBox.append(this.discountPrice, this.price);
+    // this.btnCart.classList.add('btnOff');
+    // (this.btnCart as HTMLButtonElement).disabled = true;
+    this.cart.then((data) => {
+      if (data.some((item) => item.productKey === this.key)) {
+        // this.btnCart.classList.remove('btnOff');
+        // (this.btnCart as HTMLButtonElement).disabled = false;
+
+        this.btnCart.textContent = 'Remove from Cart';
+        this.btnCart.append(this.imgCart);
+        this.isCard = true;
+      }
+    });
     this.addListenerBtn();
   }
 
@@ -330,18 +352,40 @@ export default class Product {
       this.btnCart.innerText = '';
       this.btnCart.append(this.load);
       id.then((data) => {
-        addProductCart(data.value, this.key, data.anon, data.token)
-          .then(() => {
-            this.btnCart.removeChild(this.load);
-
-            this.btnCart.innerText = text;
-            this.btnCart.append(this.imgCart);
-            const header = new Header();
-            header.triggerCartUpdate();
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        if (!this.isCard) {
+          addProductCart(data.value, this.key, data.anon, data.token)
+            .then(() => {
+              this.btnCart.removeChild(this.load);
+              this.isCard = true;
+              this.btnCart.innerText = 'Remove from Cart';
+              this.btnCart.append(this.imgCart);
+              const event = new CustomEvent('buttonClicked', {
+                detail: { key: this.title.textContent },
+              });
+              document.dispatchEvent(event);
+            })
+            .catch((err) => {
+              createModal(err.name);
+            });
+        } else {
+          removeItem(data.value, this.key, data.anon, data.token)
+            .then(() => {
+              this.btnCart.removeChild(this.load);
+              this.isCard = false;
+              this.btnCart.innerText = text;
+              this.btnCart.append(this.imgCart);
+              const event = new CustomEvent('buttonClickedDell', {
+                detail: { key: this.title.textContent },
+              });
+              document.dispatchEvent(event);
+              createModal('The product is removed from cart');
+              const header = new Header();
+              header.triggerCartUpdate();
+            })
+            .catch((err) => {
+              createModal(err.name);
+            });
+        }
       });
     });
   }

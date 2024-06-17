@@ -356,6 +356,7 @@ async function getCart(id: string | undefined, anon: boolean, token: string) {
         .withCustomerId({ customerId: id! })
         .get()
         .execute();
+
       return response;
     }
 
@@ -401,6 +402,48 @@ async function getCart(id: string | undefined, anon: boolean, token: string) {
     }
   }
   return null;
+}
+
+async function removeItem(
+  idCost: string | undefined,
+  key: string,
+  anon: boolean,
+  token: string,
+) {
+  const Cart = await getCart(idCost, anon, token);
+
+  let lineItemId = '';
+
+  const product = await getProd(key);
+
+  const { id } = Cart!.body;
+  const productId = product.id;
+
+  const { version } = Cart!.body;
+  for (let i = 0; i < Cart!.body.lineItems.length; i += 1) {
+    if (Cart!.body.lineItems[i].productId === productId) {
+      lineItemId = Cart!.body.lineItems[i].id;
+    }
+  }
+  const response = await apiRoot
+    .carts()
+    .withId({ ID: id })
+    .post({
+      body: {
+        version,
+        actions: [
+          {
+            action: 'removeLineItem',
+            lineItemId,
+          },
+        ],
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .execute();
+  return response;
 }
 
 async function addProductCart(
@@ -488,6 +531,17 @@ async function isLog() {
   };
 }
 
+async function cartAll() {
+  try {
+    const id = await isLog();
+
+    const cart = await getCart(id.value, id.anon, id.token);
+    return cart?.body.lineItems || [];
+  } catch (err) {
+    return [];
+  }
+}
+
 async function getCartId(): Promise<string | null> {
   const { value, anon } = await isLog();
 
@@ -504,7 +558,6 @@ async function getCartId(): Promise<string | null> {
 
       if (cartResponse.body.results.length > 0) {
         const cartId = cartResponse.body.results[0].id;
-        console.log('Fetched Cart ID:', cartId);
         return cartId;
       }
       console.warn('No cart found for logged-in customer.');
@@ -514,7 +567,6 @@ async function getCartId(): Promise<string | null> {
       return null;
     }
   } else if (value && anon) {
-    console.log('Anonymous Cart ID:', value);
     return value;
   }
 
@@ -543,5 +595,7 @@ export {
   addProductCart,
   isLog,
   getTokenAnon,
+  cartAll,
   getCartId,
+  removeItem,
 };
