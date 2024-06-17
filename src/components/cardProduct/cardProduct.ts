@@ -6,6 +6,7 @@ import imgCart from '../../../public/files/cart.png';
 import load from '../../../public/files/load.gif';
 // eslint-disable-next-line import/order
 import { LineItem } from '@commercetools/platform-sdk';
+import createModal from '../modal/modal';
 
 const text = 'Add to Cart';
 
@@ -124,7 +125,7 @@ export default class Card {
               (this.addBtn as HTMLButtonElement).disabled = true;
             })
             .catch((err) => {
-              console.log(err);
+              createModal(err.name);
             });
         });
       } else {

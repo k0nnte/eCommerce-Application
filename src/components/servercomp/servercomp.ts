@@ -356,6 +356,8 @@ async function getCart(id: string | undefined, anon: boolean, token: string) {
         .withCustomerId({ customerId: id! })
         .get()
         .execute();
+      console.log(response);
+
       return response;
     }
 
@@ -401,6 +403,48 @@ async function getCart(id: string | undefined, anon: boolean, token: string) {
     }
   }
   return null;
+}
+
+async function removeItem(
+  idCost: string | undefined,
+  key: string,
+  anon: boolean,
+  token: string,
+) {
+  const Cart = await getCart(idCost, anon, token);
+
+  let lineItemId = '';
+
+  const product = await getProd(key);
+
+  const { id } = Cart!.body;
+  const productId = product.id;
+
+  const { version } = Cart!.body;
+  for (let i = 0; i < Cart!.body.lineItems.length; i += 1) {
+    if (Cart!.body.lineItems[i].productId === productId) {
+      lineItemId = Cart!.body.lineItems[i].id;
+    }
+  }
+  const response = await apiRoot
+    .carts()
+    .withId({ ID: id })
+    .post({
+      body: {
+        version,
+        actions: [
+          {
+            action: 'removeLineItem',
+            lineItemId,
+          },
+        ],
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .execute();
+  return response;
 }
 
 async function addProductCart(
@@ -554,4 +598,5 @@ export {
   getTokenAnon,
   cartAll,
   getCartId,
+  removeItem,
 };
