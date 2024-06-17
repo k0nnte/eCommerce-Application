@@ -5,6 +5,7 @@ import createComponent from '@/components/components';
 import { LineItem } from '@commercetools/platform-sdk';
 import { getCartId } from '@/components/servercomp/servercomp';
 import { apiRoot } from '@/sdk/builder';
+import showModal from '../../components/modal/modal';
 import emptyCartImg from '../../../public/files/empty-cart.png';
 import binImg from '../../../public/files/bin.png';
 
@@ -32,7 +33,7 @@ export default class Cart {
     this.addToCatalogButton('To Catalog');
   }
 
-  static renderCartItem(container: Element, item: LineItem) {
+  static renderCartItem(container: HTMLElement, item: LineItem) {
     const cartItem = createComponent('li', ['cart-item'], {});
     const productName = createComponent('p', ['item-name'], {});
     productName.textContent = item.name['en-US'];
@@ -44,12 +45,20 @@ export default class Cart {
     );
     const quantityLabel = createComponent('span', ['quantity-label'], {});
     quantityLabel.textContent = 'Qty: ';
-
-    const quantityElement = document.createElement('input');
-    quantityElement.type = 'number';
-    quantityElement.min = '1';
-    quantityElement.value = item.quantity.toString();
-    quantityElement.classList.add('item-quantity');
+    const quantityElement = createComponent('input', ['item-quantity'], {
+      type: 'number',
+      min: '1',
+      value: item.quantity.toString(),
+    }) as HTMLInputElement;
+    quantityElement.addEventListener('change', async (event) => {
+      const newQuantity = parseInt(
+        (event.target as HTMLInputElement).value,
+        10,
+      );
+      if (newQuantity > 0) {
+        await Cart.updateCartItemQuantity(item.id, newQuantity, item);
+      }
+    });
 
     const btnDelete = createComponent('button', ['delete-icon'], {});
     btnDelete.addEventListener('click', async () => {});
@@ -59,7 +68,7 @@ export default class Cart {
     deleteIcon.alt = 'Delete Item';
     deleteIcon.classList.add('delete-icon-image');
 
-    btnDelete.appendChild(deleteIcon);
+    btnDelete.append(deleteIcon);
 
     const imageContainer = createComponent('div', ['image-container'], {});
     const imageElement = createComponent('img', ['item-image'], {
@@ -68,30 +77,15 @@ export default class Cart {
     if (item.variant.images && item.variant.images.length > 0) {
       imageElement.src = item.variant.images[0].url;
     }
-    imageContainer.appendChild(imageElement);
-    imageContainer.appendChild(btnDelete);
+    imageContainer.append(imageElement);
+    imageContainer.append(btnDelete);
 
     quantityContainer.append(quantityLabel, quantityElement);
 
     const priceElement = createComponent('p', ['item-price'], {});
+    priceElement.dataset.itemId = item.id;
 
-    if (item.price.discounted && item.price.discounted.value) {
-      const regularPrice = item.price.value.centAmount / 100;
-      const discountedPrice = item.price.discounted.value.centAmount / 100;
-      const totalCost = (discountedPrice * item.quantity).toFixed(2);
-
-      priceElement.innerHTML = `Price: <del style="color: rgb(251, 46, 134);">${regularPrice} ${item.price.value.currencyCode}</del> ${discountedPrice} ${item.price.value.currencyCode} (Total: ${totalCost} ${item.price.value.currencyCode})`;
-    } else {
-      const totalCost = (
-        (item.price.value.centAmount * item.quantity) /
-        100
-      ).toFixed(2);
-      priceElement.textContent = `Price: ${item.price.value.centAmount / 100} ${item.price.value.currencyCode} (Total: ${totalCost} ${item.price.value.currencyCode})`;
-    }
-
-    if (item.variant.images && item.variant.images.length > 0) {
-      imageElement.src = item.variant.images[0].url;
-    }
+    Cart.updatePriceElement(priceElement, item);
 
     productInfo.append(
       imageContainer,
@@ -104,6 +98,25 @@ export default class Cart {
     container.append(cartItem);
   }
 
+  static updatePriceElement(priceElement: HTMLElement, item: LineItem) {
+    let priceContent = '';
+    if (item.price.discounted && item.price.discounted.value) {
+      const regularPrice = item.price.value.centAmount / 100;
+      const discountedPrice = item.price.discounted.value.centAmount / 100;
+      const totalCost = (discountedPrice * item.quantity).toFixed(2);
+
+      priceContent = `Price: <del style="color: rgb(251, 46, 134);">${regularPrice} ${item.price.value.currencyCode}</del> ${discountedPrice} ${item.price.value.currencyCode} (Total: ${totalCost} ${item.price.value.currencyCode})`;
+    } else {
+      const totalCost = (
+        (item.price.value.centAmount * item.quantity) /
+        100
+      ).toFixed(2);
+      priceContent = `Price: ${item.price.value.centAmount / 100} ${item.price.value.currencyCode} (Total: ${totalCost} ${item.price.value.currencyCode})`;
+    }
+    const localPriceElement = priceElement;
+    localPriceElement.innerHTML = priceContent;
+  }
+
   static async fetchAndDisplayCartItems() {
     const cartId = await getCartId();
     if (!cartId) {
@@ -114,7 +127,9 @@ export default class Cart {
       .withId({ ID: cartId })
       .get()
       .execute();
-    const cartItemsContainer = document.querySelector('.cart-container');
+    const cartItemsContainer = document.querySelector(
+      '.cart-container',
+    ) as HTMLElement;
     if (!cartItemsContainer) {
       return;
     }
@@ -125,10 +140,62 @@ export default class Cart {
         src: emptyCartImg,
         alt: 'Empty cart image',
       });
-      cartItemsContainer.appendChild(imgElement);
+      cartItemsContainer.append(imgElement);
       return;
     }
     cartItems.forEach((item) => Cart.renderCartItem(cartItemsContainer, item));
+  }
+
+  static async updateCartItemQuantity(
+    itemId: string,
+    newQuantity: number,
+    item: LineItem,
+  ) {
+    const cartId = await getCartId();
+    if (!cartId) {
+      return;
+    }
+
+    try {
+      const cartResponse = await apiRoot
+        .carts()
+        .withId({ ID: cartId })
+        .get()
+        .execute();
+
+      const cartVersion = cartResponse.body.version;
+
+      await apiRoot
+        .carts()
+        .withId({ ID: cartId })
+        .post({
+          body: {
+            version: cartVersion,
+            actions: [
+              {
+                action: 'changeLineItemQuantity',
+                lineItemId: itemId,
+                quantity: newQuantity,
+              },
+            ],
+          },
+        })
+        .execute();
+
+      const priceElement = document.querySelector(
+        `[data-item-id="${itemId}"]`,
+      ) as HTMLElement;
+      if (priceElement) {
+        const updatedItem = { ...item, quantity: newQuantity };
+        Cart.updatePriceElement(priceElement, updatedItem);
+      }
+    } catch (error) {
+      let errorMessage = 'An error occurred';
+      if (error && typeof error === 'object' && 'message' in error) {
+        errorMessage = (error as { message: string }).message;
+      }
+      showModal(errorMessage);
+    }
   }
 
   addCartSection(type: 'title' | 'emptyContent' | 'content', text: string) {
