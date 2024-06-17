@@ -356,6 +356,8 @@ export default class RegistrationForm {
             });
             customerOn(this.Sheader);
             showModal(MODAL_MESSAGE.REGISTERED);
+            const event = new CustomEvent('restartCatalog');
+            document.dispatchEvent(event);
           });
           return customerId;
         })

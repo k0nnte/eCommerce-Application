@@ -356,7 +356,6 @@ async function getCart(id: string | undefined, anon: boolean, token: string) {
         .withCustomerId({ customerId: id! })
         .get()
         .execute();
-      console.log(response);
 
       return response;
     }
@@ -535,6 +534,7 @@ async function isLog() {
 async function cartAll() {
   try {
     const id = await isLog();
+
     const cart = await getCart(id.value, id.anon, id.token);
     return cart?.body.lineItems || [];
   } catch (err) {
@@ -567,7 +567,6 @@ async function getCartId(): Promise<string | null> {
       return null;
     }
   } else if (value && anon) {
-    console.log('Anonymous Cart ID:', value);
     return value;
   }
 

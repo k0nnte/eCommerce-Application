@@ -7,6 +7,7 @@ import {
   addCard,
   getAllCategories,
   getAllProduct,
+  isLog,
   sortByName,
   sortPriceHigh,
   sortPriceSmall,
@@ -90,6 +91,7 @@ export default class Filter {
     this.categoryAdd();
     this.addSelectListener();
     this.addBtnListner();
+    this.addListnerRestart();
   }
 
   createSelect() {
@@ -208,17 +210,10 @@ export default class Filter {
       }
     });
     this.btnReset.addEventListener('click', () => {
-      const response = getAllProduct(0);
       (this.header as HTMLInputElement).value = ``;
       (this.price as HTMLInputElement).value = ``;
-      response
-        .then((data) => {
-          addCard(data, this.head, true);
-          this.addListnerScrollReset();
-        })
-        .catch((err) => {
-          createModal(err.name);
-        });
+      const event = new CustomEvent('restartCatalog');
+      document.dispatchEvent(event);
     });
   }
 
@@ -303,5 +298,19 @@ export default class Filter {
         });
       }
     };
+  }
+
+  addListnerRestart() {
+    document.addEventListener('restartCatalog', () => {
+      const response = getAllProduct(0);
+      response
+        .then((data) => {
+          addCard(data, this.head, true);
+          this.addListnerScrollReset();
+        })
+        .catch((err) => {
+          createModal(err.name);
+        });
+    });
   }
 }

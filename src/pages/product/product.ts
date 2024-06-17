@@ -377,7 +377,7 @@ export default class Product {
                 detail: { key: this.title.textContent },
               });
               document.dispatchEvent(event);
-              createModal('Card is deleted');
+              createModal('The product is removed from cart');
             })
             .catch((err) => {
               createModal(err.name);

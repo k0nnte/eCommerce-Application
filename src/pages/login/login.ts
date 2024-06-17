@@ -90,6 +90,8 @@ export default class Login extends HTMLElement {
             const token = getToken(email.value, password.value);
             token.then((tok) => {
               Cookies.set('token', btoa(tok.access_token), { expires: days });
+              const event = new CustomEvent('restartCatalog');
+              document.dispatchEvent(event);
             });
 
             customerOn(Login.SHeader);
