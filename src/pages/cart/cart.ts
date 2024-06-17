@@ -11,18 +11,24 @@ export default class Cart {
 
   wrapper_cart: HTMLElement;
 
-  image: HTMLElement;
-
   constructor() {
     this.wrap_main = createComponent('div', ['cart'], {});
     this.wrapper_cart = createComponent('div', ['wrapper_cart'], {});
-    this.image = createComponent('img', ['empty-cart-img'], {
-      src: emptyCartImg,
-      alt: 'Empty cart image',
-    });
 
     Cart.fetchAndDisplayCartItems();
     this.renderCart();
+  }
+
+  renderCart() {
+    this.wrap_main.append(this.wrapper_cart);
+    this.addCartSection('title', 'Shopping Cart');
+    this.addCartSection(
+      'emptyContent',
+      'Continue shopping and add items to your cart',
+    );
+    this.addCartSection('content', '');
+
+    this.addToCatalogButton('To Catalog');
   }
 
   static renderCartItem(container: Element, item: LineItem) {
@@ -48,14 +54,14 @@ export default class Cart {
     if (item.price.discounted && item.price.discounted.value) {
       const regularPrice = item.price.value.centAmount / 100;
       const discountedPrice = item.price.discounted.value.centAmount / 100;
-      const totalCost = (discountedPrice * item.quantity).toFixed(2); // Calculate total cost for all quantities
+      const totalCost = (discountedPrice * item.quantity).toFixed(2);
 
       priceElement.innerHTML = `Price: <del style="color: rgb(251, 46, 134);">${regularPrice} ${item.price.value.currencyCode}</del> ${discountedPrice} ${item.price.value.currencyCode} (Total: ${totalCost} ${item.price.value.currencyCode})`;
     } else {
       const totalCost = (
         (item.price.value.centAmount * item.quantity) /
         100
-      ).toFixed(2); // Calculate total cost for all quantities
+      ).toFixed(2);
       priceElement.textContent = `Price: ${item.price.value.centAmount / 100} ${item.price.value.currencyCode} (Total: ${totalCost} ${item.price.value.currencyCode})`;
     }
 
@@ -71,7 +77,6 @@ export default class Cart {
     );
 
     cartItem.append(productInfo);
-
     container.append(cartItem);
   }
 
@@ -97,62 +102,60 @@ export default class Cart {
     const cartItems = cartResponse.body.lineItems;
 
     if (cartItems.length === 0) {
-      cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+      cartItemsContainer.innerHTML = '<p>Your cart is currently empty</p>';
+
+      const imgElement = createComponent('img', ['empty-cart-img'], {
+        src: emptyCartImg,
+        alt: 'Empty cart image',
+      });
+
+      cartItemsContainer.appendChild(imgElement);
+
       return;
     }
 
     cartItems.forEach((item) => Cart.renderCartItem(cartItemsContainer, item));
   }
 
-  renderCart() {
-    this.wrap_main.append(this.wrapper_cart);
-    this.addCartTitle('Shopping Cart');
-    this.addEmptyCartContent(
-      'Your shopping cart is currently empty',
-      'Continue shopping and add items to your cart',
-    );
-    this.addCartContent('Items in your cart:');
-    this.addToCatalogButton('To Catalog');
-  }
+  addCartSection(type: 'title' | 'emptyContent' | 'content', text: string) {
+    switch (type) {
+      case 'title': {
+        const titleElement = createComponent('span', ['cart-title'], {});
+        titleElement.textContent = text;
+        this.wrapper_cart.append(titleElement);
+        break;
+      }
+      case 'emptyContent': {
+        const emptyCartContainer = createComponent(
+          'div',
+          ['empty-cart-container'],
+          {},
+        );
+        const linkElement = createComponent('a', ['empty-cart-link'], {});
+        linkElement.textContent = text;
+        this.wrapper_cart.append(linkElement);
 
-  addCartTitle(text: string) {
-    const textElement = createComponent('span', ['cart-title'], {});
-    textElement.textContent = text;
-    this.wrapper_cart.append(textElement);
-  }
+        linkElement.addEventListener('click', (event) => {
+          event.preventDefault();
+          window.history.pushState({}, '', '/catalog');
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        });
 
-  addEmptyCartContent(text: string, link: string) {
-    const emptyCartContainer = createComponent(
-      'div',
-      ['empty-cart-container'],
-      {},
-    );
-    const textElement = createComponent('span', ['empty-cart-text'], {});
-    textElement.textContent = text;
-
-    const linkElement = createComponent('a', ['empty-cart-link'], {});
-    linkElement.textContent = link;
-    this.wrapper_cart.append(linkElement);
-
-    if (linkElement) {
-      linkElement.addEventListener('click', (event) => {
-        event.preventDefault();
-        window.history.pushState({}, '', '/catalog');
-        window.dispatchEvent(new PopStateEvent('popstate'));
-      });
+        emptyCartContainer.append(linkElement);
+        this.wrapper_cart.append(emptyCartContainer);
+        break;
+      }
+      case 'content': {
+        const cartContainer = createComponent('div', ['cart-container'], {});
+        const textElement = createComponent('span', ['empty-cart-text'], {});
+        textElement.textContent = text;
+        cartContainer.append(textElement);
+        this.wrapper_cart.append(cartContainer);
+        break;
+      }
+      default:
+        throw new Error('Invalid section type');
     }
-
-    emptyCartContainer.append(textElement, linkElement, this.image);
-    this.wrapper_cart.append(emptyCartContainer);
-  }
-
-  addCartContent(text: string) {
-    const emptyCartContainer = createComponent('div', ['cart-container'], {});
-    const textElement = createComponent('span', ['empty-cart-text'], {});
-    textElement.textContent = text;
-
-    emptyCartContainer.append(textElement);
-    this.wrapper_cart.append(emptyCartContainer);
   }
 
   addToCatalogButton(buttonText: string) {
@@ -160,13 +163,11 @@ export default class Cart {
     buttonElement.textContent = buttonText;
     this.wrapper_cart.append(buttonElement);
 
-    if (buttonElement) {
-      buttonElement.addEventListener('click', (event) => {
-        event.preventDefault();
-        window.history.pushState({}, '', '/catalog');
-        window.dispatchEvent(new PopStateEvent('popstate'));
-      });
-    }
+    buttonElement.addEventListener('click', (event) => {
+      event.preventDefault();
+      window.history.pushState({}, '', '/catalog');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
   }
 
   getWrap() {
