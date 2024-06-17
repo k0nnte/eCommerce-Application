@@ -58,7 +58,10 @@ export default class Header {
             (total, item) => total + item.quantity,
             0,
           );
-          this.cartItemCount.textContent = totalQuantity.toString();
+          const count = document.querySelector('.cart-item-count');
+          if (count) {
+            count.textContent = totalQuantity.toString();
+          }
         }
       }
     }
