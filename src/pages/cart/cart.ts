@@ -2,7 +2,7 @@
 import 'font-awesome/css/font-awesome.min.css';
 import './cart.scss';
 import createComponent from '@/components/components';
-import { LineItem } from '@commercetools/platform-sdk';
+import { LineItem, CartUpdateAction } from '@commercetools/platform-sdk';
 import { getCartId } from '@/components/servercomp/servercomp';
 import { apiRoot } from '@/sdk/builder';
 import showModal from '../../components/modal/modal';
@@ -61,7 +61,15 @@ export default class Cart {
     });
 
     const btnDelete = createComponent('button', ['delete-icon'], {});
-    btnDelete.addEventListener('click', async () => {});
+    btnDelete.addEventListener('click', async () => {
+      const success = await Cart.removeCartItem(item.id);
+      if (success) {
+        while (container.firstChild) {
+          container.removeChild(container.firstChild);
+        }
+        Cart.fetchAndDisplayCartItems();
+      }
+    });
 
     const deleteIcon = document.createElement('img');
     deleteIcon.src = binImg;
@@ -144,6 +152,49 @@ export default class Cart {
       return;
     }
     cartItems.forEach((item) => Cart.renderCartItem(cartItemsContainer, item));
+  }
+
+  static async removeCartItem(itemId: string): Promise<boolean> {
+    try {
+      const cartId = await getCartId();
+      if (!cartId) {
+        throw new Error('Cart ID not found');
+      }
+
+      const cartResponse = await apiRoot
+        .carts()
+        .withId({ ID: cartId })
+        .get()
+        .execute();
+
+      const cartVersion = cartResponse.body.version;
+
+      const updateActions: CartUpdateAction[] = [
+        {
+          action: 'removeLineItem',
+          lineItemId: itemId,
+        },
+      ];
+
+      await apiRoot
+        .carts()
+        .withId({ ID: cartId })
+        .post({
+          body: {
+            version: cartVersion,
+            actions: updateActions,
+          },
+        })
+        .execute();
+
+      const cartUpdatedEvent = new CustomEvent('cart-updated');
+      document.dispatchEvent(cartUpdatedEvent);
+
+      return true;
+    } catch (error) {
+      console.error('Error removing item from cart:', error);
+      return false;
+    }
   }
 
   static async updateCartItemQuantity(
