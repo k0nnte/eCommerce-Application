@@ -6,9 +6,14 @@
   padding: 0;
   box-sizing: border-box;
 }
+html{
+  height: 100%;
+}
 
 body {
   overflow: scroll;
+  height: 100%;
+  width: 100%;
 }
 
 button {
@@ -38,7 +43,7 @@ button {
 
 .main_wrap {
   width: 100vw;
-  height: 100vh;
+  height: 100%;
 }
 
 .center {
