@@ -1,10 +1,12 @@
 /* eslint-disable no-console */
+import 'font-awesome/css/font-awesome.min.css';
 import './cart.scss';
 import createComponent from '@/components/components';
 import { LineItem } from '@commercetools/platform-sdk';
 import { getCartId } from '@/components/servercomp/servercomp';
 import { apiRoot } from '@/sdk/builder';
 import emptyCartImg from '../../../public/files/empty-cart.png';
+import binImg from '../../../public/files/bin.png';
 
 export default class Cart {
   wrap_main: HTMLElement;
@@ -27,29 +29,51 @@ export default class Cart {
       'Continue shopping and add items to your cart',
     );
     this.addCartSection('content', '');
-
     this.addToCatalogButton('To Catalog');
   }
 
   static renderCartItem(container: Element, item: LineItem) {
     const cartItem = createComponent('li', ['cart-item'], {});
-
-    const imageElement = document.createElement('img');
-    imageElement.alt = 'Product Image';
-    imageElement.classList.add('item-image');
-
-    const productName = document.createElement('p');
+    const productName = createComponent('p', ['item-name'], {});
     productName.textContent = item.name['en-US'];
+    const productInfo = createComponent('div', ['product-info'], {});
+    const quantityContainer = createComponent(
+      'div',
+      ['quantity-container'],
+      {},
+    );
+    const quantityLabel = createComponent('span', ['quantity-label'], {});
+    quantityLabel.textContent = 'Qty: ';
 
-    const productInfo = document.createElement('div');
-    productInfo.classList.add('product-info');
-
-    const quantityElement = document.createElement('p');
-    quantityElement.textContent = `Quantity: ${item.quantity}`;
+    const quantityElement = document.createElement('input');
+    quantityElement.type = 'number';
+    quantityElement.min = '1';
+    quantityElement.value = item.quantity.toString();
     quantityElement.classList.add('item-quantity');
 
-    const priceElement = document.createElement('p');
-    priceElement.classList.add('item-price');
+    const btnDelete = createComponent('button', ['delete-icon'], {});
+    btnDelete.addEventListener('click', async () => {});
+
+    const deleteIcon = document.createElement('img');
+    deleteIcon.src = binImg;
+    deleteIcon.alt = 'Delete Item';
+    deleteIcon.classList.add('delete-icon-image');
+
+    btnDelete.appendChild(deleteIcon);
+
+    const imageContainer = createComponent('div', ['image-container'], {});
+    const imageElement = createComponent('img', ['item-image'], {
+      alt: 'Product Image',
+    }) as HTMLImageElement;
+    if (item.variant.images && item.variant.images.length > 0) {
+      imageElement.src = item.variant.images[0].url;
+    }
+    imageContainer.appendChild(imageElement);
+    imageContainer.appendChild(btnDelete);
+
+    quantityContainer.append(quantityLabel, quantityElement);
+
+    const priceElement = createComponent('p', ['item-price'], {});
 
     if (item.price.discounted && item.price.discounted.value) {
       const regularPrice = item.price.value.centAmount / 100;
@@ -70,9 +94,9 @@ export default class Cart {
     }
 
     productInfo.append(
-      imageElement,
+      imageContainer,
       productName,
-      quantityElement,
+      quantityContainer,
       priceElement,
     );
 
@@ -82,38 +106,28 @@ export default class Cart {
 
   static async fetchAndDisplayCartItems() {
     const cartId = await getCartId();
-
     if (!cartId) {
       return;
     }
-
     const cartResponse = await apiRoot
       .carts()
       .withId({ ID: cartId })
       .get()
       .execute();
-
     const cartItemsContainer = document.querySelector('.cart-container');
-
     if (!cartItemsContainer) {
       return;
     }
-
     const cartItems = cartResponse.body.lineItems;
-
     if (cartItems.length === 0) {
       cartItemsContainer.innerHTML = '<p>Your cart is currently empty</p>';
-
       const imgElement = createComponent('img', ['empty-cart-img'], {
         src: emptyCartImg,
         alt: 'Empty cart image',
       });
-
       cartItemsContainer.appendChild(imgElement);
-
       return;
     }
-
     cartItems.forEach((item) => Cart.renderCartItem(cartItemsContainer, item));
   }
 
@@ -134,13 +148,11 @@ export default class Cart {
         const linkElement = createComponent('a', ['empty-cart-link'], {});
         linkElement.textContent = text;
         this.wrapper_cart.append(linkElement);
-
         linkElement.addEventListener('click', (event) => {
           event.preventDefault();
           window.history.pushState({}, '', '/catalog');
           window.dispatchEvent(new PopStateEvent('popstate'));
         });
-
         emptyCartContainer.append(linkElement);
         this.wrapper_cart.append(emptyCartContainer);
         break;

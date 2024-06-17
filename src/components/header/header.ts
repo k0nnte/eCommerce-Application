@@ -52,14 +52,6 @@ export default class Header {
           const itemCount = cartData.body.lineItems.length;
           this.cartItemCount.textContent = itemCount.toString();
         }
-        // if (cartData && this.cartItemCount) {
-        //   const totalQuantity = cartData.body.lineItems.reduce(
-        //     (acc, lineItem) => acc + lineItem.quantity,
-        //     0,
-        //   );
-
-        //   this.cartItemCount.textContent = totalQuantity.toString();
-        // }
       }
     }
   }
