@@ -91,6 +91,7 @@ export default class Login extends HTMLElement {
             token.then((tok) => {
               Cookies.set('token', btoa(tok.access_token), { expires: days });
               const event = new CustomEvent('restartCatalog');
+              Login.SHeader.triggerCartUpdate();
               document.dispatchEvent(event);
             });
 

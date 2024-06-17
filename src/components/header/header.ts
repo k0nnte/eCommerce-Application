@@ -55,7 +55,8 @@ export default class Header {
           this.cartItemCount instanceof HTMLElement
         ) {
           const itemCount = cartData.body.lineItems.length;
-          this.cartItemCount.textContent = itemCount.toString();
+          const count = document.querySelector('.cart-item-count');
+          count!.textContent = itemCount.toString();
         }
       }
     }
@@ -157,6 +158,8 @@ export default class Header {
       Cookies.remove('token');
       customerOn(this);
       const events = new CustomEvent('restartCatalog');
+      const header = new Header();
+      header.triggerCartUpdate();
       document.dispatchEvent(events);
     });
 
@@ -206,7 +209,7 @@ export default class Header {
       {},
     ) as HTMLElement;
     if (this.cartItemCount) {
-      this.cartLink.append(this.cartItemCount);
+      this.cartLink.appendChild(this.cartItemCount);
       this.updateCartItemCount();
     }
 

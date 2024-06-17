@@ -363,6 +363,8 @@ export default class Product {
                 detail: { key: this.title.textContent },
               });
               document.dispatchEvent(event);
+              const header = new Header();
+              header.triggerCartUpdate();
             })
             .catch((err) => {
               createModal(err.name);
