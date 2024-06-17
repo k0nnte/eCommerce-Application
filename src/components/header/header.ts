@@ -23,9 +23,9 @@ export default class Header {
 
   profileLink: null | HTMLElement;
 
-  cartLink: null | HTMLElement;
+  cartLink: HTMLElement | null = null;
 
-  cartItemCount: null | HTMLElement;
+  cartItemCount: HTMLElement | null = null;
 
   constructor() {
     this.header = createComponent('header', ['header'], {});
@@ -39,6 +39,7 @@ export default class Header {
     this.aboutLink = null;
     this.cartLink = null;
     this.cartItemCount = null;
+    this.updateHeaderCartCount();
     this.render();
   }
 
@@ -48,12 +49,47 @@ export default class Header {
       if ('value' in logResult && 'anon' in logResult && 'token' in logResult) {
         const { value, anon, token } = logResult;
         const cartData = await getCart(value, anon, token);
-        if (cartData && this.cartItemCount) {
+        if (
+          cartData &&
+          'lineItems' in cartData.body &&
+          this.cartItemCount instanceof HTMLElement
+        ) {
           const itemCount = cartData.body.lineItems.length;
-          this.cartItemCount.textContent = itemCount.toString();
+          const count = document.querySelector('.cart-item-count');
+          count!.textContent = itemCount.toString();
         }
       }
     }
+  }
+
+  updateHeaderCartCount() {
+    document.addEventListener('cart-updated', async () => {
+      await this.updateCartItemCount();
+    });
+  }
+
+  async triggerCartUpdate() {
+    const logResult = await isLog();
+    if (
+      logResult &&
+      'value' in logResult &&
+      'anon' in logResult &&
+      'token' in logResult
+    ) {
+      const { value, anon, token } = logResult;
+      const cartData = await getCart(value, anon, token);
+      if (cartData) {
+        this.cartItemCount = document.createElement('span');
+        this.cartItemCount.textContent =
+          cartData.body.lineItems.length.toString();
+        this.cartLink = document.createElement('a');
+        this.cartLink.setAttribute('href', '/cart');
+        this.cartLink.textContent = 'Cart';
+      }
+    }
+
+    const cartUpdatedEvent = new CustomEvent('cart-updated');
+    document.dispatchEvent(cartUpdatedEvent);
   }
 
   render() {
@@ -122,6 +158,8 @@ export default class Header {
       Cookies.remove('token');
       customerOn(this);
       const events = new CustomEvent('restartCatalog');
+      const header = new Header();
+      header.triggerCartUpdate();
       document.dispatchEvent(events);
     });
 
@@ -150,7 +188,11 @@ export default class Header {
       window.dispatchEvent(new PopStateEvent('popstate'));
     });
 
-    this.cartLink = createComponent('a', ['nav-link', 'cart-link'], {});
+    this.cartLink = createComponent(
+      'a',
+      ['nav-link', 'cart-link'],
+      {},
+    ) as HTMLElement;
     this.cartLink.innerHTML +=
       '<img width="22" height="22" src="https://img.icons8.com/sf-regular/96/FFFFFF/shopping-cart.png" alt="shopping-cart"/>';
     this.cartLink.setAttribute('href', '');
@@ -161,9 +203,15 @@ export default class Header {
       window.history.pushState({}, '', '/cart');
       window.dispatchEvent(new PopStateEvent('popstate'));
     });
-    this.cartItemCount = createComponent('span', ['cart-item-count'], {});
-    this.cartLink.append(this.cartItemCount);
-    this.updateCartItemCount();
+    this.cartItemCount = createComponent(
+      'span',
+      ['cart-item-count'],
+      {},
+    ) as HTMLElement;
+    if (this.cartItemCount) {
+      this.cartLink.appendChild(this.cartItemCount);
+      this.updateCartItemCount();
+    }
 
     this.header.append(this.homeLink, this.nav);
     this.nav.append(

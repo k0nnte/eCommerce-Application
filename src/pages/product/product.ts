@@ -15,6 +15,7 @@ import 'swiper/scss/pagination';
 import './product.scss';
 import { LineItem } from '@commercetools/platform-sdk';
 import createModal from '@/components/modal/modal';
+import Header from '@/components/header/header';
 import imgCart from '../../../public/files/cart.png';
 import load from '../../../public/files/load.gif';
 
@@ -362,6 +363,8 @@ export default class Product {
                 detail: { key: this.title.textContent },
               });
               document.dispatchEvent(event);
+              const header = new Header();
+              header.triggerCartUpdate();
             })
             .catch((err) => {
               createModal(err.name);
@@ -378,6 +381,8 @@ export default class Product {
               });
               document.dispatchEvent(event);
               createModal('The product is removed from cart');
+              const header = new Header();
+              header.triggerCartUpdate();
             })
             .catch((err) => {
               createModal(err.name);

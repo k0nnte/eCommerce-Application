@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import createComponent from '@/components/components';
 import Filter from '@/components/filter/filter';
 import showModal from '@/components/modal/modal';

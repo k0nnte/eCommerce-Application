@@ -1,12 +1,11 @@
-/* eslint-disable no-console */
+import { LineItem } from '@commercetools/platform-sdk';
 import createComponent from '../components';
-import './cardProduct.scss';
 import { addProductCart, cartAll, isLog } from '../servercomp/servercomp';
 import imgCart from '../../../public/files/cart.png';
 import load from '../../../public/files/load.gif';
-// eslint-disable-next-line import/order
-import { LineItem } from '@commercetools/platform-sdk';
 import createModal from '../modal/modal';
+import Header from '../header/header';
+import './cardProduct.scss';
 
 const text = 'Add to Cart';
 
@@ -124,6 +123,8 @@ export default class Card {
             .then(() => {
               this.addBtn.classList.add('btnOff');
               (this.addBtn as HTMLButtonElement).disabled = true;
+              const header = new Header();
+              header.triggerCartUpdate();
             })
             .catch((err) => {
               createModal(err.name);
