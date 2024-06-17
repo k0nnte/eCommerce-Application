@@ -11,6 +11,7 @@ import 'swiper/scss';
 import 'swiper/scss/navigation';
 import 'swiper/scss/pagination';
 import './product.scss';
+import Header from '@/components/header/header';
 import imgCart from '../../../public/files/cart.png';
 import load from '../../../public/files/load.gif';
 
@@ -335,6 +336,8 @@ export default class Product {
 
             this.btnCart.innerText = text;
             this.btnCart.append(this.imgCart);
+            const header = new Header();
+            header.triggerCartUpdate();
           })
           .catch((err) => {
             console.log(err);
