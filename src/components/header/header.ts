@@ -121,6 +121,8 @@ export default class Header {
       Cookies.remove('log');
       Cookies.remove('token');
       customerOn(this);
+      const events = new CustomEvent('restartCatalog');
+      document.dispatchEvent(events);
     });
 
     this.profileLink = createComponent('a', ['nav-link', 'profile-link'], {});

@@ -72,6 +72,7 @@ export default class Card {
       alt: 'Cart',
     });
     this.cart = cartAll();
+
     this.render(title, description, price, discount);
     this.addListener();
   }
