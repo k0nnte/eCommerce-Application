@@ -3,6 +3,8 @@ import {
   getAllCategories,
   sortPriceSmall,
   getTokenAnon,
+  fetchShippingAddressId,
+  fetchBillingAddressId,
 } from './servercomp';
 
 describe('loginCustomer function', () => {
@@ -69,5 +71,21 @@ describe('getTokenAnon function', () => {
     const tokenData = await getTokenAnon();
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(tokenData).toEqual(mockTokenResponse);
+  });
+});
+
+describe('fetchShippingAddressId function', () => {
+  it('should return shipping address information for a valid customer ID', async () => {
+    const customerId = '14e07f5b-0004-4659-baed-dba8eed05224';
+    const addressInfo = await fetchShippingAddressId(customerId);
+    expect(addressInfo).toBeDefined();
+  });
+});
+
+describe('fetchBillingAddressId function', () => {
+  it('should return Billing address information for a valid customer ID', async () => {
+    const customerId = '14e07f5b-0004-4659-baed-dba8eed05224';
+    const addressInfo = await fetchBillingAddressId(customerId);
+    expect(addressInfo).toBeDefined();
   });
 });

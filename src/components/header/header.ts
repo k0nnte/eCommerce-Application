@@ -54,9 +54,14 @@ export default class Header {
           'lineItems' in cartData.body &&
           this.cartItemCount instanceof HTMLElement
         ) {
-          const itemCount = cartData.body.lineItems.length;
+          const totalQuantity = cartData.body.lineItems.reduce(
+            (total, item) => total + item.quantity,
+            0,
+          );
           const count = document.querySelector('.cart-item-count');
-          count!.textContent = itemCount.toString();
+          if (count) {
+            count.textContent = totalQuantity.toString();
+          }
         }
       }
     }
