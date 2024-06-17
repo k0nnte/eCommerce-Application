@@ -183,11 +183,12 @@
   .product-info {
     display: flex;
     flex-direction: column;
+    gap: 15px;
   }
 
   .cart-item {
     width: 380px;
-    height: 190px;
+    height: 220px;
   }
 
   .cart-title {
@@ -197,5 +198,9 @@
 
   .empty-cart-link {
     font-size: 18px;
+  }
+
+  .item-price {
+    font-size: 15px;
   }
 }
