@@ -5,12 +5,16 @@ import LiudmilaPhoto from '../../../public/files/Liudmila.png';
 import ValeriaPhoto from '../../../public/files/Valeria.png';
 import GitIcon from '../../../public/files/github_icon.png';
 import FicusIcon from '../../../public/files/ficusIcon.png';
+import RSLogo from '../../../public/files/RSS.svg';
 import './about.scss';
 
 const CLASS = {
   wrapper: ['about-page'],
   intro_section: ['intro-section'],
+  intro_image_container: ['intro-image-container'],
   intro_image: ['intro-image'],
+  rs_link: ['rs-link'],
+  rs_logo: ['rs-logo'],
   intro_text: ['intro-text'],
   team_section: ['team-section'],
   member: ['team-member'],
@@ -97,14 +101,32 @@ export default class About {
 
   addIntroduction() {
     const introSection = createComponent('div', CLASS.intro_section, {});
+    const introImageContainer = createComponent(
+      'div',
+      CLASS.intro_image_container,
+      {},
+    );
     const introImage = createComponent('img', CLASS.intro_image, {
       src: FicusImage,
       alt: 'IntroFicus',
     });
+
+    const rsLogoLink = createComponent('a', CLASS.rs_link, {
+      href: 'https://rs.school',
+      target: '_blank',
+    });
+
+    const rsLogo = createComponent('img', CLASS.rs_logo, {
+      src: RSLogo,
+      alt: 'RS School',
+    });
+
     const introText = createComponent('p', CLASS.intro_text, {});
     introText.innerHTML = `We are the web development team 'LIV', brought together by RS School in May 2024. Over the past two months, we've created this e-commerce application, working cohesively and effectively. By leveraging our strengths, we clearly defined roles, communicated actively through Discord, and tracked tasks on the GitHub project board. Regular meetings helped us address issues and monitor progress. We are proud of our application and grateful to RS School for the support and opportunity to realize this project.`;
 
-    introSection.append(introImage, introText);
+    rsLogoLink.appendChild(rsLogo);
+    introImageContainer.append(introImage, rsLogoLink);
+    introSection.append(introImageContainer, introText);
 
     this.aboutPage.appendChild(introSection);
   }
@@ -186,8 +208,6 @@ export default class About {
       const worksList = About.addWorksList(member.works);
 
       titleWrap.append(nameLink, roleText, bioHeader);
-
-      // titleWrap.appendChild(bioText);
 
       worksWrap.append(worksHeader, worksList);
 

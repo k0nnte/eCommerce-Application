@@ -13,6 +13,7 @@
 /* INTRO */
 
 .intro-section {
+
   max-height: 40vh;
   display: flex;
   gap: 3vw;
@@ -21,9 +22,26 @@
   border-radius: 3px;
 }
 
+.intro-image-container {
+  position: relative;
+}
+
 .intro-image {
   height: 100%;
   border-radius: 3px;
+}
+
+.rs-logo {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  max-height: 100px;
+  width: auto;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
 }
 
 .intro-text {
@@ -63,7 +81,7 @@
   box-shadow: $box-shadow;
 
   &:hover {
-    border-color: #ff9100;
+    border-color: $color-primary;
   }
 }
 
@@ -73,15 +91,6 @@
   border-radius: 50%;
   box-shadow: $box-shadow;
   transition: $transition;
-
-  &:hover {
-    transform: scale(1.1);
-    cursor: none;
-    box-shadow:
-      rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
-      rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
-      rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
-  }
 }
 
 .title-wrap {
@@ -297,6 +306,11 @@
   .intro-image {
     width: 100%;
     height: auto;
+  }
+
+  .rs-logo {
+    top: 0;
+    right: 0;
   }
 
   .intro-text {
