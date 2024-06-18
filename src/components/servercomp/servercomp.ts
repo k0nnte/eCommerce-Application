@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+// /* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
 import { apiRoot } from '@/sdk/builder';
 import Cookies from 'js-cookie';
@@ -542,37 +542,6 @@ async function cartAll() {
   }
 }
 
-async function getCartId(): Promise<string | null> {
-  const { value, anon } = await isLog();
-
-  if (value && !anon) {
-    try {
-      const cartResponse = await apiRoot
-        .carts()
-        .get({
-          queryArgs: {
-            where: `customerId="${value}"`,
-          },
-        })
-        .execute();
-
-      if (cartResponse.body.results.length > 0) {
-        const cartId = cartResponse.body.results[0].id;
-        return cartId;
-      }
-      console.warn('No cart found for logged-in customer.');
-      return null;
-    } catch (error) {
-      console.error('Error fetching cart by customerId:', error);
-      return null;
-    }
-  } else if (value && anon) {
-    return value;
-  }
-
-  return null;
-}
-
 export {
   loginCustomer,
   customerOn,
@@ -596,6 +565,5 @@ export {
   isLog,
   getTokenAnon,
   cartAll,
-  getCartId,
   removeItem,
 };

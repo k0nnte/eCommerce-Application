@@ -2,8 +2,8 @@ import Cookies from 'js-cookie';
 import createComponent from '../../components/components';
 import img from '../../../public/files/main-image.png';
 import './main.scss';
-
 import Profile from '../profile/profile';
+import Cart from '../cart/cart';
 
 export default class Main {
   main: HTMLElement;
@@ -104,6 +104,11 @@ export default class Main {
       event.preventDefault();
       window.history.pushState({}, '', '/cart');
       window.dispatchEvent(new PopStateEvent('popstate'));
+      const cartContainer = document.querySelector('.cart-container');
+      if (cartContainer) {
+        cartContainer.innerHTML = '';
+      }
+      Cart.fetchAndDisplayCartItems();
     });
 
     this.aboutLink.textContent = `About Us`;
