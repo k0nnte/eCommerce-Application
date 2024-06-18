@@ -1,5 +1,7 @@
+/* eslint-disable no-console */
 import Cookies from 'js-cookie';
 import Profile from '@/pages/profile/profile';
+import Cart from '@/pages/cart/cart';
 import createComponent from '../components';
 import { customerOn, getCart, isLog } from '../servercomp/servercomp';
 import './header.scss';
@@ -207,6 +209,11 @@ export default class Header {
       event.preventDefault();
       window.history.pushState({}, '', '/cart');
       window.dispatchEvent(new PopStateEvent('popstate'));
+      const cartContainer = document.querySelector('.cart-container');
+      if (cartContainer) {
+        cartContainer.innerHTML = '';
+      }
+      Cart.fetchAndDisplayCartItems();
     });
     this.cartItemCount = createComponent(
       'span',

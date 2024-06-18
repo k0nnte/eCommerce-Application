@@ -8,6 +8,11 @@
   justify-content: space-between;
   background-color: $color-secondary;
   font-family: $font-family-secondary;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  transition: top 0.3s;
 }
 
 .header * img {
@@ -71,19 +76,19 @@
 }
 
 @media (max-width: 510px) {
-
   .nav-items {
     gap: 5px;
   }
 
   .nav-link {
-  font-size: 3.1vw;
+    font-size: 3.1vw;
 
-  img {
-    width: 20px;
-    height: 20px;
+    img {
+      width: 20px;
+      height: 20px;
+    }
   }
-}}
+}
 
 @media (max-width: 450px) {
   .nav-link {

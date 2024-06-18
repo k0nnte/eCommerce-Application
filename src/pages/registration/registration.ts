@@ -26,14 +26,14 @@ export default class RegistrationForm {
 
   header: Header;
 
-  static Sheader: Header;
+  static SHeader: Header;
 
   constructor(header: Header) {
     this.registrationForm = document.createElement('div');
     this.registrationForm.classList.add('registration__wrapper');
     RegistrationForm.renderRegistrationForm(this.registrationForm);
     this.header = header;
-    RegistrationForm.Sheader = this.header;
+    RegistrationForm.SHeader = this.header;
   }
 
   static renderRegistrationForm(registrationForm: HTMLElement) {
@@ -354,9 +354,10 @@ export default class RegistrationForm {
             Cookies.set('token', btoa(tokenData.access_token), {
               expires: days,
             });
-            customerOn(this.Sheader);
+            customerOn(this.SHeader);
             showModal(MODAL_MESSAGE.REGISTERED);
             const event = new CustomEvent('restartCatalog');
+            RegistrationForm.SHeader.triggerCartUpdate();
             document.dispatchEvent(event);
           });
           return customerId;

@@ -3,11 +3,20 @@ import 'font-awesome/css/font-awesome.min.css';
 import './cart.scss';
 import createComponent from '@/components/components';
 import { LineItem, CartUpdateAction } from '@commercetools/platform-sdk';
-import { getCartId } from '@/components/servercomp/servercomp';
+import { getCart, isLog } from '@/components/servercomp/servercomp';
 import { apiRoot } from '@/sdk/builder';
 import showModal from '../../components/modal/modal';
 import emptyCartImg from '../../../public/files/empty-cart.png';
 import binImg from '../../../public/files/bin.png';
+
+type ConcurrentModificationError = {
+  body: {
+    errors: {
+      code: string;
+    }[];
+  };
+  message?: string;
+};
 
 export default class Cart {
   wrap_main: HTMLElement;
@@ -18,7 +27,6 @@ export default class Cart {
     this.wrap_main = createComponent('div', ['cart'], {});
     this.wrapper_cart = createComponent('div', ['wrapper_cart'], {});
 
-    Cart.fetchAndDisplayCartItems();
     this.renderCart();
   }
 
@@ -31,6 +39,7 @@ export default class Cart {
     );
     this.addCartSection('content', '');
     this.addToCatalogButton('To Catalog');
+    Cart.fetchAndDisplayCartItems();
   }
 
   static renderCartItem(container: HTMLElement, item: LineItem) {
@@ -126,22 +135,28 @@ export default class Cart {
   }
 
   static async fetchAndDisplayCartItems() {
-    const cartId = await getCartId();
-    if (!cartId) {
+    const logResult = await isLog();
+    if (!logResult) {
       return;
     }
-    const cartResponse = await apiRoot
-      .carts()
-      .withId({ ID: cartId })
-      .get()
-      .execute();
+
+    const { value, anon, token } = logResult;
+
+    const cartData = await getCart(value, anon, token);
+    if (!cartData) {
+      return;
+    }
+
     const cartItemsContainer = document.querySelector(
       '.cart-container',
     ) as HTMLElement;
     if (!cartItemsContainer) {
       return;
     }
-    const cartItems = cartResponse.body.lineItems;
+
+    cartItemsContainer.innerHTML = '';
+
+    const cartItems = cartData.body.lineItems;
     if (cartItems.length === 0) {
       cartItemsContainer.innerHTML = '<p>Your cart is currently empty</p>';
       const imgElement = createComponent('img', ['empty-cart-img'], {
@@ -151,23 +166,25 @@ export default class Cart {
       cartItemsContainer.append(imgElement);
       return;
     }
+
     cartItems.forEach((item) => Cart.renderCartItem(cartItemsContainer, item));
   }
 
   static async removeCartItem(itemId: string): Promise<boolean> {
     try {
-      const cartId = await getCartId();
-      if (!cartId) {
-        throw new Error('Cart ID not found');
+      const logResult = await isLog();
+      if (!logResult || !logResult.value) {
+        throw new Error('User not logged in');
       }
 
-      const cartResponse = await apiRoot
-        .carts()
-        .withId({ ID: cartId })
-        .get()
-        .execute();
+      const { value, anon, token } = logResult;
+      const cartData = await getCart(value, anon, token);
+      if (!cartData || !cartData.body || !cartData.body.id) {
+        throw new Error('Cart data not found');
+      }
 
-      const cartVersion = cartResponse.body.version;
+      const cartId = cartData.body.id;
+      const cartVersion = cartData.body.version;
 
       const updateActions: CartUpdateAction[] = [
         {
@@ -184,6 +201,9 @@ export default class Cart {
             version: cartVersion,
             actions: updateActions,
           },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         })
         .execute();
 
@@ -192,7 +212,6 @@ export default class Cart {
 
       return true;
     } catch (error) {
-      console.error('Error removing item from cart:', error);
       return false;
     }
   }
@@ -202,48 +221,82 @@ export default class Cart {
     newQuantity: number,
     item: LineItem,
   ) {
-    const cartId = await getCartId();
-    if (!cartId) {
-      return;
-    }
-
     try {
-      const cartResponse = await apiRoot
-        .carts()
-        .withId({ ID: cartId })
-        .get()
-        .execute();
-
-      const cartVersion = cartResponse.body.version;
-
-      await apiRoot
-        .carts()
-        .withId({ ID: cartId })
-        .post({
-          body: {
-            version: cartVersion,
-            actions: [
-              {
-                action: 'changeLineItemQuantity',
-                lineItemId: itemId,
-                quantity: newQuantity,
-              },
-            ],
-          },
-        })
-        .execute();
-
-      const priceElement = document.querySelector(
-        `[data-item-id="${itemId}"]`,
-      ) as HTMLElement;
-      if (priceElement) {
-        const updatedItem = { ...item, quantity: newQuantity };
-        Cart.updatePriceElement(priceElement, updatedItem);
+      const logResult = await isLog();
+      if (!logResult || !logResult.value) {
+        throw new Error('User not logged in');
       }
+
+      const { value, anon, token } = logResult;
+      const cartData = await getCart(value, anon, token);
+      if (!cartData || !cartData.body || !cartData.body.id) {
+        throw new Error('Cart data not found');
+      }
+
+      const cartId = cartData.body.id;
+
+      const updateCartQuantity = async (cartVersion: number) => {
+        try {
+          await apiRoot
+            .carts()
+            .withId({ ID: cartId })
+            .post({
+              body: {
+                version: cartVersion,
+                actions: [
+                  {
+                    action: 'changeLineItemQuantity',
+                    lineItemId: itemId,
+                    quantity: newQuantity,
+                  },
+                ],
+              },
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            })
+            .execute();
+
+          const cartUpdatedEvent = new CustomEvent('cart-updated');
+          document.dispatchEvent(cartUpdatedEvent);
+
+          const priceElement = document.querySelector(
+            `[data-item-id="${itemId}"]`,
+          ) as HTMLElement;
+          if (priceElement) {
+            const updatedItem = { ...item, quantity: newQuantity };
+            Cart.updatePriceElement(priceElement, updatedItem);
+          }
+        } catch (error) {
+          const err = error as ConcurrentModificationError;
+          if (
+            err.body &&
+            err.body.errors &&
+            err.body.errors[0].code === 'ConcurrentModification'
+          ) {
+            const latestCartResponse = await apiRoot
+              .carts()
+              .withId({ ID: cartId })
+              .get()
+              .execute();
+
+            await updateCartQuantity(latestCartResponse.body.version);
+          } else {
+            let errorMessage = 'An unexpected error occurred';
+            if (err.message) {
+              errorMessage = err.message;
+            }
+            showModal(errorMessage);
+          }
+        }
+      };
+
+      await updateCartQuantity(cartData.body.version);
     } catch (error) {
-      let errorMessage = 'An error occurred';
-      if (error && typeof error === 'object' && 'message' in error) {
-        errorMessage = (error as { message: string }).message;
+      const err = error as { message?: string };
+      let errorMessage = 'An unexpected error occurred';
+      if (err.message) {
+        errorMessage = err.message;
       }
       showModal(errorMessage);
     }
