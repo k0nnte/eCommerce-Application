@@ -116,7 +116,7 @@ export default class Card {
 
   addListener() {
     this.wrapper_Card.addEventListener('click', (event) => {
-      if (event.target === this.addBtn) {
+      if (event.target === this.addBtn || event.target === this.imgCart) {
         const id = isLog();
         id.then((data) => {
           addProductCart(data.value, this.key, data.anon, data.token)

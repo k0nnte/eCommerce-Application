@@ -96,6 +96,8 @@ export default class Product {
 
     this.createProductPage(title, discountPrice, price, description);
     this.renderProduct(key);
+
+    this.addListenerBtn();
   }
 
   createProductPage(
@@ -351,6 +353,7 @@ export default class Product {
       this.btnCart.removeChild(this.imgCart);
       this.btnCart.innerText = '';
       this.btnCart.append(this.load);
+
       id.then((data) => {
         if (!this.isCard) {
           addProductCart(data.value, this.key, data.anon, data.token)
@@ -359,10 +362,13 @@ export default class Product {
               this.isCard = true;
               this.btnCart.innerText = 'Remove from Cart';
               this.btnCart.append(this.imgCart);
+
               const event = new CustomEvent('buttonClicked', {
                 detail: { key: this.title.textContent },
               });
+
               document.dispatchEvent(event);
+
               const header = new Header();
               header.triggerCartUpdate();
             })
@@ -376,10 +382,12 @@ export default class Product {
               this.isCard = false;
               this.btnCart.innerText = text;
               this.btnCart.append(this.imgCart);
+
               const event = new CustomEvent('buttonClickedDell', {
                 detail: { key: this.title.textContent },
               });
               document.dispatchEvent(event);
+
               createModal('The product is removed from cart');
               const header = new Header();
               header.triggerCartUpdate();

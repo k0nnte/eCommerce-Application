@@ -38,6 +38,7 @@ export default class Cart {
       'Continue shopping and add items to your cart',
     );
     this.addCartSection('content', '');
+    this.addCartSection('totalCost', '');
     this.addToCatalogButton('To Catalog');
     Cart.fetchAndDisplayCartItems();
   }
@@ -103,6 +104,7 @@ export default class Cart {
     priceElement.dataset.itemId = item.id;
 
     Cart.updatePriceElement(priceElement, item);
+    Cart.updateTotalCost();
 
     productInfo.append(
       imageContainer,
@@ -113,6 +115,47 @@ export default class Cart {
 
     cartItem.append(productInfo);
     container.append(cartItem);
+  }
+
+  static async fetchCartData() {
+    try {
+      const logResult = await isLog();
+      if (!logResult || !logResult.value) {
+        throw new Error('User not logged in');
+      }
+
+      const { value, anon, token } = logResult;
+      const cartData = await getCart(value, anon, token);
+      return cartData;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  static async updateTotalCost() {
+    const cartData = await Cart.fetchCartData();
+    if (!cartData) {
+      return;
+    }
+
+    const cartItems = cartData.body.lineItems;
+    let totalCost = 0;
+
+    cartItems.forEach((item) => {
+      if (item.price.discounted && item.price.discounted.value) {
+        totalCost +=
+          (item.price.discounted.value.centAmount / 100) * item.quantity;
+      } else {
+        totalCost += (item.price.value.centAmount / 100) * item.quantity;
+      }
+    });
+
+    const totalCostElement = document.querySelector(
+      '.total-cost',
+    ) as HTMLElement;
+    if (totalCostElement) {
+      totalCostElement.textContent = `Total Cost: ${totalCost.toFixed(2)} USD`;
+    }
   }
 
   static updatePriceElement(priceElement: HTMLElement, item: LineItem) {
@@ -210,6 +253,8 @@ export default class Cart {
       const cartUpdatedEvent = new CustomEvent('cart-updated');
       document.dispatchEvent(cartUpdatedEvent);
 
+      await Cart.updateTotalCost();
+
       return true;
     } catch (error) {
       return false;
@@ -292,6 +337,8 @@ export default class Cart {
       };
 
       await updateCartQuantity(cartData.body.version);
+
+      await Cart.updateTotalCost();
     } catch (error) {
       const err = error as { message?: string };
       let errorMessage = 'An unexpected error occurred';
@@ -302,7 +349,10 @@ export default class Cart {
     }
   }
 
-  addCartSection(type: 'title' | 'emptyContent' | 'content', text: string) {
+  addCartSection(
+    type: 'title' | 'emptyContent' | 'content' | 'totalCost',
+    text: string,
+  ) {
     switch (type) {
       case 'title': {
         const titleElement = createComponent('span', ['cart-title'], {});
@@ -334,6 +384,11 @@ export default class Cart {
         textElement.textContent = text;
         cartContainer.append(textElement);
         this.wrapper_cart.append(cartContainer);
+        break;
+      }
+      case 'totalCost': {
+        const totalCostElement = createComponent('div', ['total-cost'], {});
+        this.wrapper_cart.append(totalCostElement);
         break;
       }
       default:
