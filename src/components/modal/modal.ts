@@ -15,7 +15,7 @@ export default function createModal(textIn: string) {
   const modal = createComponent('div', CLASS.modal, {});
   const text = createComponent('p', CLASS.text, {});
   const btn = createComponent('button', CLASS.btn, {});
-  if (textIn === 'ConcurrentModification') {
+  if (textIn === 'ConcurrentModification' || textIn === 'I' || textIn === 'C') {
     return;
   }
 
