@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable no-unused-vars */
 import 'font-awesome/css/font-awesome.min.css';
 import './cart.scss';
 import createComponent from '@/components/components';
@@ -39,6 +39,7 @@ export default class Cart {
     );
     this.addCartSection('content', '');
     this.addCartSection('totalCost', '');
+    this.addClearCartButton('Clear Cart');
     this.addToCatalogButton('To Catalog');
     Cart.fetchAndDisplayCartItems();
   }
@@ -78,6 +79,11 @@ export default class Cart {
           container.removeChild(container.firstChild);
         }
         Cart.fetchAndDisplayCartItems();
+
+        const event = new CustomEvent('buttonClickedDell', {
+          detail: { key: item.name['en-US'] },
+        });
+        document.dispatchEvent(event);
       }
     });
 
@@ -261,6 +267,85 @@ export default class Cart {
     }
   }
 
+  static async removeAllCartItems(): Promise<boolean> {
+    try {
+      const logResult = await isLog();
+      if (!logResult || !logResult.value) {
+        throw new Error('User not logged in');
+      }
+
+      const { value, anon, token } = logResult;
+      const cartData = await getCart(value, anon, token);
+      if (!cartData || !cartData.body || !cartData.body.id) {
+        throw new Error('Cart data not found');
+      }
+
+      const cartId = cartData.body.id;
+      const cartVersion = cartData.body.version;
+
+      const names = cartData.body.lineItems.map((item) => item.name['en-US']);
+
+      for (let i = 0; i < names.length; i += 1) {
+        const event = new CustomEvent('buttonClickedDell', {
+          detail: { key: names[i] },
+        });
+        document.dispatchEvent(event);
+      }
+
+      const updateActions: CartUpdateAction[] = cartData.body.lineItems.map(
+        (item: LineItem) => ({
+          action: 'removeLineItem',
+          lineItemId: item.id,
+        }),
+      );
+
+      const updateCartItems = async (version: number): Promise<boolean> => {
+        try {
+          const response = await apiRoot
+            .carts()
+            .withId({ ID: cartId })
+            .post({
+              body: {
+                version,
+                actions: updateActions,
+              },
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            })
+            .execute();
+
+          const cartUpdatedEvent = new CustomEvent('cart-updated');
+          document.dispatchEvent(cartUpdatedEvent);
+
+          await Cart.updateTotalCost();
+
+          return true;
+        } catch (error) {
+          const err = error as ConcurrentModificationError;
+          if (
+            err.body &&
+            err.body.errors &&
+            err.body.errors[0].code === 'ConcurrentModification'
+          ) {
+            const latestCartResponse = await apiRoot
+              .carts()
+              .withId({ ID: cartId })
+              .get()
+              .execute();
+
+            return updateCartItems(latestCartResponse.body.version);
+          }
+          throw error;
+        }
+      };
+
+      return await updateCartItems(cartVersion);
+    } catch (error) {
+      return false;
+    }
+  }
+
   static async updateCartItemQuantity(
     itemId: string,
     newQuantity: number,
@@ -405,6 +490,26 @@ export default class Cart {
       event.preventDefault();
       window.history.pushState({}, '', '/catalog');
       window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+  }
+
+  addClearCartButton(buttonText: string) {
+    const buttonElement = createComponent('button', ['btn-clear-cart'], {});
+    buttonElement.textContent = buttonText;
+    this.wrapper_cart.append(buttonElement);
+
+    buttonElement.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const success = await Cart.removeAllCartItems();
+      if (success) {
+        const cartItemsContainer = document.querySelector(
+          '.cart-container',
+        ) as HTMLElement;
+        cartItemsContainer.innerHTML = '';
+        Cart.fetchAndDisplayCartItems();
+      } else {
+        showModal('Failed to clear the cart. Please try again.');
+      }
     });
   }
 

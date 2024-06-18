@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import Cookies from 'js-cookie';
 import Profile from '@/pages/profile/profile';
 import Cart from '@/pages/cart/cart';

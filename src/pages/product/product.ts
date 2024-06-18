@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import createComponent from '@/components/components';
 import {
   addProductCart,
@@ -120,13 +119,9 @@ export default class Product {
       this.btnCart,
     );
     this.priceBox.append(this.discountPrice, this.price);
-    // this.btnCart.classList.add('btnOff');
-    // (this.btnCart as HTMLButtonElement).disabled = true;
+
     this.cart.then((data) => {
       if (data.some((item) => item.productKey === this.key)) {
-        // this.btnCart.classList.remove('btnOff');
-        // (this.btnCart as HTMLButtonElement).disabled = false;
-
         this.btnCart.textContent = 'Remove from Cart';
         this.btnCart.append(this.imgCart);
         this.isCard = true;
@@ -350,7 +345,6 @@ export default class Product {
   addListenerBtn() {
     this.btnCart.addEventListener('click', () => {
       const id = isLog();
-      this.btnCart.removeChild(this.imgCart);
       this.btnCart.innerText = '';
       this.btnCart.append(this.load);
 

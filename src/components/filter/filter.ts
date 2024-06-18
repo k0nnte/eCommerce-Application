@@ -1,20 +1,18 @@
 /* eslint-disable no-unused-vars */
-// /* eslint-disable no-console */
 import { ClientResponse } from '@commercetools/importapi-sdk/dist/declarations/src/generated/shared/utils/common-types';
+import { ProductProjectionPagedSearchResponse } from '@commercetools/platform-sdk';
 import createComponent from '../components';
 import createModal from '../modal/modal';
 import {
   addCard,
   getAllCategories,
   getAllProduct,
-  isLog,
   sortByName,
   sortPriceHigh,
   sortPriceSmall,
 } from '../servercomp/servercomp';
 import './filter.scss';
-// eslint-disable-next-line import/order
-import { ProductProjectionPagedSearchResponse } from '@commercetools/platform-sdk';
+
 import load from '../../../public/files/load.gif';
 
 const CLASS = {

@@ -1,5 +1,5 @@
 import Header from './header';
-// import { isLog, getCart } from '../servercomp/servercomp';
+import { isLog, getCart } from '../servercomp/servercomp';
 
 jest.mock('../servercomp/servercomp', () => ({
   isLog: jest.fn(),
@@ -172,29 +172,29 @@ describe('Header component', () => {
     expect(window.history.pushState).toHaveBeenCalledWith({}, '', '/cart');
   });
 
-  // describe('updateCartItemCount method', () => {
-  //   it('should update cart item count correctly', async () => {
-  //     (isLog as jest.Mock).mockResolvedValue({
-  //       value: 'test-value',
-  //       anon: false,
-  //       token: 'test-token',
-  //     });
-  //     (getCart as jest.Mock).mockResolvedValue({
-  //       body: {
-  //         lineItems: [{}, {}, {}],
-  //       },
-  //     });
+  describe('updateCartItemCount method', () => {
+    it('should update cart item count correctly', async () => {
+      (isLog as jest.Mock).mockResolvedValue({
+        value: 'test-value',
+        anon: false,
+        token: 'test-token',
+      });
+      (getCart as jest.Mock).mockResolvedValue({
+        body: {
+          lineItems: [{ quantity: 1 }, { quantity: 1 }, { quantity: 1 }],
+        },
+      });
 
-  //     const cartItemCount = document.createElement('span');
-  //     cartItemCount.classList.add('cart-item-count');
-  //     document.body.appendChild(cartItemCount);
-  //     header.cartItemCount = cartItemCount;
+      const cartItemCount = document.createElement('span');
+      cartItemCount.classList.add('cart-item-count');
+      document.body.appendChild(cartItemCount);
+      header.cartItemCount = cartItemCount;
 
-  //     await header.updateCartItemCount();
+      await header.updateCartItemCount();
 
-  //     expect(header.cartItemCount.textContent).toBe('3');
-  //   });
-  // });
+      expect(header.cartItemCount.textContent).toBe('3');
+    });
+  });
 
   afterAll(() => {
     mainWrap.remove();
