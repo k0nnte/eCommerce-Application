@@ -10,11 +10,14 @@ const CLASS = {
 
 const TEXTBTN = 'Continue';
 
-export default function createModal(textIn: string): HTMLElement {
+export default function createModal(textIn: string) {
   const wrapper = createComponent('div', CLASS.main, {});
   const modal = createComponent('div', CLASS.modal, {});
   const text = createComponent('p', CLASS.text, {});
   const btn = createComponent('button', CLASS.btn, {});
+  if (textIn === 'ConcurrentModification') {
+    return;
+  }
 
   btn.textContent = TEXTBTN;
   text.innerText = textIn;
@@ -37,6 +40,4 @@ export default function createModal(textIn: string): HTMLElement {
       }
     });
   });
-
-  return wrapper;
 }

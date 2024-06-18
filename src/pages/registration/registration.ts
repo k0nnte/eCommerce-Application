@@ -1,5 +1,3 @@
-// /* eslint-disable no-console */
-// /* eslint-disable no-unused-vars */
 import './registration.scss';
 import 'font-awesome/css/font-awesome.min.css';
 import {

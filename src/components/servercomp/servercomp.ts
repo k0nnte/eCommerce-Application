@@ -1,4 +1,3 @@
-// /* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
 import { apiRoot } from '@/sdk/builder';
 import Cookies from 'js-cookie';

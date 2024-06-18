@@ -1,5 +1,3 @@
-// /* eslint-disable no-console */
-// /* eslint-disable no-unused-vars */
 import Cookies from 'js-cookie';
 import './profile.scss';
 import createComponent from '@/components/components';
