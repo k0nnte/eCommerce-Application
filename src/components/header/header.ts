@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Cookies from 'js-cookie';
 import Profile from '@/pages/profile/profile';
 import createComponent from '../components';
@@ -205,6 +206,12 @@ export default class Header {
       const centerElement = document.querySelector('.centercard');
       centerElement?.classList.remove('centercard');
       event.preventDefault();
+
+      console.log('Cart icon clicked, dispatching cart-page-update event');
+      // Dispatch custom event to notify cart page to update
+      const cartPageUpdateEvent = new CustomEvent('cart-page-update');
+      document.dispatchEvent(cartPageUpdateEvent);
+
       window.history.pushState({}, '', '/cart');
       window.dispatchEvent(new PopStateEvent('popstate'));
     });

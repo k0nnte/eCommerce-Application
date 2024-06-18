@@ -9,6 +9,15 @@ import showModal from '../../components/modal/modal';
 import emptyCartImg from '../../../public/files/empty-cart.png';
 import binImg from '../../../public/files/bin.png';
 
+type ConcurrentModificationError = {
+  body: {
+    errors: {
+      code: string;
+    }[];
+  };
+  message?: string;
+};
+
 export default class Cart {
   wrap_main: HTMLElement;
 
@@ -207,6 +216,59 @@ export default class Cart {
       return;
     }
 
+    const updateCartQuantity = async (cartVersion: number) => {
+      try {
+        await apiRoot
+          .carts()
+          .withId({ ID: cartId })
+          .post({
+            body: {
+              version: cartVersion,
+              actions: [
+                {
+                  action: 'changeLineItemQuantity',
+                  lineItemId: itemId,
+                  quantity: newQuantity,
+                },
+              ],
+            },
+          })
+          .execute();
+
+        const cartUpdatedEvent = new CustomEvent('cart-updated');
+        document.dispatchEvent(cartUpdatedEvent);
+
+        const priceElement = document.querySelector(
+          `[data-item-id="${itemId}"]`,
+        ) as HTMLElement;
+        if (priceElement) {
+          const updatedItem = { ...item, quantity: newQuantity };
+          Cart.updatePriceElement(priceElement, updatedItem);
+        }
+      } catch (error) {
+        const err = error as ConcurrentModificationError;
+        if (
+          err.body &&
+          err.body.errors &&
+          err.body.errors[0].code === 'ConcurrentModification'
+        ) {
+          const latestCartResponse = await apiRoot
+            .carts()
+            .withId({ ID: cartId })
+            .get()
+            .execute();
+
+          await updateCartQuantity(latestCartResponse.body.version);
+        } else {
+          let errorMessage = 'An unexpected error occurred';
+          if (err.message) {
+            errorMessage = err.message;
+          }
+          showModal(errorMessage);
+        }
+      }
+    };
+
     try {
       const cartResponse = await apiRoot
         .carts()
@@ -214,36 +276,12 @@ export default class Cart {
         .get()
         .execute();
 
-      const cartVersion = cartResponse.body.version;
-
-      await apiRoot
-        .carts()
-        .withId({ ID: cartId })
-        .post({
-          body: {
-            version: cartVersion,
-            actions: [
-              {
-                action: 'changeLineItemQuantity',
-                lineItemId: itemId,
-                quantity: newQuantity,
-              },
-            ],
-          },
-        })
-        .execute();
-
-      const priceElement = document.querySelector(
-        `[data-item-id="${itemId}"]`,
-      ) as HTMLElement;
-      if (priceElement) {
-        const updatedItem = { ...item, quantity: newQuantity };
-        Cart.updatePriceElement(priceElement, updatedItem);
-      }
+      await updateCartQuantity(cartResponse.body.version);
     } catch (error) {
-      let errorMessage = 'An error occurred';
-      if (error && typeof error === 'object' && 'message' in error) {
-        errorMessage = (error as { message: string }).message;
+      const err = error as { message?: string };
+      let errorMessage = 'An unexpected error occurred';
+      if (err.message) {
+        errorMessage = err.message;
       }
       showModal(errorMessage);
     }
