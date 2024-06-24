@@ -1,0 +1,46 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": ["./tsconfig.json"]
+  },
+  "extends": [
+    "airbnb-base",
+    "eslint:recommended",
+     "prettier"
+  ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [
+        ".ts"
+        ]
+      },
+      "typescript": {}
+    }
+  },
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "error",
+    "prettier/prettier": "error",
+    "import/extensions": [
+      "error",
+      "never",
+      {
+        "ignorePackages": true,
+        "ts": "never"
+      }
+    ]
+  },
+  "plugins": [
+    "@typescript-eslint",
+    // "@typescript-eslint-recommended",
+    "prettier"
+   
+  ],
+  "env": {
+    "browser": true,
+    "node": true,
+    "jest": true,
+    "es2020": true
+  }
+}
+  

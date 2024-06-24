@@ -1,0 +1,146 @@
+@import '../../app/app.scss';
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.center {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 544px;
+  margin: auto;
+  padding: 50px 55px;
+  box-shadow: $box-shadow;
+  text-align: center;
+  font-family: $font-family-primary;
+}
+
+.form-title {
+  margin-bottom: 7px;
+  font-family: $font-family-secondary;
+}
+
+.form-subtitle {
+  margin-top: 0;
+  margin-bottom: 37px;
+  font-size: 17px;
+  color: $color-text-grey;
+}
+
+.input-container {
+  margin-bottom: 35px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  .input-field {
+    width: 100%;
+    height: 52px;
+    padding: 10px;
+    border: $border;
+    border-radius: 3px;
+    font-family: $font-family-primary;
+    font-size: 16px;
+
+    &:focus {
+      outline: none;
+      border: $border;
+      &.input-invalid {
+        border: 1px solid $color-error;
+      }
+
+      &.input-valid {
+        border: 1px solid $color-correct;
+      }
+    }
+    &::placeholder {
+      color: $color-text-grey;
+    }
+  }
+
+  .input-invalid {
+    border: 1px solid $color-error;
+  }
+
+  .input-valid {
+    border: 1px solid $color-correct;
+  }
+
+  .error-message {
+    max-width: 100%;
+    position: absolute;
+    top: 105%;
+    font-size: 14px;
+    color: $color-error;
+    word-wrap: break-word;
+    text-align: left;
+    line-height: 1;
+  }
+
+  .password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    box-shadow: none;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+    }
+    &.fa {
+      font-size: 1.2em;
+      color: $color-text-grey;
+    }
+  }
+}
+
+.button {
+  width: 100%;
+  height: 47px;
+  margin-bottom: 30px;
+}
+
+.account-text,
+.create-account-link {
+  font-size: 17px;
+  color: $color-text-grey;
+  text-decoration: none;
+  transition: $transition;
+  a:hover {
+    color: $color-primary;
+  }
+}
+
+@media (max-width: 544px) {
+  .login-form {
+    max-width: 90%;
+    padding: 40px;
+  }
+}
+
+@media (max-width: 425px) {
+  .login-form {
+    padding: 20px;
+  }
+}

@@ -1,0 +1,82 @@
+@import '../../app/app.scss';
+
+.wrapper_card {
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border: $border;
+  border-radius: 3px;
+  padding: 20px;
+  color: $color-text-dark;
+  cursor: pointer;
+  transition: $transition;
+  font-family: $font-family-secondary;
+}
+
+.wrapper_card:hover {
+  .img_card {
+    transform: scale(1.05);
+  }
+  transform: scale(1.05);
+}
+
+.img_card {
+  transition: $transition;
+  width: 80%;
+  height: auto;
+  height: 300px;
+  object-fit: contain;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.title_card {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: -1px;
+  letter-spacing: 0%;
+  text-align: center;
+}
+
+.description_card {
+  width: 100%;
+  color: $color-text-grey;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 29px;
+  letter-spacing: 0%;
+  text-align: left;
+  word-wrap: break-word;
+  text-align: center;
+}
+
+.price {
+  font-size: 13.89px;
+  font-weight: 400;
+  line-height: -1px;
+  letter-spacing: 1%;
+  text-align: left;
+}
+
+.discount {
+  color: $color-primary;
+  font-size: 13.89px;
+  font-weight: 400;
+  line-height: -1px;
+  letter-spacing: 0%;
+  text-align: left;
+  text-decoration-line: line-through;
+}
+
+.add-btn {
+  width: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+  margin-top: auto; /* Push the button to the bottom of the card */
+}

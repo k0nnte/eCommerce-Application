@@ -1,0 +1,52 @@
+@import './fonts.scss';
+@import './variables.scss';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  height: 100%;
+}
+
+body {
+  overflow: scroll;
+  height: 100%;
+  width: 100%;
+  padding-top: 55px;
+}
+
+button {
+  font-family: $font-family-primary;
+  font-size: 17px;
+  font-weight: 700;
+  border-radius: 3px;
+  min-height: 50px;
+  border: none;
+  background-color: $color-primary;
+  color: $color-text-light;
+  cursor: pointer;
+  box-shadow: $box-shadow;
+  border: none;
+  transition: $transition;
+
+  &:hover {
+    transform: scale(1.02);
+    background-color: darken($color-primary, 5%);
+  }
+
+  &:active {
+    transform: scale(0.98);
+    background-color: darken($color-primary, 10%);
+  }
+}
+
+.main_wrap {
+  width: 100vw;
+  height: 100%;
+}
+
+.center {
+  width: 100%;
+}

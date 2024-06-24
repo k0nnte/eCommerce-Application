@@ -1,0 +1,81 @@
+@import './../../app/app.scss';
+
+.center {
+  position: relative;
+}
+
+.wrap_main {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  position: absolute;
+}
+
+.main {
+  width: 100%;
+  padding: 20px;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: $background-light;
+  font-family: $font-family-secondary;
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    gap: 20px;
+  }
+  flex-direction: column;
+}
+
+.main-items {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.main-links {
+  text-decoration: none;
+  color: $color-text-dark;
+  font-family: $font-family-secondary;
+  font-weight: 600;
+  font-size: 16px;
+  transition: $transition;
+
+  &:first-child {
+    color: $color-primary;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+    color: $color-primary;
+  }
+}
+
+.main-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+@media (max-width: 550px) {
+  .main {
+    margin-top: 20px;
+    padding: 0;
+    gap: 0;
+  }
+
+  .main-items {
+    gap: 10px;
+  }
+
+  .main-links {
+    font-size: 13px;
+  }
+}
