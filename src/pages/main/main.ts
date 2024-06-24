@@ -2,11 +2,13 @@ import Cookies from 'js-cookie';
 import createComponent from '../../components/components';
 import img from '../../../public/files/main-image.png';
 import './main.scss';
-
 import Profile from '../profile/profile';
+import Cart from '../cart/cart';
 
 export default class Main {
   main: HTMLElement;
+
+  wrap_main: HTMLElement;
 
   nav: HTMLElement;
 
@@ -18,9 +20,11 @@ export default class Main {
 
   profileLink: HTMLElement;
 
-  wrap_main: HTMLElement;
-
   catalogLink: HTMLElement;
+
+  cartLink: HTMLElement;
+
+  aboutLink: HTMLElement;
 
   constructor() {
     this.wrap_main = createComponent('div', ['wrap_main'], {});
@@ -29,8 +33,10 @@ export default class Main {
     this.homeLink = createComponent('a', ['main-links', 'home-link'], {});
     this.loginLink = createComponent('a', ['main-links', 'login-link'], {});
     this.regLink = createComponent('a', ['main-links', 'reg-link'], {});
-    this.catalogLink = createComponent('a', ['main-links'], {});
     this.profileLink = createComponent('a', ['main-links', 'profile-link'], {});
+    this.catalogLink = createComponent('a', ['main-links', 'catalog-link'], {});
+    this.cartLink = createComponent('a', ['main-links', 'cart-link'], {});
+    this.aboutLink = createComponent('a', ['main-links', 'about-link'], {});
 
     this.render();
   }
@@ -92,6 +98,27 @@ export default class Main {
       window.dispatchEvent(new PopStateEvent('popstate'));
     });
 
+    this.cartLink.textContent = `Cart`;
+    this.cartLink.setAttribute(`href`, '');
+    this.cartLink.addEventListener('click', (event: MouseEvent) => {
+      event.preventDefault();
+      window.history.pushState({}, '', '/cart');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+      const cartContainer = document.querySelector('.cart-container');
+      if (cartContainer) {
+        cartContainer.innerHTML = '';
+      }
+      Cart.fetchAndDisplayCartItems();
+    });
+
+    this.aboutLink.textContent = `About Us`;
+    this.aboutLink.setAttribute(`href`, '');
+    this.aboutLink.addEventListener('click', (event: MouseEvent) => {
+      event.preventDefault();
+      window.history.pushState({}, '', '/about');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+
     const imageContainer = createComponent('div', ['image-container'], {});
     const image = createComponent('img', ['main-image'], {});
     image.setAttribute('src', img);
@@ -111,6 +138,8 @@ export default class Main {
       this.regLink,
       this.profileLink,
       this.catalogLink,
+      this.cartLink,
+      this.aboutLink,
     );
   }
 

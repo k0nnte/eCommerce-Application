@@ -10,6 +10,8 @@ import Header from '@/components/header/header';
 import Cookies from 'js-cookie';
 import './login.scss';
 
+const days = 10;
+
 interface ValidationResult {
   isValid: boolean;
   message: string;
@@ -82,13 +84,21 @@ export default class Login extends HTMLElement {
         const resp = loginCustomer(email.value, password.value);
         resp.then((data) => {
           if (data.istrue) {
-            Cookies.set('log', btoa(data.response!.customer.id));
+            Cookies.set('log', btoa(data.response!.customer.id), {
+              expires: days,
+            });
             const token = getToken(email.value, password.value);
             token.then((tok) => {
-              Cookies.set('token', btoa(tok.access_token));
+              Cookies.set('token', btoa(tok.access_token), { expires: days });
+              const event = new CustomEvent('restartCatalog');
+              Login.SHeader.triggerCartUpdate();
+              document.dispatchEvent(event);
             });
 
             customerOn(Login.SHeader);
+
+            email.value = '';
+            password.value = '';
           } else {
             showModal(`${data.error!.message}`);
           }

@@ -1,5 +1,3 @@
-// /* eslint-disable no-console */
-// /* eslint-disable no-unused-vars */
 import './registration.scss';
 import 'font-awesome/css/font-awesome.min.css';
 import {
@@ -17,6 +15,8 @@ import { CLASS_NAME, MODAL_MESSAGE } from './constants/constants';
 import showModal from '../../components/modal/modal';
 import ValidationUtils from '../../utils/validation/validationUtils';
 
+const days = 10;
+
 export default class RegistrationForm {
   static isFormValid = false;
 
@@ -24,14 +24,14 @@ export default class RegistrationForm {
 
   header: Header;
 
-  static Sheader: Header;
+  static SHeader: Header;
 
   constructor(header: Header) {
     this.registrationForm = document.createElement('div');
     this.registrationForm.classList.add('registration__wrapper');
     RegistrationForm.renderRegistrationForm(this.registrationForm);
     this.header = header;
-    RegistrationForm.Sheader = this.header;
+    RegistrationForm.SHeader = this.header;
   }
 
   static renderRegistrationForm(registrationForm: HTMLElement) {
@@ -347,11 +347,16 @@ export default class RegistrationForm {
       response
         .then((signInResult) => {
           const customerId = signInResult.customer.id;
-          Cookies.set('log', btoa(customerId));
+          Cookies.set('log', btoa(customerId), { expires: days });
           getToken(body.email, body.password).then((tokenData) => {
-            Cookies.set('token', btoa(tokenData.access_token));
-            customerOn(this.Sheader);
+            Cookies.set('token', btoa(tokenData.access_token), {
+              expires: days,
+            });
+            customerOn(this.SHeader);
             showModal(MODAL_MESSAGE.REGISTERED);
+            const event = new CustomEvent('restartCatalog');
+            RegistrationForm.SHeader.triggerCartUpdate();
+            document.dispatchEvent(event);
           });
           return customerId;
         })

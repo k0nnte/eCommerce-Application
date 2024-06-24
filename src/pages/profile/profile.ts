@@ -1,5 +1,3 @@
-// /* eslint-disable no-console */
-// /* eslint-disable no-unused-vars */
 import Cookies from 'js-cookie';
 import './profile.scss';
 import createComponent from '@/components/components';
@@ -456,7 +454,6 @@ export default class Profile {
                   country: newShippingCountry,
                 },
               },
-              // ... other update actions if needed
             ],
           },
         })

@@ -1,11 +1,24 @@
 import createComponent from '@/components/components';
-import { getProd } from '@/components/servercomp/servercomp';
+import {
+  addProductCart,
+  cartAll,
+  getProd,
+  isLog,
+  removeItem,
+} from '@/components/servercomp/servercomp';
 import Swiper from 'swiper';
 import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/scss';
 import 'swiper/scss/navigation';
 import 'swiper/scss/pagination';
 import './product.scss';
+import { LineItem } from '@commercetools/platform-sdk';
+import createModal from '@/components/modal/modal';
+import Header from '@/components/header/header';
+import imgCart from '../../../public/files/cart.png';
+import load from '../../../public/files/load.gif';
+
+const text = 'Add to Cart';
 
 const CLASS = {
   wrapper: ['page-prod'],
@@ -16,6 +29,9 @@ const CLASS = {
   discountPrice: ['price-prod', 'discount-price'],
   price: ['price-prod', 'start-price'],
   description: ['description-prod'],
+  btnCart: ['btn-cart-product'],
+  imgCart: ['img-cart'],
+  gif: ['gif'],
 };
 
 export default class Product {
@@ -37,6 +53,18 @@ export default class Product {
 
   currentModal: HTMLElement | null = null;
 
+  btnCart: HTMLElement;
+
+  imgCart: HTMLElement;
+
+  key: string;
+
+  load: HTMLElement;
+
+  cart: Promise<LineItem[]>;
+
+  isCard: boolean;
+
   constructor(
     key: string,
     title: string = '',
@@ -52,9 +80,23 @@ export default class Product {
     this.price = createComponent('div', CLASS.price, {});
     this.description = createComponent('p', CLASS.description, {});
     this.swiperContainer = createComponent('div', ['swiper-container'], {});
+    this.btnCart = createComponent('button', CLASS.btnCart, {});
+    this.imgCart = createComponent('img', CLASS.imgCart, {
+      src: imgCart,
+      alt: 'Cart',
+    });
+    this.isCard = false;
+    this.load = createComponent('img', CLASS.gif, {
+      src: load,
+      alt: 'loading',
+    });
+    this.key = key;
+    this.cart = cartAll();
 
     this.createProductPage(title, discountPrice, price, description);
     this.renderProduct(key);
+
+    this.addListenerBtn();
   }
 
   createProductPage(
@@ -68,8 +110,24 @@ export default class Product {
     this.price.innerText = `$${price}`;
     this.description.innerText = description;
     this.pageProd.append(this.swiperContainer, this.infoContainer);
-    this.infoContainer.append(this.title, this.priceBox, this.description);
+    this.btnCart.innerText = text;
+    this.btnCart.append(this.imgCart);
+    this.infoContainer.append(
+      this.title,
+      this.priceBox,
+      this.description,
+      this.btnCart,
+    );
     this.priceBox.append(this.discountPrice, this.price);
+
+    this.cart.then((data) => {
+      if (data.some((item) => item.productKey === this.key)) {
+        this.btnCart.textContent = 'Remove from Cart';
+        this.btnCart.append(this.imgCart);
+        this.isCard = true;
+      }
+    });
+    this.addListenerBtn();
   }
 
   async renderProduct(key: string) {
@@ -282,5 +340,57 @@ export default class Product {
     if (centerElement) {
       centerElement.appendChild(this.pageProd);
     }
+  }
+
+  addListenerBtn() {
+    this.btnCart.addEventListener('click', () => {
+      const id = isLog();
+      this.btnCart.innerText = '';
+      this.btnCart.append(this.load);
+
+      id.then((data) => {
+        if (!this.isCard) {
+          addProductCart(data.value, this.key, data.anon, data.token)
+            .then(() => {
+              this.btnCart.removeChild(this.load);
+              this.isCard = true;
+              this.btnCart.innerText = 'Remove from Cart';
+              this.btnCart.append(this.imgCart);
+
+              const event = new CustomEvent('buttonClicked', {
+                detail: { key: this.title.textContent },
+              });
+
+              document.dispatchEvent(event);
+
+              const header = new Header();
+              header.triggerCartUpdate();
+            })
+            .catch((err) => {
+              createModal(err.name);
+            });
+        } else {
+          removeItem(data.value, this.key, data.anon, data.token)
+            .then(() => {
+              this.btnCart.removeChild(this.load);
+              this.isCard = false;
+              this.btnCart.innerText = text;
+              this.btnCart.append(this.imgCart);
+
+              const event = new CustomEvent('buttonClickedDell', {
+                detail: { key: this.title.textContent },
+              });
+              document.dispatchEvent(event);
+
+              createModal('The product is removed from cart');
+              const header = new Header();
+              header.triggerCartUpdate();
+            })
+            .catch((err) => {
+              createModal(err.name);
+            });
+        }
+      });
+    });
   }
 }

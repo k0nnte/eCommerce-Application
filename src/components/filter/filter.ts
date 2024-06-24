@@ -1,4 +1,6 @@
-// /* eslint-disable no-console */
+/* eslint-disable no-unused-vars */
+import { ClientResponse } from '@commercetools/importapi-sdk/dist/declarations/src/generated/shared/utils/common-types';
+import { ProductProjectionPagedSearchResponse } from '@commercetools/platform-sdk';
 import createComponent from '../components';
 import createModal from '../modal/modal';
 import {
@@ -11,6 +13,8 @@ import {
 } from '../servercomp/servercomp';
 import './filter.scss';
 
+import load from '../../../public/files/load.gif';
+
 const CLASS = {
   warper: ['wrapper_search'],
   input: ['input_search'],
@@ -19,6 +23,15 @@ const CLASS = {
   options: ['options'],
   wrasses: ['wrap_select'],
 };
+
+type Callback = (
+  value: number,
+  index: number,
+) => Promise<ClientResponse<ProductProjectionPagedSearchResponse>>;
+
+type CallbackNoValue = (
+  index: number,
+) => Promise<ClientResponse<ProductProjectionPagedSearchResponse>>;
 
 const optionst = ['price is less', 'price is higher', 'by name'];
 
@@ -45,14 +58,26 @@ export default class Filter {
 
   header: HTMLElement;
 
-  constructor(head: HTMLElement, header: HTMLElement) {
+  index: number;
+
+  parent: HTMLElement;
+
+  load: HTMLElement;
+
+  constructor(head: HTMLElement, header: HTMLElement, parent: HTMLElement) {
     this.header = header;
     this.head = head;
+    this.parent = parent;
+    this.index = 0;
     this.wrapper = createComponent('div', CLASS.warper, {});
     this.search = createComponent('input', CLASS.input, {});
     this.categories = createComponent('select', CLASS.select, {});
     this.price = createComponent('input', CLASS.input, {
       type: 'number',
+    });
+    this.load = createComponent('img', ['gifLoad'], {
+      src: load,
+      alt: 'loading',
     });
     this.select = createComponent('select', CLASS.select, {});
     this.selectWrap = createComponent('div', CLASS.wrasses, {});
@@ -64,6 +89,7 @@ export default class Filter {
     this.categoryAdd();
     this.addSelectListener();
     this.addBtnListner();
+    this.addListnerRestart();
   }
 
   createSelect() {
@@ -140,10 +166,15 @@ export default class Filter {
           (this.price as HTMLInputElement).reportValidity();
         } else {
           (this.price as HTMLInputElement).setCustomValidity('');
-          const response = sortPriceSmall(Number(price));
-          response.then((data) => {
-            addCard(data, this.head);
-          });
+          const response = sortPriceSmall(Number(price), 0);
+          response
+            .then((data) => {
+              addCard(data, this.head, true);
+              this.addListnerScroll(sortPriceSmall, Number(price));
+            })
+            .catch((err) => {
+              createModal(err.name);
+            });
         }
       } else if (this.selectOption === 'price is higher') {
         const price = (this.price as HTMLInputElement).value;
@@ -154,29 +185,130 @@ export default class Filter {
           (this.price as HTMLInputElement).reportValidity();
         } else {
           (this.price as HTMLInputElement).setCustomValidity('');
-          const response = sortPriceHigh(Number(price));
-          response.then((data) => {
-            addCard(data, this.head);
-          });
+          const response = sortPriceHigh(Number(price), 0);
+          response
+            .then((data) => {
+              addCard(data!, this.head, true);
+              this.addListnerScroll(sortPriceHigh, Number(price));
+            })
+            .catch((err) => {
+              createModal(err.name);
+            });
         }
       } else {
-        const response = sortByName();
-        response.then((data) => {
-          addCard(data, this.head);
-        });
+        const response = sortByName(0);
+        response
+          .then((data) => {
+            addCard(data, this.head, true);
+            this.addListrerNoValue(sortByName);
+          })
+          .catch((err) => {
+            createModal(err.name);
+          });
       }
     });
     this.btnReset.addEventListener('click', () => {
-      const response = getAllProduct();
       (this.header as HTMLInputElement).value = ``;
       (this.price as HTMLInputElement).value = ``;
-      response.then((data) => {
-        addCard(data, this.head);
-      });
+      const event = new CustomEvent('restartCatalog');
+      document.dispatchEvent(event);
     });
   }
 
   getFilter() {
     return this.wrapper;
+  }
+
+  addListnerScrollReset() {
+    window.onscroll = null;
+    let index = 0;
+    let isLoading = false;
+    window.onscroll = () => {
+      if (isLoading) return;
+      this.parent.append(this.load);
+      const { scrollHeight, clientHeight, scrollTop } =
+        document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight) {
+        isLoading = true;
+        index += 10;
+        const response = getAllProduct(index);
+        response.then((data) => {
+          this.parent.removeChild(this.load);
+          if (data.results.length === 0) {
+            window.onscroll = null;
+          } else {
+            addCard(data, this.head, false);
+          }
+          isLoading = false;
+        });
+      }
+    };
+  }
+
+  addListnerScroll(callback: Callback, value: number) {
+    window.onscroll = null;
+    let index = 0;
+    let isLoading = false;
+    window.onscroll = () => {
+      if (isLoading) return;
+      const { scrollHeight, clientHeight, scrollTop } =
+        document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight) {
+        isLoading = true;
+        index += 10;
+        this.parent.append(this.load);
+        const response = callback(value, index);
+        response.then((data) => {
+          this.parent.removeChild(this.load);
+          if (data.body.results.length === 0) {
+            window.onscroll = null;
+          } else {
+            addCard(data, this.head, false);
+          }
+          isLoading = false;
+        });
+      }
+    };
+  }
+
+  addListrerNoValue(callback: CallbackNoValue) {
+    window.onscroll = null;
+    let index = 0;
+    let isLoading = false;
+    window.onscroll = () => {
+      if (isLoading) return;
+      this.parent.append(this.load);
+      const { scrollHeight, clientHeight, scrollTop } =
+        document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight) {
+        isLoading = true;
+        index += 10;
+
+        const response = callback(index);
+        response.then((data) => {
+          this.parent.removeChild(this.load);
+          if (data.body.results.length === 0) {
+            window.onscroll = null;
+          } else {
+            addCard(data, this.head, false);
+          }
+          isLoading = false;
+        });
+      }
+    };
+  }
+
+  addListnerRestart() {
+    document.addEventListener('restartCatalog', () => {
+      const response = getAllProduct(0);
+      response
+        .then((data) => {
+          addCard(data, this.head, true);
+          this.addListnerScrollReset();
+        })
+        .catch((err) => {
+          createModal(err.name);
+        });
+    });
   }
 }

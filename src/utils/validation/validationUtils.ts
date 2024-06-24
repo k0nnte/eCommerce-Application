@@ -1,5 +1,3 @@
-// /* eslint-disable no-console */
-// /* eslint-disable no-unused-vars */
 import createComponent from '@/components/components';
 import {
   CLASS_NAME,

@@ -1,11 +1,18 @@
+@import '../../app/app.scss';
+
 .header {
   height: 55px;
   padding: 0 13%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #7e33e0;
-  font-family: 'Josefin Sans', sans-serif;
+  background-color: $color-secondary;
+  font-family: $font-family-secondary;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  transition: top 0.3s;
 }
 
 .header * img {
@@ -14,24 +21,82 @@
 
 .nav-items {
   display: flex;
+  align-items: flex-end;
   gap: 20px;
 }
 
 .nav-link {
   text-decoration: none;
-  color: #ffffff;
-  font-family: 'Josefin Sans', sans-serif;
+  color: $color-text-light;
   font-weight: 600;
   font-size: 16px;
-  transition: all 0.3s ease;
+  transition: $transition;
 
   &:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
+}
+
+.cart-link {
+  position: relative;
+  order: 2;
+}
+
+.cart-item-count {
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  padding-top: 2px;
+  top: -7px;
+  right: -7px;
+  width: 75%;
+  height: 75%;
+  border-radius: 50%;
+  text-align: center;
+  background-color: $color-primary;
+  color: $color-text-light;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 @media (max-width: 768px) {
   .header {
     padding: 0 5%;
+  }
+}
+
+@media (max-width: 550px) {
+  .home-link {
+    margin-right: 10px;
+  }
+
+  .nav-items {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 510px) {
+  .nav-items {
+    gap: 5px;
+  }
+
+  .nav-link {
+    font-size: 3.1vw;
+
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+@media (max-width: 450px) {
+  .nav-link {
+    font-size: 3vw;
+
+    img {
+      width: 17px;
+      height: 17px;
+    }
   }
 }
